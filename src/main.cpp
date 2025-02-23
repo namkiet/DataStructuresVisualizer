@@ -4,7 +4,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML 2.6.2 Test");
 
     sf::RectangleShape rectangle(sf::Vector2f(200, 150));
-    rectangle.setFillColor(sf::Color::Yellow);
+    rectangle.setFillColor(sf::Color::White);
     rectangle.setPosition(300, 225);
 
     while (window.isOpen()) {
