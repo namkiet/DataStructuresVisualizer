@@ -3,9 +3,9 @@
 # No other meaning or use of this file is supported.
 
 method=git
-command=/usr/local/bin/cmake;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-subbuild/sfml-populate-prefix/tmp/sfml-populate-gitclone.cmake
-source_dir=/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-src
-work_dir=/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps
+command=C:/Program Files/CMake/bin/cmake.exe;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-subbuild/sfml-populate-prefix/tmp/sfml-populate-gitclone.cmake
+source_dir=C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-src
+work_dir=C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps
 repository=https://github.com/SFML/SFML.git
 remote=origin
 init_submodules=TRUE

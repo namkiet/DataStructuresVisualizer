@@ -1,8 +1,8 @@
-# Install script for directory: /Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-src/src/SFML/System
+# Install script for directory: C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-src/src/SFML/System
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/usr/local")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/CMakeSFMLProject")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "Release")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -32,36 +32,33 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set path to fallback-tool for dependency-resolution.
-if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/Library/Developer/CommandLineTools/usr/bin/objdump")
+if(CMAKE_INSTALL_COMPONENT STREQUAL "devel" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-build/lib/Debug/sfml-system-d.lib")
+  elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-build/lib/Release/sfml-system.lib")
+  elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-build/lib/MinSizeRel/sfml-system.lib")
+  elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY OPTIONAL FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-build/lib/RelWithDebInfo/sfml-system.lib")
+  endif()
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "bin" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES
-    "/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-build/lib/libsfml-system.2.6.2.dylib"
-    "/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-build/lib/libsfml-system.2.6.dylib"
-    )
-  foreach(file
-      "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libsfml-system.2.6.2.dylib"
-      "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libsfml-system.2.6.dylib"
-      )
-    if(EXISTS "${file}" AND
-       NOT IS_SYMLINK "${file}")
-      if(CMAKE_INSTALL_DO_STRIP)
-        execute_process(COMMAND "/Library/Developer/CommandLineTools/usr/bin/strip" -x "${file}")
-      endif()
-    endif()
-  endforeach()
-endif()
-
-if(CMAKE_INSTALL_COMPONENT STREQUAL "bin" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-build/lib/libsfml-system.dylib")
+  if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/bin/Debug/sfml-system-d-2.dll")
+  elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/bin/Release/sfml-system-2.dll")
+  elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/bin/MinSizeRel/sfml-system-2.dll")
+  elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE SHARED_LIBRARY FILES "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/bin/RelWithDebInfo/sfml-system-2.dll")
+  endif()
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/namkiet/Documents/GitHub/cmake-sfml-project/build/_deps/sfml-build/src/SFML/System/install_local_manifest.txt"
+  file(WRITE "C:/Users/QUOC VI/OneDrive/Tài liệu/GitHub/DataStructuresVisualizer/build/_deps/sfml-build/src/SFML/System/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
