@@ -12,6 +12,14 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp)
+
+file(GLOB SRC_FILES src/*.cpp)
+add_executable(main ${SRC_FILES} ${HEADER_FILES})
+
+# add_executable(main src/main.cpp)
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE sfml-graphics)
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+add_definitions(-DSFML_NO_DEPRECATED_WARNINGS)
