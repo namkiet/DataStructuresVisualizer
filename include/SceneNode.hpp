@@ -5,6 +5,9 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <vector>
 #include <memory>
+#include <Category.hpp>
+
+struct Command;
 
 class SceneNode : 
     public sf::Transformable, public sf::Drawable,
@@ -37,5 +40,10 @@ private:
 // public:
 //     sf::Vector2f		getWorldPosition() const;
 //     sf::Transform		getWorldTransform() const;
+private:
+    unsigned int        getCategory() const;
+
+public:
+    void                executeCommand(const Command& command, sf::Time dt);
 
 };

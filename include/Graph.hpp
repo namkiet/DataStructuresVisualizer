@@ -1,11 +1,7 @@
-#ifndef BOOK_Graph_HPP
-#define BOOK_Graph_HPP
-
-#include <StateStack.hpp>
-
+#pragma once
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
-
+#include <StateStack.hpp>
 
 class Graph : public State
 {
@@ -18,5 +14,3 @@ class Graph : public State
 	private:
         sf::Text                text;
 };
-
-#endif // BOOK_Graph_HPP

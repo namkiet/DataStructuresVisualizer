@@ -1,6 +1,4 @@
-#ifndef BOOK_AVL_HPP
-#define BOOK_AVL_HPP
-
+#pragma once
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <StateStack.hpp>
@@ -19,5 +17,3 @@ class AVL : public State
 		
         sf::Text                text;
 };
-
-#endif // BOOK_AVL_HPP

@@ -1,10 +1,7 @@
-#ifndef BOOK_MENUSTATE_HPP
-#define BOOK_MENUSTATE_HPP
-
-#include <StateStack.hpp>
-
+#pragma once
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <StateStack.hpp>
 
 
 class MenuState : public State
@@ -35,5 +32,3 @@ private:
 	std::vector<sf::Text>	mOptions;
 	std::size_t				mOptionIndex;
 };
-
-#endif // BOOK_MENUSTATE_HPP

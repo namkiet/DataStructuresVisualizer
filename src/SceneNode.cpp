@@ -1,4 +1,5 @@
 #include <SceneNode.hpp>
+#include <Command.hpp>
 
 SceneNode::SceneNode()
 {
@@ -72,3 +73,17 @@ void SceneNode::drawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 
 // 	return transform;
 // }
+
+unsigned int SceneNode::getCategory() const
+{
+    return Category::Scene;
+}
+
+void SceneNode::executeCommand(const Command& command, sf::Time dt)
+{
+    if (command.category & getCategory())
+        command.action(*this, dt);
+    
+    for (Ptr& child: mChildren)
+        child->executeCommand(command, dt);
+}

@@ -48,8 +48,10 @@ void App::run()
      
         sf::Time dt = clock.restart();
         handleEvent();
-        update(dt);
-        if (mStateStack.isEmpty()) mWindow.close();
+        if (!mIsPaused)
+            update(dt);
+        if (mStateStack.isEmpty()) 
+            mWindow.close();
         draw();
     }
 }
@@ -57,12 +59,25 @@ void App::run()
 void App::handleEvent()
 {
     sf::Event event;
+    CommandQueue& commands = mWorld.getCommandQueue();
     while (mWindow.pollEvent(event))
     {
         mStateStack.handleEvent(event);
+
         if (event.type == sf::Event::Closed)
             mWindow.close();
-
+        
+        if (event.type == sf::Event::LostFocus)
+            mIsPaused = true;
+        
+        if (event.type == sf::Event::GainedFocus)
+            mIsPaused = false;
+        
+        if (event.type == sf::Event::KeyPressed)
+            if (event.key.code == sf::Keyboard::P)
+                mIsPaused  = !mIsPaused;
+        
+        mUser.handleEvent(event, command);
     }
 }
 

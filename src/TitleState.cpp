@@ -1,11 +1,10 @@
 #include <TitleState.hpp>
 #include <Utility.hpp>
 
-TitleState::TitleState(StateStack& stack, Context context)
-: State(stack, context)
-, mText()
-, mShowText(true)
-, mTextEffectTime(sf::Time::Zero)
+TitleState::TitleState(StateStack& stack, Context context): 
+	State(stack, context),
+	mShowText(true),
+	mTextEffectTime(sf::Time::Zero)
 {
 	mBackgroundSprite.setTexture(context.textures->get(Textures::TitleScreen));
 
@@ -18,8 +17,8 @@ TitleState::TitleState(StateStack& stack, Context context)
 void TitleState::draw()
 {
 	sf::RenderWindow& window = *getContext().window;
-	// window.draw(mBackgroundSprite);
 
+	// window.draw(mBackgroundSprite);
 	if (mShowText)
 		window.draw(mText);
 }

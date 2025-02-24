@@ -25,7 +25,6 @@ void AVL::draw()
 	sf::RenderWindow& window = *getContext().window;
 	window.setView(window.getDefaultView());
     window.draw(text);
-    // window.draw()
     mWorld.draw();
 }
 

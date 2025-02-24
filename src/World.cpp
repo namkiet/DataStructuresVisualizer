@@ -6,7 +6,7 @@
 World::World(sf::RenderWindow& window, TextureHolder& textures):
     mWindow(window),
     mWorldView(mWindow.getDefaultView()),
-    mWorldBounds(0.f, 0.f, mWorldView.getSize().x, mWorldView.getSize().y),
+    // mWorldBounds(0.f, 0.f, mWorldView.getSize().x, mWorldView.getSize().y),
 	mRootNode(nullptr)
 {
 	loadTextures();
@@ -37,14 +37,14 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 }
 
-// CommandQueue &World::getCommandQueue()
-// {
-// 	return mCommandQueue;
-// }
+CommandQueue &World::getCommandQueue()
+{
+	return mCommandQueue;
+}
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::AppBackground, "assets/images/background.jpg");
+	// mTextures.load(Textures::AppBackground, "assets/images/background.jpg");
 }
 
 void World::buildScene()
@@ -57,13 +57,13 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	// Add the background sprite to the scene
-	sf::Texture &texture = mTextures.get(Textures::AppBackground);
-	sf::IntRect textureRect(mWorldBounds);
+	// // Add the background sprite to the scene
+	// sf::Texture &texture = mTextures.get(Textures::AppBackground);
+	// sf::IntRect textureRect(mWorldBounds);
 
-	std::unique_ptr<SpriteNode> backgroundSprite = std::make_unique<SpriteNode>(texture, textureRect);
-	backgroundSprite->setPosition(0, 0);
-	mSceneLayers[Background]->attachChild(std::move(backgroundSprite));
+	// std::unique_ptr<SpriteNode> backgroundSprite = std::make_unique<SpriteNode>(texture, textureRect);
+	// backgroundSprite->setPosition(0, 0);
+	// mSceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
 	// Add first object
 	std::unique_ptr<CircleNode> firstObj = std::make_unique<CircleNode>(20, 20.f, sf::Color::White, sf::Color::Black);

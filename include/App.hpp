@@ -13,8 +13,12 @@ private:
     TextureHolder       mTextures;
     FontHolder          mFonts;
 
-    StateStack          mStateStack;
-    void                registerStates();
+private:
+    bool                mIsPaused;
+
+private:
+    void                loadTextures();
+    void                loadFonts();
 
 private:
     void                handleEvent();
@@ -22,8 +26,8 @@ private:
     void                draw();
 
 private:
-    void                loadTextures();
-    void                loadFonts();
+    StateStack          mStateStack;
+    void                registerStates();
 
 private:
     sf::View            mView;
