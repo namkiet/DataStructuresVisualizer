@@ -14,19 +14,7 @@
 #include <queue>
 
 class AVL : public State
-{	
-public:
-	struct Node
-	{
-		int value;
-		Node *left, *right, *parent;
-		Node(int value): value(value), left(nullptr), right(nullptr) {};
-	};
-	
-private:
-	Node*								mRoot;
-	void 								insert(AVL::Node* &node, int value);
-
+{
 private:
     enum Layer
     {

@@ -5,6 +5,12 @@ void AVLTree::insert(int value)
     mRoot = insert(mRoot, nullptr, value);
 }
 
+AVLTree::AVLTree():
+    mRoot(nullptr)
+{
+    
+}
+
 // void AVLTree::remove(int value)
 // {
 //     mRoot = remove(mRoot, value);

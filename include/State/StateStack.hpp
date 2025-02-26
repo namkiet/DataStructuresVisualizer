@@ -26,8 +26,8 @@ public:
     bool                            isEmpty() const;
 
 private:
-    State::Ptr createState(States::ID stateID);
-    void applyPendingChanges();
+    State::Ptr                      createState(States::ID stateID);
+    void                            applyPendingChanges();
 
 private:
     struct PendingChange
