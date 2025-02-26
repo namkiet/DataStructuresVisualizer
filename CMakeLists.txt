@@ -15,9 +15,10 @@ FetchContent_MakeAvailable(SFML)
 
 file(GLOB SRC_FILES 
     src/*.cpp
-    src/SceneNode/*.cpp
-    src/State/*.cpp
     src/Core/*.cpp
+    src/State/*.cpp
+    src/SceneNode/*.cpp
+    src/DataStructures/*.cpp
 )
 add_executable(main ${SRC_FILES} ${HEADER_FILES})
 

@@ -14,16 +14,24 @@ private:
     TreeNode*               mLeft;
     TreeNode*               mRight;
     TreeNode*               mParent;
+    int                     mHeight;
+    int                     mLevel;
+    void                    inorder(TreeNode* node, std::vector<TreeNode*> &nodeList);
 
 public:
     int                     getValue();
     TreeNode*               getLeft();
     TreeNode*               getRight();
     TreeNode*               getParent();
+    int                     getHeight();
+    int                     getLevel();
+    std::vector<TreeNode*>  getInorderTraversal(TreeNode* node);
 
     void                    setLeft(TreeNode* node);
     void                    setRight(TreeNode* node);
     void                    setParent(TreeNode* node);
+    void                    updateHeight();
+    void                    updateLevel();
 
 private:
     sf::CircleShape         mShape;
@@ -34,7 +42,7 @@ private:
 private:
     virtual void            updateCurrent(sf::Time dt);
 
-private:
+public:
     virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
@@ -48,17 +56,7 @@ public:
     void                    moveTo(sf::Vector2f target);
 
 public:
-    void attachLeft(TreeNode* child) {
-        child->moveTo(sf::Vector2f(-100, 100));
-        mLeft = child;
-        SceneNode::attachChild(std::unique_ptr<SceneNode>(child));
-        // delete child;
-    }
+    void                    attachLeft(TreeNode* child);
 
-    void attachRight(TreeNode* child) {
-        child->moveTo(sf::Vector2f(100, 100));
-        mRight = child;
-        SceneNode::attachChild(std::unique_ptr<SceneNode>(child));
-        // delete child;
-    }
+    void                    attachRight(TreeNode* child);
 };

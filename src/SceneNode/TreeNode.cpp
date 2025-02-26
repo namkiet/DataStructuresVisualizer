@@ -27,8 +27,10 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
 
 void TreeNode::updateCurrent(sf::Time dt)
 {
+    std::cerr << mValue << "\n";
     if (mIsMoving)
     {
+        std::cerr << mValue << "\n";
         sf::Vector2f curPosition = getPosition();
         if (dist(curPosition, mTargetPosition) < 1.f)
         {
@@ -39,7 +41,7 @@ void TreeNode::updateCurrent(sf::Time dt)
         {
             sf::Vector2f dir = mTargetPosition - curPosition;
             sf::Vector2f unitDir = dir * (1 / dist(curPosition, mTargetPosition));
-            move(unitDir * 100.f * dt.asSeconds());
+            move(unitDir * 200.f * dt.asSeconds());
         }
     }
 }
@@ -48,9 +50,6 @@ void TreeNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 {
     target.draw(mShape, states);
     target.draw(mText, states);
-
-    // if (mLeft) mLeft->drawCurrent(target, states);
-    // if (mRight) mRight->drawCurrent(target, states);
 }
 
 unsigned int TreeNode::getCategory() const
@@ -100,4 +99,51 @@ void TreeNode::setRight(TreeNode* node)
 void TreeNode::setParent(TreeNode* node)
 {
     mParent = node;
+}
+
+void TreeNode::attachLeft(TreeNode* child) {
+    child->moveTo(sf::Vector2f(-100, 100));
+    mLeft = child;
+    this->SceneNode::attachChild(std::unique_ptr<SceneNode>(child));
+}
+
+void TreeNode::attachRight(TreeNode* child) {
+    child->moveTo(sf::Vector2f(100, 100));
+    mRight = child;
+    this->SceneNode::attachChild(std::unique_ptr<SceneNode>(child));
+}
+
+int TreeNode::getHeight()
+{
+    return mHeight;
+}
+
+int TreeNode::getLevel()
+{
+    return mLevel;
+}
+
+void TreeNode::updateHeight()
+{
+    
+}
+
+void TreeNode::updateLevel()
+{
+    
+}
+
+std::vector<TreeNode*> TreeNode::getInorderTraversal(TreeNode* node)
+{
+    std::vector<TreeNode*> nodeList;
+    inorder(node, nodeList);
+    return nodeList;
+}
+
+void TreeNode::inorder(TreeNode* node, std::vector<TreeNode*> &nodeList)
+{
+    if (!node) return;
+    inorder(node->mLeft, nodeList);
+    nodeList.push_back(node);
+    inorder(node->mRight, nodeList);
 }

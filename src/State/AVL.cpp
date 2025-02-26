@@ -23,13 +23,15 @@ AVL::AVL(StateStack& stack, Context context):
 void AVL::draw()
 {
 	mWindow.draw(mSceneGraph);   
+    mWindow.draw(mAVL);
 }
 
 bool AVL::update(sf::Time dt)
 {
 	while (!mCommandQueue.isEmpty())
         mSceneGraph.executeCommand(mCommandQueue.pop(), dt);
-    mSceneGraph.update(dt);
+    // mSceneGraph.update(dt);
+    mAVL.update(dt);
 	return true;
 }
 
@@ -51,28 +53,31 @@ bool AVL::handleEvent(const sf::Event& event)
         if (event.key.code == sf::Keyboard::A)
         {
             int value = std::rand() % 50;
-
-            TreeNode* cur = mRootNode;
-            TreeNode* prev = nullptr;
-
             std::cerr << value << "\n";
-            while (cur)
-            {
-                prev = cur;
-                if (value < cur->getValue()) cur = cur->getLeft();
-                else if (value > cur->getValue()) cur = cur->getRight();
-                else return true;
-            }
-            cur = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
-            // cur->setPosition(sf::Vector2f(50, 50));
-            if (prev->getValue() < value)
-                prev->attachRight(cur);
-            else
-                prev->attachLeft(cur);
+
+            mAVL.insert(value);
+
+            
+            // TreeNode* cur = mRootNode;
+            // TreeNode* prev = nullptr;
+
+            // while (cur)
+            // {
+            //     prev = cur;
+            //     if (value < cur->getValue()) cur = cur->getLeft();
+            //     else if (value > cur->getValue()) cur = cur->getRight();
+            //     else return true;
+            // }
+            // cur = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
+            // // cur->setPosition(sf::Vector2f(50, 50));
+            // if (prev->getValue() < value)
+            //     prev->attachRight(cur);
+            // else
+            //     prev->attachLeft(cur);
         }
 
-        if (event.key.code == sf::Keyboard::B)
-            mRootNode->moveTo(sf::Vector2f(100, 200));
+        // if (event.key.code == sf::Keyboard::B)
+        //     mRootNode->moveTo(sf::Vector2f(100, 200));
     }
 
 	return true;
@@ -106,13 +111,8 @@ void AVL::buildScene()
 	// mRootNode = firstObj.get();
 	// mSceneLayers[Nodes]->attachChild(std::move(firstObj));
 
-    mRootNode = new TreeNode(20, 20.f, sf::Color::White, sf::Color::Black);
-    mRootNode->setPosition(sf::Vector2f(600, 100));
-    mSceneLayers[Nodes]->attachChild(std::unique_ptr<TreeNode>(mRootNode));
-
-	// auto secondObj = new TreeNode(20, 5.f, sf::Color::White, sf::Color::Black);
-	// secondObj->setPosition(100, 100);
-	// mRootNode->attachChild(std::unique_ptr<TreeNode>(secondObj));
+    // mSceneLayers[Nodes]->attachChild()
+    mAVL.setPosition(sf::Vector2f(600, 100));
 }
 
 void AVL::insert(int value)

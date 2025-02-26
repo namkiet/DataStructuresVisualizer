@@ -9,6 +9,7 @@
 #include <SceneNode/TreeNode.hpp>
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
+#include <DataStructures/AVLTree.hpp>
 #include <array>
 #include <queue>
 
@@ -68,7 +69,7 @@ private:
 	sf::Text							text;
 
 private:
-	TreeNode*							mRootNode;
+	AVLTree								mAVL;
 
 private:
 	void								insert(int value);
