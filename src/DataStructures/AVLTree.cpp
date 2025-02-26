@@ -39,7 +39,6 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
     return node;
 }
 
-void AVLTree::
 
 void AVLTree::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {

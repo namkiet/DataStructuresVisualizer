@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <Core/Category.hpp>
 #include <cassert>
+#include <functional>
 
 class SceneNode;
 

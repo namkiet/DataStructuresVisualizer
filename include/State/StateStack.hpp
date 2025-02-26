@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <State/State.hpp>
+#include <functional>
 
 class StateStack : private sf::NonCopyable
 {
