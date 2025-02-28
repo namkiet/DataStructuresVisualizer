@@ -8,7 +8,7 @@ SceneNode::SceneNode()
 
 void SceneNode::attachChild(Ptr child)
 {
-    child->mParent = this;
+    child->mPar = this;
     mChildren.push_back(std::move(child));
 }
 
@@ -21,7 +21,7 @@ SceneNode::Ptr SceneNode::detachChild(const SceneNode& node) {
 
     Ptr result = std::move(*found); 
     mChildren.erase(found);
-    result->mParent = nullptr;
+    result->mPar = nullptr;
     return result;
 }
 

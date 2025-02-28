@@ -10,11 +10,16 @@
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
 #include <DataStructures/AVLTree.hpp>
+#include <memory>
 #include <array>
 #include <queue>
 
 class AVL : public State
 {
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 private:
     enum Layer
     {
@@ -32,6 +37,9 @@ private:
 	SceneNode							mSceneGraph;
 	std::array<SceneNode*, LayerCount>	mSceneLayers;
 	std::vector<TreeNode*>              mNodeList;
+
+	std::vector<int>	v;
+	int id;
 
 public:
 										AVL(StateStack& stack, Context context);
@@ -58,7 +66,4 @@ private:
 
 private:
 	AVLTree								mAVL;
-
-private:
-	void								insert(int value);
 };

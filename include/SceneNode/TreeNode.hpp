@@ -4,7 +4,9 @@
 #include <Core/ResourceHolder.hpp>
 #include <Core/ResourceIdentifiers.hpp>
 
-class TreeNode : public SceneNode
+class TreeNode :
+    public sf::Transformable, public sf::Drawable,
+    private sf::NonCopyable
 {
 public:
                             TreeNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
@@ -16,7 +18,12 @@ private:
     TreeNode*               mParent;
     int                     mHeight;
     int                     mLevel;
-    void                    inorder(TreeNode* node, std::vector<TreeNode*> &nodeList);
+    // void                    inorder(TreeNode* node, std::vector<TreeNode*> &nodeList);
+    void                    updateLevel(TreeNode* &node, int level);
+
+public:
+    bool                    isLeftChild();
+    bool                    isRightChild();
 
 public:
     int                     getValue();
@@ -25,28 +32,36 @@ public:
     TreeNode*               getParent();
     int                     getHeight();
     int                     getLevel();
-    std::vector<TreeNode*>  getInorderTraversal(TreeNode* node);
 
     void                    setLeft(TreeNode* node);
     void                    setRight(TreeNode* node);
     void                    setParent(TreeNode* node);
+    void                    setHeight(int height);
+    void                    setLevel(int level);
     void                    updateHeight();
     void                    updateLevel();
 
-private:
-    sf::CircleShape         mShape;
-    sf::Text                mText;
+public:
+    TreeNode*               insert(TreeNode* node, TreeNode* prev, int value);
+    bool                    search(TreeNode* node, int value);
 
-    sf::Font font;
+    int                     get_Height(TreeNode* root);
+    TreeNode*               update_Height(TreeNode* root);
+    int                     get_bf(TreeNode* root);
+    TreeNode*               leftRotate(TreeNode* x);
+    TreeNode*               rightRotate(TreeNode* y);
+    TreeNode*               balance(TreeNode* root);
 
 private:
     virtual void            updateCurrent(sf::Time dt);
-
-public:
     virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
-    virtual unsigned int    getCategory() const;
+    virtual void            update(sf::Time dt);
+    virtual void            draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+public:
+    bool                    mIsAnimationFinished;
 
 private:
     bool                    mIsMoving;
@@ -55,8 +70,17 @@ private:
 public:
     void                    moveTo(sf::Vector2f target);
 
-public:
-    void                    attachLeft(TreeNode* child);
+private:
+    bool                    mIsHighlighted;
+    sf::Color               mTargetColor;
+    float                   mElapsedTime;
+    float                   mDuration;
 
-    void                    attachRight(TreeNode* child);
+public:
+    void                    highlight(sf::Color targetColor, float elapsedTime, float duration);
+
+private:
+    sf::CircleShape         mShape;
+    sf::Text                mText;
+    sf::Font                font;
 };

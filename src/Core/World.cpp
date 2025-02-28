@@ -46,8 +46,8 @@ void World::buildScene()
 	}
 
 	// // Add first object
-	auto firstObj = std::make_unique<TreeNode>(20, 20.f, sf::Color::White, sf::Color::Black);
-	firstObj->setPosition(600, 100);
+	// auto firstObj = std::make_unique<TreeNode>(20, 20.f, sf::Color::White, sf::Color::Black);
+	// firstObj->setPosition(600, 100);
 	// mRootNode = firstObj.get();
-	mSceneLayers[Objects]->attachChild(std::move(firstObj));
+	// mSceneLayers[Objects]->attachChild(std::move(firstObj));
 }

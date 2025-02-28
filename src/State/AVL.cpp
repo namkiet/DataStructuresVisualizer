@@ -18,18 +18,21 @@ AVL::AVL(StateStack& stack, Context context):
 
     loadTextures();
     buildScene();
+
+    v = {1, 3, 2, 10, 4, 5, 6, 7, 8};
+    id = 0;
 }
 
 void AVL::draw()
 {
-	mWindow.draw(mSceneGraph);   
+	// mWindow.draw(mSceneGraph);   
     mWindow.draw(mAVL);
 }
 
 bool AVL::update(sf::Time dt)
 {
-	while (!mCommandQueue.isEmpty())
-        mSceneGraph.executeCommand(mCommandQueue.pop(), dt);
+	// while (!mCommandQueue.isEmpty())
+    //     mSceneGraph.executeCommand(mCommandQueue.pop(), dt);
     // mSceneGraph.update(dt);
     mAVL.update(dt);
 	return true;
@@ -52,32 +55,23 @@ bool AVL::handleEvent(const sf::Event& event)
 
         if (event.key.code == sf::Keyboard::A)
         {
-            int value = std::rand() % 50;
+            // int value = std::rand() % 100;
+            int value = v[id];
+            id++;
             std::cerr << value << "\n";
-
             mAVL.insert(value);
-
-            
-            // TreeNode* cur = mRootNode;
-            // TreeNode* prev = nullptr;
-
-            // while (cur)
-            // {
-            //     prev = cur;
-            //     if (value < cur->getValue()) cur = cur->getLeft();
-            //     else if (value > cur->getValue()) cur = cur->getRight();
-            //     else return true;
-            // }
-            // cur = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
-            // // cur->setPosition(sf::Vector2f(50, 50));
-            // if (prev->getValue() < value)
-            //     prev->attachRight(cur);
-            // else
-            //     prev->attachLeft(cur);
         }
 
-        // if (event.key.code == sf::Keyboard::B)
-        //     mRootNode->moveTo(sf::Vector2f(100, 200));
+        if (event.key.code == sf::Keyboard::B)
+            mAVL.setPosition(mAVL.getPosition() + sf::Vector2f(50, 50));
+
+        if (event.key.code == sf::Keyboard::C)
+            mAVL.leftRotate();
+
+        if (event.key.code == sf::Keyboard::D)
+        {
+            std::cerr << mAVL.search(5) << "\n";
+        }
     }
 
 	return true;
@@ -98,12 +92,12 @@ void AVL::buildScene()
 {
     std::cerr << LayerCount << "\n";
 	// Initialize the different layers
-	for (std::size_t i = 0; i < LayerCount; ++i)
-	{
-		SceneNode::Ptr layer = std::make_unique<SceneNode>();
-		mSceneLayers[i] = layer.get();
-		mSceneGraph.attachChild(std::move(layer));
-	}
+	// for (std::size_t i = 0; i < LayerCount; ++i)
+	// {
+	// 	SceneNode::Ptr layer = std::make_unique<SceneNode>();
+	// 	mSceneLayers[i] = layer.get();
+	// 	mSceneGraph.attachChild(std::move(layer));
+	// }
 
 	// // Add first object
 	// auto firstObj = std::make_unique<TreeNode>(20, 20.f, sf::Color::White, sf::Color::Black);
@@ -111,10 +105,5 @@ void AVL::buildScene()
 	// mRootNode = firstObj.get();
 	// mSceneLayers[Nodes]->attachChild(std::move(firstObj));
 
-    // mSceneLayers[Nodes]->attachChild()
     mAVL.setPosition(sf::Vector2f(600, 100));
-}
-
-void AVL::insert(int value)
-{
 }

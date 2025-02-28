@@ -37,10 +37,10 @@ void User::handleEvent(sf::Event event, CommandQueue& commands)
     {
         if (event.key.code == sf::Keyboard::A)
         {
-            Command c;
-            c.category = Category::TreeNode;
-            c.action = derivedAction<TreeNode>(addLeftNode);
-            commands.push(c);
+            // Command c;
+            // c.category = Category::TreeNode;
+            // c.action = derivedAction<TreeNode>(addLeftNode);
+            // commands.push(c);
         }
     }
 }
