@@ -34,7 +34,7 @@ private:
 	std::array<SceneNode*, LayerCount>	mSceneLayers;
 	std::vector<TreeNode*>              mNodeList;
 
-	std::vector<int>	v;
+	std::vector<int> v;
 	int id;
 
 public:

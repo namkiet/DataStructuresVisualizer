@@ -16,7 +16,7 @@ class SceneNode :
 public:
     typedef std::unique_ptr<SceneNode> Ptr;
 
-protected:
+private:
     std::vector<Ptr>        mChildren;
     SceneNode*              mPar;
 
