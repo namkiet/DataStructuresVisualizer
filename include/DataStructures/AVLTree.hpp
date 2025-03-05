@@ -19,7 +19,7 @@ public:
 private:
     TreeNode*           insert(TreeNode* node, TreeNode* prev, int value);
     // TreeNode*           remove(TreeNode* node, int value);
-    // bool                search(TreeNode* node, int value);
+    bool                search(TreeNode* node, int value);
 
     void updateLevel(TreeNode* node, int level);
     void updateHeight(TreeNode* node, int level);
@@ -37,4 +37,8 @@ public:
 
 private:
     void                    align(TreeNode* node);
+
+
+private:
+    AnimationQueue          mAnimationQueue;
 };

@@ -19,7 +19,7 @@ AVL::AVL(StateStack& stack, Context context):
     loadTextures();
     buildScene();
 
-    v = {1, 3, 2, 10, 4, 5, 6, 7, 8};
+    v = {6,1, 3, 2, 10, 4, 5, 6, 7, 8};
     id = 0;
 }
 
