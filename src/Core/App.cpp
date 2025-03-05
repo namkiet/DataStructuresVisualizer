@@ -88,7 +88,7 @@ void App::update(sf::Time dt)
 void App::draw()
 {
     mWindow.setView(mView);
-    mWindow.clear(sf::Color(173, 216, 230));
+    mWindow.clear(sf::Color(173, 126, 230));
     mStateStack.draw();
     mWindow.display();
 }

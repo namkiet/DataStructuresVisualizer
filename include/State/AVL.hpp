@@ -16,6 +16,10 @@
 
 class AVL : public State
 {
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 private:
     enum Layer
     {
