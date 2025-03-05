@@ -7,9 +7,8 @@
 #include <State/LinkedList.hpp>
 #include <iostream>
 
-App::App():
-    mContextSettings(0, 0, 16),
-    mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
+App::App(): 
+    mWindow(sf::VideoMode(1200, 720), "My App"),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
     // mBounds(sf::FloatRect(100, 100, 1100, 620)),
     mView(mWindow.getDefaultView())

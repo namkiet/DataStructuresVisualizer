@@ -1,26 +1,30 @@
 #pragma once
-#include <DataStructures/AVLNode.hpp>
+
+#include <SceneNode/TreeNode.hpp>
 
 class AVLTree: 
-public SceneNode
-// public sf::Transformable, public sf::Drawable,
-//     private sf::NonCopyable
+// public SceneNode
+public sf::Transformable, public sf::Drawable,
+    private sf::NonCopyable
 {
 public:
-                            AVLTree();
-    AVLNode*                mRoot;
+                        AVLTree();
+    TreeNode*           mRoot;
 
 public:
-    void                    insert(int value);
+    void                insert(int value);
     // void                remove(int value);
-    bool                    search(int value);
+    bool                search(int value);
 
 private:
-    // AVLNode*               insert(AVLNode* node, AVLNode* prev, int value);
-    // AVLNode*           remove(AVLNode* node, int value);
-    // bool                search(AVLNode* node, int value);
+    TreeNode*           insert(TreeNode* node, TreeNode* prev, int value);
+    // TreeNode*           remove(TreeNode* node, int value);
+    // bool                search(TreeNode* node, int value);
 
-    void                    updateLevel(AVLNode* node, int level);
+    void updateLevel(TreeNode* node, int level);
+    void updateHeight(TreeNode* node, int level);
+    void                    lR(TreeNode* &root);
+    void                    rR(TreeNode* &root);
 
 public:
     void                    leftRotate();
@@ -28,9 +32,9 @@ public:
 
 
 public:
-    virtual void            updateCurrent(sf::Time dt);
-    virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+    virtual void            update(sf::Time dt);
+    virtual void            draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-    void                    align(AVLNode* node);
+    void                    align(TreeNode* node);
 };

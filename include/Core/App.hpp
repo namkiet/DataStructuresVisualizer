@@ -9,7 +9,6 @@ public:
     void                run();
 
 private:
-    sf::ContextSettings mContextSettings;
     sf::RenderWindow    mWindow;
     TextureHolder       mTextures;
     FontHolder          mFonts;

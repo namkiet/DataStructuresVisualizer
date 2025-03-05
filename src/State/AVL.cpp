@@ -19,7 +19,7 @@ AVL::AVL(StateStack& stack, Context context):
     loadTextures();
     buildScene();
 
-    v = {135, 67, 271, 187, 312, 210, 124, 87, 33, 48, 72, 83, 54, 235, 129};
+    v = {1, 3, 2, 10, 4, 5, 6, 7, 8};
     id = 0;
 }
 
@@ -41,6 +41,7 @@ bool AVL::update(sf::Time dt)
 bool AVL::handleEvent(const sf::Event& event)
 {
     // CommandQueue& commands = mWorld.getCommandQueue();
+
     // CommandQueue& commands = getCommandQueue();
     // mUser.handleEvent(event, commands);
 
@@ -89,13 +90,20 @@ void AVL::loadTextures()
 
 void AVL::buildScene()
 {
+    std::cerr << LayerCount << "\n";
 	// Initialize the different layers
-	for (std::size_t i = 0; i < LayerCount; ++i)
-	{
-		SceneNode::Ptr layer = std::make_unique<SceneNode>();
-		mSceneLayers[i] = layer.get();
-		mSceneGraph.attachChild(std::move(layer));
-	}
+	// for (std::size_t i = 0; i < LayerCount; ++i)
+	// {
+	// 	SceneNode::Ptr layer = std::make_unique<SceneNode>();
+	// 	mSceneLayers[i] = layer.get();
+	// 	mSceneGraph.attachChild(std::move(layer));
+	// }
+
+	// // Add first object
+	// auto firstObj = std::make_unique<TreeNode>(20, 20.f, sf::Color::White, sf::Color::Black);
+	// firstObj->setPosition(600, 100);
+	// mRootNode = firstObj.get();
+	// mSceneLayers[Nodes]->attachChild(std::move(firstObj));
 
     mAVL.setPosition(sf::Vector2f(600, 100));
 }
