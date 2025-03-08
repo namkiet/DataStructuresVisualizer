@@ -34,8 +34,18 @@ sf::Vector2f operator*(const sf::Vector2f& v, float a) {
     return sf::Vector2f(v.x * a, v.y * a);
 }
 
+float norm(sf::Vector2f a)
+{
+	return sqrt(a.x * a.x + a.y * a.y);
+}
+
 float dist(sf::Vector2f a, sf::Vector2f b)
 {
-	sf::Vector2f c = a - b;
-	return sqrt(c.x * c.x + c.y * c.y);
+	return norm(a - b);
+}
+
+float angle(sf::Vector2f a, sf::Vector2f b) 
+{
+	sf::Vector2f vec = b - a;
+    return std::atan2(vec.y, vec.x);
 }

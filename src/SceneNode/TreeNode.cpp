@@ -9,7 +9,9 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
     mLeft(nullptr),
     mRight(nullptr),
     mParent(nullptr),
-    mColor(fillColor)
+    mColor(fillColor),
+    mLeftEdge(sf::Color::Black, sf::Vector2f(0, 0), sf::Vector2f(0, 0)),
+    mRightEdge(sf::Color::Black, sf::Vector2f(0, 0), sf::Vector2f(0, 0))
 {  
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
@@ -30,8 +32,31 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
 void TreeNode::update(sf::Time dt)
 {
     updateCurrent(dt);
-    if (mLeft) mLeft->update(dt);
-    if (mRight) mRight->update(dt);
+    if (mLeft) 
+    {
+        sf::Vector2f dir = mLeft->getPosition();
+        float radius = mShape.getRadius() + mShape.getOutlineThickness();
+        if (norm(dir) >= radius * 2)
+        {
+            sf::Vector2f offset = dir * (radius / norm(dir));
+            mLeftEdge.setHead(offset);
+            mLeftEdge.setTail(dir - offset);
+        }
+        mLeft->update(dt);
+    }
+
+    if (mRight) 
+    {
+        sf::Vector2f dir = mRight->getPosition();
+        float radius = mShape.getRadius();
+        if (norm(dir) >= radius * 2)
+        {
+            sf::Vector2f offset = dir * (radius / norm(dir));
+            mRightEdge.setHead(offset);
+            mRightEdge.setTail(dir - offset);
+        }
+        mRight->update(dt);
+    }
 }
 
 
@@ -45,13 +70,14 @@ void TreeNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 void TreeNode::updateCurrent(sf::Time dt)
 {
-    
 }
 
 void TreeNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(mShape, states);
     target.draw(mText, states);
+    target.draw(mLeftEdge, states);
+    target.draw(mRightEdge, states);
 }
 
 sf::Color TreeNode::getColor()
@@ -62,4 +88,19 @@ sf::Color TreeNode::getColor()
 void TreeNode::setColor(sf::Color color)
 {
     mShape.setFillColor(color);
+}
+
+void TreeNode::setOpacity(float opacity)
+{
+    if (opacity > 1) return;
+    sf::Color newFillColor = mShape.getFillColor();
+    newFillColor.a = 255 * opacity;
+    sf::Color newOutlineColor = mShape.getOutlineColor();
+    newOutlineColor.a = 255 * opacity;
+    sf::Color newTextColor = mText.getFillColor();
+    newTextColor.a = 255 * opacity;
+    
+    mShape.setFillColor(newFillColor);
+    mShape.setOutlineColor(newOutlineColor);
+    mText.setFillColor(newTextColor);
 }

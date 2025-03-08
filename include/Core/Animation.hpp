@@ -22,7 +22,11 @@ private:
     sf::Vector2f                targetPos;
     sf::Vector2f                speed;
 
+private:
+    float                       opacity;
+    bool                        hasAppearEffect;
+
 public:
-                                NodeMove(TreeNode* node, sf::Vector2f targetPos, float duration);
+                                NodeMove(TreeNode* node, sf::Vector2f targetPos, float duration, bool appearEffect = false);
     bool                        update(sf::Time dt) override;
 };

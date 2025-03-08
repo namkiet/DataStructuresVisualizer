@@ -1,11 +1,11 @@
 #pragma once
-
+#include <SceneNode/SceneNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 
 class AVLTree: 
-// public SceneNode
-public sf::Transformable, public sf::Drawable,
-    private sf::NonCopyable
+    public SceneNode
+// public sf::Transformable, public sf::Drawable,
+//     private sf::NonCopyable
 {
 public:
                             AVLTree();
@@ -15,6 +15,8 @@ public:
     void                    insert(int value);
     // void                    remove(int value);
     bool                    search(int value);
+
+    void                    leftRotate();
 
 private:
     TreeNode*               insert(TreeNode* node, TreeNode* prev, int value);
@@ -28,8 +30,8 @@ private:
     TreeNode*               balance(TreeNode* root);
 
 public:
-    virtual void            update(sf::Time dt);
-    virtual void            draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    virtual void            updateCurrent(sf::Time dt);
+    virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
     AnimationQueue          mAnimationQueue;

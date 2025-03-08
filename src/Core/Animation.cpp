@@ -55,8 +55,8 @@ bool NodeHighlight::update(sf::Time dt)
 /*
     START NODE MOVE
 */
-NodeMove::NodeMove(TreeNode* node, sf::Vector2f targetPos, float duration): 
-    node(node), targetPos(targetPos)
+NodeMove::NodeMove(TreeNode* node, sf::Vector2f targetPos, float duration, bool appearEffect): 
+    node(node), targetPos(targetPos), hasAppearEffect(appearEffect)
 {
     elapsed = 0;
     finished = false;
@@ -65,8 +65,6 @@ NodeMove::NodeMove(TreeNode* node, sf::Vector2f targetPos, float duration):
     this->duration = duration;
 }
 
-#include <iostream>
-
 bool NodeMove::update(sf::Time dt)
 {
     if (!node) return true;
@@ -74,6 +72,7 @@ bool NodeMove::update(sf::Time dt)
 
     if (!isInit)
     {   
+        opacity = hasAppearEffect ? 0 : 1;
         startPos = node->getPosition();
         speed = (targetPos - startPos) / duration;
         isInit = true;
@@ -83,10 +82,18 @@ bool NodeMove::update(sf::Time dt)
 
     sf::Vector2f newPos = startPos + speed * elapsed;
     node->setPosition(newPos);
+    
+    if (hasAppearEffect)
+    {
+        float t = std::sin((elapsed / duration) * 3.14159f / 2);
+        opacity = t;
+        node->setOpacity(opacity);
+    }
 
     if (elapsed >= duration)
     {
         node->setPosition(targetPos);
+        node->setOpacity(1);
         finished = true;
     }
 
