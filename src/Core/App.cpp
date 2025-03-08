@@ -8,9 +8,9 @@
 #include <iostream>
 
 App::App(): 
-    mWindow(sf::VideoMode(1200, 720), "My App"),
+    mContextSettings(0, 0, 16),
+    mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
-    // mBounds(sf::FloatRect(100, 100, 1100, 620)),
     mView(mWindow.getDefaultView())
 {
     loadTextures();

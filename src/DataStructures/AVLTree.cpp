@@ -3,53 +3,15 @@
 #include <queue>
 #include <iostream>
 
-void AVLTree::align(TreeNode* node)
-{
-    return ;
-
-
-    // if (!node) 
-    // {
-    //     return;
-    // }
-
-    // if (node->mParent) // Not root node
-    // {
-    //     // std::cerr << node->mValue << " ";
-    //     if (node->isLeftChild()) // is left child
-    //     {
-    //         // node->moveTo(node->mParent->getPosition() + sf::Vector2f(-500 / (1 << node->mLevel), 100));
-    //         node->moveTo(sf::Vector2f(-500 / (1 << node->mLevel), 100));
-            
-    //         // node->setPosition(sf::Vector2f(20 ,0));
-    //     }
-    //     else if (node->isRightChild()) // is right child
-    //     {
-    //         // node->moveTo(node->mParent->getPosition() + sf::Vector2f(500 / (1 << node->mLevel), 100));
-    //         // node->moveTo(sf::Vector2f(500 / (1 << node->mLevel), 100));
-    //         // node->setPosition(sf::Vector2f(100, 0));
-    //     }
-    // }
-    // else
-    // {
-    //     node->moveTo(sf::Vector2f(0, 0));
-    //     std::cerr << "HELLO";
-    // }
-
-    // align(node->mLeft);
-    // align(node->mRight);
+AVLTree::AVLTree():
+    mRoot(nullptr)
+{    
 }
 
 void AVLTree::insert(int value)
 {
     mRoot = insert(mRoot, nullptr, value);
-    updateLevel(mRoot, 0);
-}
-
-AVLTree::AVLTree():
-    mRoot(nullptr)
-{
-    
+    // updateLevel(mRoot, 0);
 }
 
 // void AVLTree::remove(int value)
@@ -59,7 +21,6 @@ AVLTree::AVLTree():
 
 bool AVLTree::search(int value)
 {
-    // mRoot->highlight(sf::Color::Yellow, 0.f, 1.f);
     return search(mRoot, value);
 }
 
@@ -69,9 +30,6 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
     {
         node = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
         node->mParent = prev;
-
-        // mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, sf::Vector2f(-100, 100), 1.0f));
-
         if (prev) // Not root node
         {
             node->mLevel = node->mParent->mLevel + 1;
@@ -81,15 +39,9 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
                 mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, sf::Vector2f(500 / (1 << node->mLevel), 100), 0.5f));
         }
         else
-        {
             node->mLevel = 0;
-        }
-
         return node;
     }
-
-
-    // mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 1.0f));
 
     if (value < node->mValue)
         node->mLeft = insert(node->mLeft, node, value);
@@ -97,8 +49,8 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
     if (value > node->mValue)
         node->mRight = insert(node->mRight, node, value);
 
-    // node = node->update_Height(node);
-    // node = node->balance(node);
+    node = updateHeight(node);
+    node = balance(node);
     return node;
 }
 
@@ -119,6 +71,94 @@ bool AVLTree::search(TreeNode* node, int value)
     return true;
 }
 
+int AVLTree::getHeight(TreeNode* root) {
+    return root ? root->mHeight : 0;
+}
+
+int AVLTree::getBalanceFactor(TreeNode* root) 
+{
+    return root ? getHeight(root->mLeft) - getHeight(root->mRight) : 0;
+}
+
+TreeNode* AVLTree::updateHeight(TreeNode* root)
+{
+    if (!root) return nullptr;
+    root->mHeight = 1 + fmax(getHeight(root->mLeft), getHeight(root->mRight));
+    return root;
+}
+
+TreeNode* AVLTree::leftRotate(TreeNode* root)
+{
+    if (!root || !root->mRight) return root;
+    std::cerr <<  "LEFT\n";
+    TreeNode* newRoot = root->mRight;
+
+    root->mRight = newRoot->mLeft;
+    if (newRoot->mLeft) 
+        newRoot->mLeft->mParent = root;
+
+    newRoot->mParent = root->mParent;
+    if  (root->mParent)
+    {
+        if (root->mParent->mLeft == root)
+            root->mParent->mLeft = newRoot;
+        else
+            root->mParent->mRight = newRoot;
+    }
+
+    root->mParent = newRoot;
+    newRoot->mLeft = root;
+
+    return newRoot;
+}
+
+TreeNode* AVLTree::rightRotate(TreeNode* root)
+{
+    if (!root || !root->mLeft) return root;
+    std::cerr <<  "RIGHT\n";
+    TreeNode* newRoot = root->mLeft;
+
+    root->mLeft = newRoot->mRight;
+    if (newRoot->mRight) 
+        newRoot->mRight->mParent = root;
+
+    newRoot->mParent = root->mParent;
+    if  (root->mParent)
+    {
+        if (root->mParent->mLeft == root)
+            root->mParent->mLeft = newRoot;
+        else
+            root->mParent->mRight = newRoot;
+    }
+
+    root->mParent = newRoot;
+    newRoot->mRight = root;
+
+    return newRoot;
+}
+
+TreeNode* AVLTree::balance(TreeNode* root)
+{
+    if (!root) return nullptr;
+    int bf = getBalanceFactor(root);
+    if (bf > 1) {
+        if (getBalanceFactor(root->mLeft) >= 0)
+            return rightRotate(root);
+        else {
+            root->mLeft = leftRotate(root->mLeft);
+            return rightRotate(root);
+        }
+    }
+    if (bf < -1) {
+        if (getBalanceFactor(root->mRight) <= 0)
+            return leftRotate(root);
+        else {
+            root->mRight = rightRotate(root->mRight);
+            return leftRotate(root);
+        }
+    }   
+    return root;
+}
 
 void AVLTree::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
@@ -130,55 +170,4 @@ void AVLTree::update(sf::Time dt)
 {
     mAnimationQueue.update(dt);
     if (mRoot) mRoot->update(dt);
-}
-
-void AVLTree::updateLevel(TreeNode* node, int level)
-{
-    if (!node) return;
-    node->mLevel = level ;
-    updateLevel(node->mLeft, level + 1);
-    updateLevel(node->mRight, level + 1);
-}
-
-void AVLTree::updateHeight(TreeNode* node, int level)
-{
-
-}
-
-void AVLTree::leftRotate()
-{
-    if (!mRoot || !mRoot->mRight) return;
-    lR(mRoot);
-    // mRoot = mRoot->leftRotate(mRoot);
-    updateLevel(mRoot, 0);
-    align(mRoot);
-}
-
-void AVLTree::rightRotate()
-{
-    if (!mRoot || !mRoot->mLeft) return;
-    rR(mRoot);
-    updateLevel(mRoot, 0);
-    align(mRoot);
-}
-
-void AVLTree::lR(TreeNode* &root)
-{
-    if (!root || !root->mRight) return;
-    TreeNode* newRoot = root->mRight;
-    if (newRoot->mLeft) newRoot->mLeft->mParent = root;
-    root->mRight = newRoot->mLeft;
-    newRoot->mParent = nullptr;
-    root->mParent = newRoot;
-    newRoot->mLeft = root;
-    root = newRoot;
-    std::cerr << root->mValue << "\n";
-}
-
-void AVLTree::rR(TreeNode* &root)
-{
-    if (!root || !root->mLeft) return;
-    TreeNode* newRoot = root->mLeft;
-    newRoot->mRight = root;
-    root = newRoot;
 }

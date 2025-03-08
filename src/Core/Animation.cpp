@@ -81,8 +81,6 @@ bool NodeMove::update(sf::Time dt)
 
     elapsed += dt.asSeconds();
 
-    std::cerr << elapsed << "\n";
-
     sf::Vector2f newPos = startPos + speed * elapsed;
     node->setPosition(newPos);
 

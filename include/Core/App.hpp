@@ -5,31 +5,32 @@
 class App
 {
 public:
-                        App();
-    void                run();
+                            App();
+    void                    run();
 
 private:
-    sf::RenderWindow    mWindow;
-    TextureHolder       mTextures;
-    FontHolder          mFonts;
+    sf::ContextSettings     mContextSettings;
+    sf::RenderWindow        mWindow;
+    TextureHolder           mTextures;
+    FontHolder              mFonts;
 
 private:
-    bool                mIsPaused;
+    bool                    mIsPaused;
 
 private:
-    void                loadTextures();
-    void                loadFonts();
+    void                    loadTextures();
+    void                    loadFonts();
 
 private:
-    void                handleEvent();
-    void                update(sf::Time dt);
-    void                draw();
+    void                    handleEvent();
+    void                    update(sf::Time dt);
+    void                    draw();
 
 private:
-    StateStack          mStateStack;
-    void                registerStates();
+    StateStack              mStateStack;
+    void                    registerStates();
 
 private:
-    sf::View            mView;
-    sf::FloatRect       mBounds;
+    sf::View                mView;
+    sf::FloatRect           mBounds;
 };  

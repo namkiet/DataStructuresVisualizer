@@ -65,8 +65,8 @@ bool AVL::handleEvent(const sf::Event& event)
         if (event.key.code == sf::Keyboard::B)
             mAVL.setPosition(mAVL.getPosition() + sf::Vector2f(50, 50));
 
-        if (event.key.code == sf::Keyboard::C)
-            mAVL.leftRotate();
+        // if (event.key.code == sf::Keyboard::C)
+            // mAVL.leftRotate();
 
         if (event.key.code == sf::Keyboard::D)
         {
