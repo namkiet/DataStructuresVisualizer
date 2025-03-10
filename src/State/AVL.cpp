@@ -19,7 +19,9 @@ AVL::AVL(StateStack& stack, Context context):
     loadTextures();
     buildScene();
 
-    v = {6, 10, 20 ,30, 1, 3, 2, 10, 4, 5, 6, 7, 8};
+    v = {50, 30, 70, 20, 40, 60, 80, 10, 25, 35, 45, 55, 65, 75, 85};
+    // v = {6, 5, 3, 4, 1,2 ,8};
+    // v = {10,20,30,40,50,60,70,80,90,100,110};
     id = 0;
 }
 
@@ -65,8 +67,11 @@ bool AVL::handleEvent(const sf::Event& event)
         if (event.key.code == sf::Keyboard::B)
             mAVL->setPosition(mAVL->getPosition() - sf::Vector2f(50, 0));
 
-        if (event.key.code == sf::Keyboard::C)
+        if (event.key.code == sf::Keyboard::L)
             mAVL->leftRotate();
+
+        if (event.key.code == sf::Keyboard::R)
+            mAVL->rightRotate();
 
         if (event.key.code == sf::Keyboard::D)
         {

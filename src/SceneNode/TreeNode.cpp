@@ -9,9 +9,10 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
     mLeft(nullptr),
     mRight(nullptr),
     mParent(nullptr),
+    mHeight(1),
     mColor(fillColor),
-    mLeftEdge(sf::Color::Black, sf::Vector2f(0, 0), sf::Vector2f(0, 0)),
-    mRightEdge(sf::Color::Black, sf::Vector2f(0, 0), sf::Vector2f(0, 0))
+    mLeftEdge(outlineColor, sf::Vector2f(0, 0), sf::Vector2f(0, 0)),
+    mRightEdge(outlineColor, sf::Vector2f(0, 0), sf::Vector2f(0, 0))
 {  
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
@@ -32,9 +33,11 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
 void TreeNode::update(sf::Time dt)
 {
     updateCurrent(dt);
-    if (mLeft) 
+
+    // Update left edge
+    if (mLeft) // If current node has left child
     {
-        sf::Vector2f dir = mLeft->getPosition();
+        sf::Vector2f dir = mLeft->getPosition() - getPosition();
         float radius = mShape.getRadius() + mShape.getOutlineThickness();
         if (norm(dir) >= radius * 2)
         {
@@ -44,10 +47,16 @@ void TreeNode::update(sf::Time dt)
         }
         mLeft->update(dt);
     }
-
-    if (mRight) 
+    else
     {
-        sf::Vector2f dir = mRight->getPosition();
+        mLeftEdge.setHead(sf::Vector2f(0, 0));
+        mLeftEdge.setTail(sf::Vector2f(0, 0));
+    }
+
+    // Update right edge
+    if (mRight) // If current node has right child
+    {
+        sf::Vector2f dir = mRight->getPosition() - getPosition();
         float radius = mShape.getRadius();
         if (norm(dir) >= radius * 2)
         {
@@ -57,12 +66,17 @@ void TreeNode::update(sf::Time dt)
         }
         mRight->update(dt);
     }
+    else
+    {
+        mRightEdge.setHead(sf::Vector2f(0, 0));
+        mRightEdge.setTail(sf::Vector2f(0, 0));
+    }
 }
 
 
 void TreeNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
+    states.transform = getTransform();
     drawCurrent(target, states);
     if (mLeft) mLeft->draw(target, states);
     if (mRight) mRight->draw(target, states);    

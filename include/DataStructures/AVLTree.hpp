@@ -17,6 +17,7 @@ public:
     bool                    search(int value);
 
     void                    leftRotate();
+    void                    rightRotate();
 
 private:
     TreeNode*               insert(TreeNode* node, TreeNode* prev, int value);
@@ -35,4 +36,7 @@ public:
 
 private:
     AnimationQueue          mAnimationQueue;
+
+private:
+    void                    align(TreeNode* root);
 };
