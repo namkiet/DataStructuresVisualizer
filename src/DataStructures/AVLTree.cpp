@@ -26,31 +26,31 @@ bool AVLTree::search(int value)
 
 TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
 {
+    if (node)
+        mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 0.75f));
+
     if (!node)
     {
         node = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
         node->mParent = prev;
         if (prev) // Not root node
         {
+            node->setOpacity(0);
             node->mLevel = node->mParent->mLevel + 1;
             if (value < prev->mValue) // is left child
-                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, sf::Vector2f(-500 / (1 << node->mLevel), 100), 0.5f));
+                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, sf::Vector2f(-500 / (1 << node->mLevel), 100), 0.75f, true));
             else // is right child
-                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, sf::Vector2f(500 / (1 << node->mLevel), 100), 0.5f));
+                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, sf::Vector2f(500 / (1 << node->mLevel), 100), 0.75f, true));
         }
         else
             node->mLevel = 0;
         return node;
     }
+    if (value < node->mValue) node->mLeft = insert(node->mLeft, node, value);
+    if (value > node->mValue) node->mRight = insert(node->mRight, node, value);
 
-    if (value < node->mValue)
-        node->mLeft = insert(node->mLeft, node, value);
-    
-    if (value > node->mValue)
-        node->mRight = insert(node->mRight, node, value);
-
-    node = updateHeight(node);
-    node = balance(node);
+    // node = updateHeight(node);
+    // node = balance(node);
     return node;
 }
 
@@ -67,7 +67,6 @@ bool AVLTree::search(TreeNode* node, int value)
     mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 1.0f));
     if (value < node->mValue) return search(node->mLeft, value);
     if (value > node->mValue) return search(node->mRight, value);
-
     return true;
 }
 
@@ -108,6 +107,8 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
 
     root->mParent = newRoot;
     newRoot->mLeft = root;
+
+    mAnimationQueue.addAnimation(std::make_unique<NodeMove>(root, sf::Vector2f(0 , 0), 0.75f, false));
 
     return newRoot;
 }
@@ -160,14 +161,20 @@ TreeNode* AVLTree::balance(TreeNode* root)
     return root;
 }
 
-void AVLTree::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void AVLTree::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
     if (mRoot) mRoot->draw(target, states);
 }
 
-void AVLTree::update(sf::Time dt)   
+void AVLTree::updateCurrent(sf::Time dt)   
 {
     mAnimationQueue.update(dt);
     if (mRoot) mRoot->update(dt);
+}
+
+
+void AVLTree::leftRotate()
+{
+    mRoot = leftRotate(mRoot);
+    std::cerr << mRoot->mValue << "\n";
 }

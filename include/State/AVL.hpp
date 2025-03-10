@@ -1,14 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <State/StateStack.hpp>
-#include <Core/User.hpp>
-#include <Core/ResourceHolder.hpp>
 #include <Core/ResourceIdentifiers.hpp>
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/SpriteNode.hpp>
 #include <SceneNode/TreeNode.hpp>
-#include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
+#include <Core/CommandQueue.hpp>
+#include <Core/ResourceHolder.hpp>
+#include <Core/User.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <memory>
 #include <array>
@@ -20,11 +20,10 @@ private:
     enum Layer
     {
         Background,
-        Nodes,
-		Edges,
+        Tree,
         CodeBox,
         Controller,
-        OperationButotns,
+        Buttons,
         LayerCount
     };
 
@@ -61,5 +60,5 @@ private:
 	sf::Text							text;
 
 private:
-	AVLTree								mAVL;
+	AVLTree*							mAVL;
 };
