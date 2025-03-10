@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
-
+#include "Core/World.hpp"
 
 class LinkedList : public State
 {
@@ -16,7 +16,11 @@ class LinkedList : public State
 		virtual bool			handleEvent(const sf::Event& event);
         
 	private:
-        sf::Text                text;
+        World 					mWorld;
+		User					mUser;
+
+		
+
 };
 
 #endif // BOOK_LinkedList_HPP

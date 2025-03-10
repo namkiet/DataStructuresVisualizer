@@ -28,3 +28,8 @@ unsigned int SpriteNode::getCategory() const
 {
     return Category::Scene; // default
 }
+
+sf::FloatRect SpriteNode::getGlobalBounds() const
+{
+    return mSprite.getGlobalBounds();
+}

@@ -1,5 +1,6 @@
 #include <Core/Animation.hpp>
 #include <iostream>
+#include <math.h>
 
 /*
     START NODE HIGHLIGHT

@@ -8,6 +8,7 @@
 #include <iostream>
 
 App::App(): 
+    
     mContextSettings(0, 0, 16),
     mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
@@ -22,6 +23,7 @@ App::App():
 void App::loadTextures()
 {
     mTextures.load(Textures::TitleScreen, "assets/images/TitleScreen.png");
+    mTextures.load(Textures::Button, "assets/images/button.jpg");
 }
 
 void App::loadFonts()

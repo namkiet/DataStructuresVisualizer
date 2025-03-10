@@ -8,23 +8,22 @@
 #include <iostream>
 
 LinkedList::LinkedList(StateStack& stack, Context context): 
-    State(stack, context)
+    State(stack, context),
+    mWorld(*context.window, *context.textures, *context.fonts),
+    mUser()
 {
-	sf::Texture& texture = context.textures->get(Textures::TitleScreen);
-	sf::Font& font = context.fonts->get(Fonts::Main);
+	// sf::Texture& texture = context.textures->get(Textures::TitleScreen);
+	// sf::Font& font = context.fonts->get(Fonts::Main);
 
-	text.setFont(font);
-	text.setString("This is LinkedList");
-	centerOrigin(text);
-	text.setPosition(context.window->getView().getSize() / 2.f);
+	// text.setFont(font);
+	// text.setString("This is LinkedList");
+	// centerOrigin(text);
+	// text.setPosition(context.window->getView().getSize() / 2.f);
 }
 
 void LinkedList::draw()
 {
-	sf::RenderWindow& window = *getContext().window;
-
-	window.setView(window.getDefaultView());
-    window.draw(text);
+    mWorld.draw();
 }
 
 bool LinkedList::update(sf::Time)
@@ -42,6 +41,12 @@ bool LinkedList::handleEvent(const sf::Event& event)
             requestStackPush(States::Menu);
         }
     }
-
+    else if (event.type == sf::Event::MouseButtonPressed)
+    {
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
+            mWorld.handleEvent(event);
+        }
+    }
 	return true;
 }

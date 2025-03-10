@@ -8,8 +8,10 @@
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
 #include <array>
+#include<vector>
 #include <queue>
-
+#include "Core/Button.hpp"
+#include "Core/Container.hpp"
 class World : private sf::NonCopyable
 {
 private:
@@ -21,7 +23,7 @@ private:
     };
 
 public:
-    explicit							World(sf::RenderWindow& window, TextureHolder& textures);
+    explicit							World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts);
     void								update(sf::Time dt);
     void								draw();
 
@@ -40,7 +42,7 @@ private:
         Objects,
         CodeBox,
         Controller,
-        OperationButotns,
+        OperationButtons,
         LayerCount
     };
 
@@ -50,6 +52,7 @@ private:
 
 public:
     CommandQueue&						getCommandQueue();
+    void                                handleEvent(const sf::Event& event);
 
 private:
     CommandQueue						mCommandQueue;
@@ -57,4 +60,5 @@ private:
 private:
     // sf::FloatRect						mWorldBounds; 
     sf::View							mWorldView;
+    Container                           ButtonList;
 };

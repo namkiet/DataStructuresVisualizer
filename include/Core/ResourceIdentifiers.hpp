@@ -18,6 +18,7 @@ namespace Textures
 		Desert,
 		TitleScreen,
 		AppBackground,
+		Button,
 	};
 }
 

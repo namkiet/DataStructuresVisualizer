@@ -3,14 +3,28 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-
-World::World(sf::RenderWindow& window, TextureHolder& textures):
+#include "Core/Container.hpp"
+World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
     mWorldView(mWindow.getDefaultView()),
-	mRootNode(nullptr)
+	mRootNode(nullptr),
+	ButtonList()
 {
-	loadTextures();
-	buildScene();
+	 sf::Vector2f insertButtonPos(20.f, window.getSize().y - ButtonSize.y - 20.f); 
+    sf::Vector2f deleteButtonPos(20.f, insertButtonPos.y - ButtonSize.y - 10.f);
+
+	Button::Ptr InsertButton = std::make_shared<Button>(fonts, textures, insertButtonPos);
+	Button::Ptr DeleteButton = std::make_shared<Button>(fonts, textures, deleteButtonPos);
+    InsertButton->setText("Insert");
+    DeleteButton->setText("Delete");
+
+
+    ButtonList.addButton(InsertButton);
+    ButtonList.addButton(DeleteButton);
+
+
+    loadTextures();
+    buildScene();
 }
 
 void World::update(sf::Time dt)
@@ -23,6 +37,7 @@ void World::update(sf::Time dt)
 void World::draw()
 {
 	mWindow.draw(mSceneGraph);
+	mWindow.draw(ButtonList);
 }
 
 CommandQueue& World::getCommandQueue()
@@ -39,15 +54,16 @@ void World::buildScene()
 {
 	// Initialize the different layers
 	for (std::size_t i = 0; i < LayerCount; ++i)
-	{
-		SceneNode::Ptr layer = std::make_unique<SceneNode>();
-		mSceneLayers[i] = layer.get();
-		mSceneGraph.attachChild(std::move(layer));
-	}
+ {
+    SceneNode::Ptr layer(new SceneNode());
+    mSceneLayers[i] = layer.get(); // add layers to mSceneLayers
+    mSceneGraph.attachChild(std::move(layer));
+ }
+}
 
-	// // Add first object
-	// auto firstObj = std::make_unique<TreeNode>(20, 20.f, sf::Color::White, sf::Color::Black);
-	// firstObj->setPosition(600, 100);
-	// mRootNode = firstObj.get();
-	// mSceneLayers[Objects]->attachChild(std::move(firstObj));
+void World::handleEvent(const sf::Event& event){
+	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) 
+    {
+		ButtonList.handleEvent(event);
+    }
 }

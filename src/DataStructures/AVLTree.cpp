@@ -83,7 +83,7 @@ int AVLTree::getBalanceFactor(TreeNode* root)
 TreeNode* AVLTree::updateHeight(TreeNode* root)
 {
     if (!root) return nullptr;
-    root->mHeight = 1 + fmax(getHeight(root->mLeft), getHeight(root->mRight));
+    root->mHeight = 1 + std::max(getHeight(root->mLeft), getHeight(root->mRight));
     return root;
 }
 
