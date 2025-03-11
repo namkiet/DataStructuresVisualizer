@@ -57,6 +57,8 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
 
     node = updateHeight(node);
     node = balance(node);
+
+    // align(mRoot);
     return node;
 }
 
@@ -95,7 +97,18 @@ TreeNode* AVLTree::updateHeight(TreeNode* root)
 TreeNode* AVLTree::leftRotate(TreeNode* root)
 {
     if (!root || !root->mRight) return root;
+
+    mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(root, sf::Color::Yellow, 1.5f));
+
     TreeNode* newRoot = root->mRight;
+
+
+    // std::vector<std::unique_ptr<Animation>> animationGroup;
+    // animationGroup.push_back(std::make_unique<NodeMove>(root, root->getPosition() + sf::Vector2f(-100, 100), 0.5f));
+    // animationGroup.push_back(std::make_unique<NodeMove>(newRoot, newRoot->getPosition() + sf::Vector2f(0, -100), 0.5f));
+    // mAnimationQueue.addAnimationGroup(animationGroup);
+
+    // return root;
 
     root->mRight = newRoot->mLeft;
     if (newRoot->mLeft) 
@@ -116,13 +129,26 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
     newRoot->mLeft = root;
     newRoot = updateHeight(newRoot);
 
+    align(mRoot);
+
     return newRoot;
 }
 
 TreeNode* AVLTree::rightRotate(TreeNode* root)
 {
     if (!root || !root->mLeft) return root;
+
+
+    mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(root, sf::Color::Yellow, 1.5f));
     TreeNode* newRoot = root->mLeft;
+
+    // std::vector<std::unique_ptr<Animation>> animationGroup;
+    // animationGroup.push_back(std::make_unique<NodeMove>(root, root->getPosition() + sf::Vector2f(100, 100), 0.5f));
+    // animationGroup.push_back(std::make_unique<NodeMove>(newRoot, newRoot->getPosition() + sf::Vector2f(0, -100), 0.5f));
+    // mAnimationQueue.addAnimationGroup(animationGroup);
+
+
+    // return root;
 
     root->mLeft = newRoot->mRight;
     if (newRoot->mRight) 
@@ -142,6 +168,8 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
 
     newRoot->mRight = root;
     newRoot = updateHeight(newRoot);
+
+    align(mRoot);
 
     return newRoot;
 }
@@ -184,17 +212,19 @@ void AVLTree::updateCurrent(sf::Time dt)
 void AVLTree::leftRotate()
 {
     mRoot = leftRotate(mRoot);
-    align(mRoot);
+    // align(mRoot);
 }
 
 void AVLTree::rightRotate()
 {
     mRoot = rightRotate(mRoot);
-    align(mRoot);
+    // align(mRoot);
 }
 
 void AVLTree::align(TreeNode* root)
 {
+    // return;  
+
     if (!root) return;
     std::vector<std::unique_ptr<Animation>> animationGroup;
     sf::Vector2f curPos = sf::Vector2f(600, 100);

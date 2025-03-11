@@ -34,6 +34,9 @@ void TreeNode::update(sf::Time dt)
 {
     updateCurrent(dt);
 
+    // if (mLeft) mLeft->update(dt);
+    // if (mRight) mRight->update(dt);
+    
     // Update left edge
     if (mLeft) // If current node has left child
     {
