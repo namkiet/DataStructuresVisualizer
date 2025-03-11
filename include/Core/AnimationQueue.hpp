@@ -18,20 +18,37 @@ public:
 
 class AnimationQueue {
 private:
-    std::queue<std::unique_ptr<Animation>> queue;
+    std::queue<std::vector<std::unique_ptr<Animation>>> queue;
 
 public:
     void addAnimation(std::unique_ptr<Animation> anim)
     {
-        queue.push(std::move(anim));
+        std::vector<std::unique_ptr<Animation>> newAnimation;
+        newAnimation.push_back(std::move(anim));
+        // queue.push(std::move(anim));
+        queue.push(std::move(newAnimation));
+    }
+
+    void addAnimationGroup(std::vector<std::unique_ptr<Animation>> &animGroup)
+    {
+        queue.push(std::move(animGroup));
     }
 
     void update(sf::Time dt) 
     {
         if (!queue.empty()) {
-            if (queue.front()->update(dt)) {
-                queue.pop(); // Move to the next animation when finished
+            auto& curAnimationGroup = queue.front();
+            for (int i = 0; i < curAnimationGroup.size(); i++)
+            {
+                if (curAnimationGroup[i]->update(dt))
+                {
+                    queue.pop();
+                    break;
+                }
             }
+            // if (queue.front()->update(dt)) {
+            //     queue.pop(); // Move to the next animation when finished
+            // }
         }
     }
 
