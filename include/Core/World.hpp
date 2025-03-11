@@ -12,16 +12,11 @@
 #include <queue>
 #include "Core/Button.hpp"
 #include "Core/Container.hpp"
+#include "Core/ExpandableButton.hpp"
+#include "Core/TextBox.hpp"
 class World : private sf::NonCopyable
 {
 private:
-    struct Node
-    {
-        int value;
-        Node *left, *right, *parent;
-        Node(int value): value(value), left(nullptr), right(nullptr) {};
-    };
-
 public:
     explicit							World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts);
     void								update(sf::Time dt);
@@ -38,6 +33,7 @@ private:
 private:
     enum Layer
     {
+        Tree,
         Background,
         Objects,
         CodeBox,
@@ -48,17 +44,30 @@ private:
 
     SceneNode							mSceneGraph;
     std::array<SceneNode*, LayerCount>	mSceneLayers;
-    TreeNode*                           mRootNode;
+    SceneNode::Ptr                      mRootNode;
+
 
 public:
+    enum class Mode{
+        LinkedList,
+        AVL,
+        Heap,
+        Graph,
+        None,
+    };
+    void                                CreateModeContainer();
+
     CommandQueue&						getCommandQueue();
     void                                handleEvent(const sf::Event& event);
-
+    void                                setMode(World::Mode mode);
 private:
     CommandQueue						mCommandQueue;
+    FontHolder&                         mFont;
 
 private:
-    // sf::FloatRect						mWorldBounds; 
     sf::View							mWorldView;
-    Container                           ButtonList;
+    std::vector<GUI::ExpandableButton::Ptr>         OperationButtonsList;
+    Mode                                mMode;
+    GUI::Container::Ptr                 ModeContainer;
+
 };

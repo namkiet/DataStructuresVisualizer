@@ -1,14 +1,44 @@
-#pragma once
-#include "Core/Button.hpp"
-#include <vector>
 
-class Container: public sf::Drawable
+#pragma once
+#include <vector>
+#include "Core/Component.hpp"
+#include <memory>
+
+
+namespace GUI
 {
-    private:
-        std::vector<Button::Ptr> ButtonList;
+
+class Container : public Component
+{
     public:
-        Container();
-        void handleEvent(const sf::Event& event);
-        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-        void addButton(Button::Ptr button);
+        typedef std::shared_ptr<Container> Ptr;
+            
+
+	public:
+							Container();
+
+        void				pack(Component::Ptr component);
+
+        virtual bool		isSelectable() const; // false
+        virtual void		handleEvent(const sf::Event& event);
+        int                 getSize();
+
+    private:
+        virtual void		draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+        bool				hasSelection() const;
+        void				select(std::size_t index);
+
+        void                ChangeOption(std::size_t index);
+        bool                hasMode();
+
+
+    private:
+        std::vector<Component::Ptr>		mChildren;
+        int								mSelectedChild;
+        int                             mActivateChild;
 };
+
+}
+
+

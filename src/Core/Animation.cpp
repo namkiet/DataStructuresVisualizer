@@ -41,7 +41,7 @@ bool NodeHighlight::update(sf::Time dt)
         node->setColor(startColor);
         finished = true;
     }
-
+ 
     return finished;
 }
 

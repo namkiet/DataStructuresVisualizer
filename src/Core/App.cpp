@@ -1,11 +1,9 @@
 #include <Core/App.hpp>
 #include <State/TitleState.hpp>
 #include <State/MenuState.hpp>
-#include <State/AVL.hpp>
-#include <State/Graph.hpp>
-#include <State/Heap.hpp>
-#include <State/LinkedList.hpp>
 #include <iostream>
+#include "State/InApp.hpp"
+
 
 App::App(): 
     
@@ -36,10 +34,8 @@ void App::registerStates()
 {
     mStateStack.registerState<TitleState>(States::Title);
     mStateStack.registerState<MenuState>(States::Menu);
-    mStateStack.registerState<AVL>(States::AVL);
-    mStateStack.registerState<Graph>(States::Graph);
-    mStateStack.registerState<Heap>(States::Heap);
-    mStateStack.registerState<LinkedList>(States::LinkedList);
+    mStateStack.registerState<InApp>(States::InApp);
+
 }
 
 void App::run()

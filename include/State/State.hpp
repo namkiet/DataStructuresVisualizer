@@ -8,6 +8,7 @@
 namespace States {
     enum ID {
         None,
+        InApp,
         // MainMenu, 
         AVL,
         Graph,

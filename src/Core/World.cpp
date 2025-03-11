@@ -4,29 +4,44 @@
 #include <cmath>
 #include <iostream>
 #include "Core/Container.hpp"
+#include "DataStructures/AVLTree.hpp"
+#include "Core/ExpandableButton.hpp"
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
     mWorldView(mWindow.getDefaultView()),
-	mRootNode(nullptr),
-	ButtonList()
+	OperationButtonsList(),
+	mMode(World::Mode::None),
+	mFont(fonts),
+	ModeContainer(std::make_shared<GUI::Container>())
 {
-	 sf::Vector2f insertButtonPos(20.f, window.getSize().y - ButtonSize.y - 20.f); 
-    sf::Vector2f deleteButtonPos(20.f, insertButtonPos.y - ButtonSize.y - 10.f);
-
-	Button::Ptr InsertButton = std::make_shared<Button>(fonts, textures, insertButtonPos);
-	Button::Ptr DeleteButton = std::make_shared<Button>(fonts, textures, deleteButtonPos);
-    InsertButton->setText("Insert");
-    DeleteButton->setText("Delete");
-
-
-    ButtonList.addButton(InsertButton);
-    ButtonList.addButton(DeleteButton);
-
-
+	CreateModeContainer();
+	mRootNode = std::move(mRootNode);
     loadTextures();
     buildScene();
 }
 
+void World::CreateModeContainer(){
+
+	float buttonX = 20.f;
+	sf::Vector2f avlButtonPos(buttonX, 20.f);
+	sf::Vector2f linkedListButtonPos(buttonX, avlButtonPos.y + GUI::ButtonSize.y + 10.f);
+	sf::Vector2f heapButtonPos(buttonX, linkedListButtonPos.y + GUI::ButtonSize.y + 10.f);
+	sf::Vector2f graphButtonPos(buttonX, heapButtonPos.y + GUI::ButtonSize.y + 10.f);
+
+	GUI::Button::Ptr AVLButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), avlButtonPos, "AVL");
+	AVLButton->setCallback([this]() { setMode(World::Mode::AVL); });
+	GUI::Button::Ptr LinkedListButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), linkedListButtonPos, "LinkedList");
+	LinkedListButton->setCallback([this]() { setMode(World::Mode::LinkedList); });
+	GUI::Button::Ptr HeapButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), heapButtonPos, "Heap");
+	HeapButton->setCallback([this]() { setMode(World::Mode::Heap); });
+	GUI::Button::Ptr GraphButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), graphButtonPos, "Graph");
+	GraphButton->setCallback([this]() { setMode(World::Mode::Graph); });
+
+	ModeContainer->pack(AVLButton);
+	ModeContainer->pack(LinkedListButton);
+	ModeContainer->pack(HeapButton);
+	ModeContainer->pack(GraphButton);
+}
 void World::update(sf::Time dt)
 {
 	while (!mCommandQueue.isEmpty())
@@ -37,7 +52,10 @@ void World::update(sf::Time dt)
 void World::draw()
 {
 	mWindow.draw(mSceneGraph);
-	mWindow.draw(ButtonList);
+	mWindow.draw(*ModeContainer);
+	for(auto& Operation: OperationButtonsList){
+		mWindow.draw(*Operation);
+		 }
 }
 
 CommandQueue& World::getCommandQueue()
@@ -59,11 +77,39 @@ void World::buildScene()
     mSceneLayers[i] = layer.get(); // add layers to mSceneLayers
     mSceneGraph.attachChild(std::move(layer));
  }
+
+}
+
+void World::setMode(World::Mode mode){
+	OperationButtonsList.clear();
+	
+	if(mode == World::Mode::AVL){
+		mRootNode = std::make_unique<AVLTree>(); 
+		mRootNode->setPosition(sf::Vector2f(600,100));
+   		mSceneLayers[Tree]->attachChild(std::move(mRootNode));
+
+		sf::Vector2f insertButtonPos(20.f, mWindow.getSize().y - GUI::ButtonSize.y - 20.f); 
+		GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont.get(Fonts::ID::Main), insertButtonPos, "Insert");
+		sf::Vector2f inputBoxInsertPos(insertButtonPos.x + 150 + 10.f, insertButtonPos.y);
+		GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont.get(Fonts::ID::Main),inputBoxInsertPos,sf::Vector2f(100.f, 40.f));
+
+		sf::Vector2f deleteButtonPos(20.f, insertButtonPos.y - GUI::ButtonSize.y - 10.f);
+		GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont.get(Fonts::ID::Main), deleteButtonPos, "Delete");
+		sf::Vector2f inputBoxDeletePos(deleteButtonPos.x + 150 + 10.f, deleteButtonPos.y);
+		GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont.get(Fonts::ID::Main), inputBoxDeletePos, sf::Vector2f(100.f, 40.f));
+
+		InsertButton->addSubComponent(InputBoxInsert);
+		DeleteButton->addSubComponent(InputBoxDelete);
+		OperationButtonsList.push_back(InsertButton);
+		OperationButtonsList.push_back(DeleteButton);
+	}
+	// 3 other data structures
 }
 
 void World::handleEvent(const sf::Event& event){
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) 
-    {
-		ButtonList.handleEvent(event);
-    }
+
+         ModeContainer->handleEvent(event);
+		 for(auto& Operation: OperationButtonsList){
+			Operation->handleEvent(event);
+		 }
 }

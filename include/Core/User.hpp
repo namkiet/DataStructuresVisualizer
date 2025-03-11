@@ -3,7 +3,10 @@
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
 #include <memory>
-class Button;
+
+namespace GUI{
+    class Button;
+}
 
 class User
 {
@@ -17,8 +20,8 @@ public:
 
     User();
 
-    void handleEvent(const sf::Event& event, CommandQueue& commands);
-    void handleButton(std::shared_ptr<Button> button, CommandQueue& commands);
+    // void handleEvent(const sf::Event& event, CommandQueue& commands);
+    // void handleButton(std::shared_ptr<GUI::Button> button, CommandQueue& commands);
 
 private:
 

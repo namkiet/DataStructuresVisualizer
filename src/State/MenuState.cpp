@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
-
+#include "State/InApp.hpp"
 #include <iostream>
 
 MenuState::MenuState(StateStack& stack, Context context): 
@@ -78,20 +78,20 @@ bool MenuState::handleEvent(const sf::Event& event)
 		switch (mOptionIndex)
 		{
 			case AVL:
-				requestStackPush(States::AVL);
+				requestStackPush(States::InApp);
 				break;
 			
 			case Heap:
-				requestStackPush(States::Heap);
+				requestStackPush(States::InApp);
 				break;
 
 
 			case LinkedList:
-				requestStackPush(States::LinkedList);
+				requestStackPush(States::InApp);
 				break;
 
 			case Graph:
-				requestStackPush(States::Graph);
+				requestStackPush(States::InApp);
 				break;
 			
 			default:
