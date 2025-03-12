@@ -25,8 +25,7 @@ public:
 	virtual bool						update(sf::Time dt);
 	virtual bool						handleEvent(const sf::Event& event);
 
-	private:
-        World 					mWorld;
-		User					mUser;
-        
+private:
+	World 								mWorld;
+	User								mUser;
 };

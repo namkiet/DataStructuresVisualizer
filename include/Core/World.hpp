@@ -3,6 +3,7 @@
 #include <Core/ResourceHolder.hpp>
 #include <Core/ResourceIdentifiers.hpp>
 #include <SceneNode/SceneNode.hpp>
+#include <DataStructures/AVLTree.hpp>
 #include <SceneNode/SpriteNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 #include <Core/CommandQueue.hpp>
@@ -10,10 +11,10 @@
 #include <array>
 #include<vector>
 #include <queue>
-#include "Core/Button.hpp"
-#include "Core/Container.hpp"
-#include "Core/ExpandableButton.hpp"
-#include "Core/TextBox.hpp"
+#include "GUI/Button.hpp"
+#include "GUI/Container.hpp"
+#include "GUI/ExpandableButton.hpp"
+#include "GUI/TextBox.hpp"
 class World : private sf::NonCopyable
 {
 private:
@@ -44,8 +45,8 @@ private:
 
     SceneNode							mSceneGraph;
     std::array<SceneNode*, LayerCount>	mSceneLayers;
-    SceneNode::Ptr                      mRootNode;
-
+    // SceneNode::Ptr                      mRootNode;
+    AVLTree*    mAVL; 
 
 public:
     enum class Mode{
@@ -53,7 +54,7 @@ public:
         AVL,
         Heap,
         Graph,
-        None,
+        None
     };
     void                                CreateModeContainer();
 

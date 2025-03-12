@@ -1,4 +1,4 @@
-#include "Core/TextBox.hpp"
+#include "GUI/TextBox.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <functional>
@@ -34,35 +34,43 @@ void TextBox::reset(){
     mText.setString(mInput);
 }
 
-
 void TextBox::handleEvent(const sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
-    if (event.key.code == sf::Keyboard::Enter) {
-        if (!mInput.empty()) {
-            InputNum = std::stoi(mInput);
-            if (mCallBack && InputNum != 0) {
-                mCallBack(InputNum);
-            }
-            reset();
+    if (event.type == sf::Event::KeyPressed)
+    {
+        if (event.key.code == sf::Keyboard::Enter) 
+        {
+            if (!mInput.empty())
+            {
+                InputNum = std::stoi(mInput);
+                if (mCallBack && InputNum != 0)
+                {
+                    mCallBack(InputNum);
+                }
 
-            deselect();
+                reset();
+                deselect();
+            }
         }
     }
-}
-    else if (isSelected() && event.type == sf::Event::TextEntered) {
+    else if (isSelected() && event.type == sf::Event::TextEntered) 
+    {
         if (event.text.unicode < 128) {
             inputLogic(event.text.unicode);
         }
-    } else if (event.type == sf::Event::MouseButtonPressed) {
+    } 
+    else if (event.type == sf::Event::MouseButtonPressed) 
+    {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
-        if (mBox.getGlobalBounds().contains(mousePos)) {
+        if (mBox.getGlobalBounds().contains(mousePos))
+        {
             select();
-        } else {
+        } 
+        else {
             deselect();
-
         }
     }
 }
+
 void TextBox::inputLogic(sf::Uint32 unicode) {
     char ch = static_cast<char>(unicode);
 
@@ -77,6 +85,7 @@ void TextBox::inputLogic(sf::Uint32 unicode) {
     mText.setString(mInput); 
 
 }
+
 void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(mBox, states);
     target.draw(mText, states);

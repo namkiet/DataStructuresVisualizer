@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Button.hpp"
+#include "GUI/Button.hpp"
 namespace GUI
 {
 class ExpandableButton : public GUI::Button {

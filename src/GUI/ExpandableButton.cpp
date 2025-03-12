@@ -1,4 +1,4 @@
-#include "Core/ExpandableButton.hpp"
+#include "GUI/ExpandableButton.hpp"
 #include <iostream>
 namespace GUI{
 

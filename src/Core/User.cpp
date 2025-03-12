@@ -2,7 +2,7 @@
 #include <SceneNode/TreeNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 #include <iostream>
-#include "Core/Button.hpp"
+#include "GUI/Button.hpp"
 #include "Core/CommandQueue.hpp"
 
 

@@ -3,9 +3,10 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include "Core/Container.hpp"
+#include "GUI/Container.hpp"
 #include "DataStructures/AVLTree.hpp"
-#include "Core/ExpandableButton.hpp"
+#include "GUI/ExpandableButton.hpp"
+
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
     mWorldView(mWindow.getDefaultView()),
@@ -15,7 +16,7 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	ModeContainer(std::make_shared<GUI::Container>())
 {
 	CreateModeContainer();
-	mRootNode = std::move(mRootNode);
+	// mRootNode = std::move(mRootNode);
     loadTextures();
     buildScene();
 }
@@ -53,9 +54,9 @@ void World::draw()
 {
 	mWindow.draw(mSceneGraph);
 	mWindow.draw(*ModeContainer);
-	for(auto& Operation: OperationButtonsList){
+	for (auto& Operation: OperationButtonsList){
 		mWindow.draw(*Operation);
-		 }
+	}
 }
 
 CommandQueue& World::getCommandQueue()
@@ -72,22 +73,28 @@ void World::buildScene()
 {
 	// Initialize the different layers
 	for (std::size_t i = 0; i < LayerCount; ++i)
- {
-    SceneNode::Ptr layer(new SceneNode());
-    mSceneLayers[i] = layer.get(); // add layers to mSceneLayers
-    mSceneGraph.attachChild(std::move(layer));
- }
-
+	{
+		SceneNode::Ptr layer(new SceneNode());
+		mSceneLayers[i] = layer.get(); // add layers to mSceneLayers
+		mSceneGraph.attachChild(std::move(layer));
+	}
 }
 
 void World::setMode(World::Mode mode){
 	OperationButtonsList.clear();
 	
-	if(mode == World::Mode::AVL){
-		mRootNode = std::make_unique<AVLTree>(); 
-		mRootNode->setPosition(sf::Vector2f(600,100));
-   		mSceneLayers[Tree]->attachChild(std::move(mRootNode));
+	if(mode == World::Mode::AVL)
+	{
+		// mRootNode = std::make_unique<AVLTree>(); 
+		// mRootNode->setPosition(sf::Vector2f(600,100));
+   		// mSceneLayers[Tree]->attachChild(std::move(mRootNode));
 
+		std::unique_ptr<AVLTree> root(new AVLTree());
+		mAVL = root.get();
+		mAVL->setPosition(sf::Vector2f(600, 100));
+		mSceneLayers[Tree]->attachChild(std::move(root));
+
+		/* FUNCTIONAL BUTTONS */
 		sf::Vector2f insertButtonPos(20.f, mWindow.getSize().y - GUI::ButtonSize.y - 20.f); 
 		GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont.get(Fonts::ID::Main), insertButtonPos, "Insert");
 		sf::Vector2f inputBoxInsertPos(insertButtonPos.x + 150 + 10.f, insertButtonPos.y);
@@ -98,7 +105,16 @@ void World::setMode(World::Mode mode){
 		sf::Vector2f inputBoxDeletePos(deleteButtonPos.x + 150 + 10.f, deleteButtonPos.y);
 		GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont.get(Fonts::ID::Main), inputBoxDeletePos, sf::Vector2f(100.f, 40.f));
 
+		
+		// Add search Button
+
 		InsertButton->addSubComponent(InputBoxInsert);
+
+		// InsertButton->setCallback([this]) {
+		// 	int val = // insertButton->textBox->getValue;
+		// 	ds.insert(val);
+		// }
+
 		DeleteButton->addSubComponent(InputBoxDelete);
 		OperationButtonsList.push_back(InsertButton);
 		OperationButtonsList.push_back(DeleteButton);
@@ -108,8 +124,34 @@ void World::setMode(World::Mode mode){
 
 void World::handleEvent(const sf::Event& event){
 
-         ModeContainer->handleEvent(event);
-		 for(auto& Operation: OperationButtonsList){
-			Operation->handleEvent(event);
-		 }
+	ModeContainer->handleEvent(event);
+	for(auto& Operation: OperationButtonsList) {
+		Operation->handleEvent(event);
+	}
+
+	if (event.type == sf::Event::KeyPressed)
+    {
+        if (event.key.code == sf::Keyboard::A)
+        {
+            int value = std::rand() % 100;
+            // int value = v[id];
+            // id++;
+            std::cerr << value << "\n";
+            mAVL->insert(value);
+        }
+
+        // if (event.key.code == sf::Keyboard::B)
+        //     mAVL->setPosition(mAVL->getPosition() - sf::Vector2f(50, 0));
+
+        // if (event.key.code == sf::Keyboard::C)
+        //     mAVL->leftRotate();
+
+        if (event.key.code == sf::Keyboard::D)
+        {
+            if (mAVL->search(5))
+                std::cerr << "Found \n";
+            else 
+                std::cerr << "Cannot find \n";
+        }
+    }
 }

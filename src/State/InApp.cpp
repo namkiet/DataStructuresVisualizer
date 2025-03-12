@@ -16,7 +16,6 @@ InApp::InApp(StateStack& stack, Context context):
 void InApp::draw()
 {
 	mWorld.draw();
-
 }
 
 bool InApp::update(sf::Time dt)

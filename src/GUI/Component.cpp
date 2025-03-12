@@ -1,12 +1,12 @@
-#include "Core/Component.hpp"
+#include "GUI/Component.hpp"
 
 
 namespace GUI
 {
 
-Component::Component()
-: mIsSelected(false)
-, mIsActive(false)
+Component::Component():
+	mIsSelected(false), 
+	mIsActive(false)
 {
 }
 

@@ -1,5 +1,5 @@
     #pragma once
-    #include "ResourceHolder.hpp"
+    #include "Core/ResourceHolder.hpp"
     #include "SFML/Graphics.hpp"
     #include <vector>
     #include <string>
@@ -9,7 +9,7 @@
     #include "Core/User.hpp"
     #include<vector>
 
-    #include "Core/Component.hpp"
+    #include "GUI/Component.hpp"
 
 
 namespace GUI

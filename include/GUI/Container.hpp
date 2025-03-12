@@ -1,7 +1,7 @@
 
 #pragma once
 #include <vector>
-#include "Core/Component.hpp"
+#include "GUI/Component.hpp"
 #include <memory>
 
 
