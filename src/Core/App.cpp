@@ -10,7 +10,8 @@ App::App():
     mContextSettings(0, 0, 16),
     mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
-    mView(mWindow.getDefaultView())
+    mView(mWindow.getDefaultView()),
+    mIsPaused(false)
 {
     loadTextures();
     loadFonts();
@@ -46,6 +47,7 @@ void App::run()
      
         sf::Time dt = clock.restart();
         handleEvent();
+        
         if (!mIsPaused)
             update(dt);
         if (mStateStack.isEmpty()) 

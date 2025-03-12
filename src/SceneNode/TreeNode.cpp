@@ -40,40 +40,40 @@ void TreeNode::update(sf::Time dt)
     // Update left edge
     if (mLeft) // If current node has left child
     {
-        sf::Vector2f dir = mLeft->getPosition() - getPosition();
-        float radius = mShape.getRadius() + mShape.getOutlineThickness();
-        if (norm(dir) >= radius * 2)
-        {
-            sf::Vector2f offset = dir * (radius / norm(dir));
-            mLeftEdge.setHead(offset);
-            mLeftEdge.setTail(dir - offset);
-        }
+        // sf::Vector2f dir = mLeft->getPosition() - getPosition();
+        // float radius = mShape.getRadius() + mShape.getOutlineThickness();
+        // if (norm(dir) >= radius * 2)
+        // {
+        //     sf::Vector2f offset = dir * (radius / norm(dir));
+        //     mLeftEdge.setHead(offset);
+        //     mLeftEdge.setTail(dir - offset);
+        // }
         mLeft->update(dt);
     }
-    else
-    {
-        mLeftEdge.setHead(sf::Vector2f(0, 0));
-        mLeftEdge.setTail(sf::Vector2f(0, 0));
-    }
+    // else
+    // {
+    //     mLeftEdge.setHead(sf::Vector2f(0, 0));
+    //     mLeftEdge.setTail(sf::Vector2f(0, 0));
+    // }
 
     // Update right edge
     if (mRight) // If current node has right child
     {
-        sf::Vector2f dir = mRight->getPosition() - getPosition();
-        float radius = mShape.getRadius();
-        if (norm(dir) >= radius * 2)
-        {
-            sf::Vector2f offset = dir * (radius / norm(dir));
-            mRightEdge.setHead(offset);
-            mRightEdge.setTail(dir - offset);
-        }
+        // sf::Vector2f dir = mRight->getPosition() - getPosition();
+        // float radius = mShape.getRadius();
+        // if (norm(dir) >= radius * 2)
+        // {
+        //     sf::Vector2f offset = dir * (radius / norm(dir));
+        //     mRightEdge.setHead(offset);
+        //     mRightEdge.setTail(dir - offset);
+        // }
         mRight->update(dt);
     }
-    else
-    {
-        mRightEdge.setHead(sf::Vector2f(0, 0));
-        mRightEdge.setTail(sf::Vector2f(0, 0));
-    }
+    // else
+    // {
+    //     mRightEdge.setHead(sf::Vector2f(0, 0));
+    //     mRightEdge.setTail(sf::Vector2f(0, 0));
+    // }
 }
 
 

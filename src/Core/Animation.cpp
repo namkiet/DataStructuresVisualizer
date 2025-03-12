@@ -56,6 +56,7 @@ bool NodeHighlight::update(sf::Time dt)
 /*
     START NODE MOVE
 */
+
 NodeMove::NodeMove(TreeNode* node, sf::Vector2f targetPos, float duration, bool appearEffect): 
     node(node), targetPos(targetPos), hasAppearEffect(appearEffect)
 {
@@ -100,6 +101,57 @@ bool NodeMove::update(sf::Time dt)
 
     return finished;
 }
+
 /*
     END NOVE MOVE
+*/
+
+
+/*------------------------------------------------------------------------------------------------------------*/
+
+
+/*
+    START EDGE MOVE
+*/
+
+EdgeMove::EdgeMove(Edge &edge, sf::Vector2f targetPos, float duration): 
+    targetPos(targetPos)
+{
+    this->edge = &edge;
+    elapsed = 0;
+    finished = false;
+    isInit = false;
+
+    this->duration = duration;
+}
+
+bool EdgeMove::update(sf::Time dt)
+{
+    if (!edge) return true;
+    if (finished) return true;
+
+    if (!isInit)
+    {   
+        startPos = edge->getTail();
+        speed = (targetPos - startPos) / duration;
+        isInit = true;
+    }
+
+    elapsed += dt.asSeconds();
+
+    sf::Vector2f newPos = startPos + speed * elapsed;
+    edge->setTail(newPos);
+
+    if (elapsed >= duration)
+    {
+        edge->setTail(targetPos);
+        finished = true;
+    }
+
+    return finished;
+}
+
+
+/*
+    END EDGE MOVE
 */

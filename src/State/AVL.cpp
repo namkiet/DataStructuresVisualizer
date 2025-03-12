@@ -58,9 +58,9 @@ bool AVL::handleEvent(const sf::Event& event)
 
         if (event.key.code == sf::Keyboard::A)
         {
-            // int value = std::rand() % 100;
-            int value = v[id];
-            id++;
+            int value = std::rand() % 100;
+            // int value = v[id];
+            // id++;
             std::cerr << value << "\n";
             mAVL->insert(value);
         }
