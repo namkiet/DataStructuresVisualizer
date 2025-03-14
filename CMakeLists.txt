@@ -15,6 +15,7 @@ FetchContent_MakeAvailable(SFML)
 
 file(GLOB SRC_FILES 
     src/*.cpp
+    src/GUI/*.cpp
     src/Core/*.cpp
     src/State/*.cpp
     src/SceneNode/*.cpp
@@ -26,9 +27,10 @@ add_executable(main ${SRC_FILES} ${HEADER_FILES})
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE sfml-graphics)
 
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -fsanitize=undefined -fsanitize=address")
-target_link_options(main BEFORE PUBLIC -fsanitize=undefined PUBLIC -fsanitize=address)
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Werror -fsanitize=undefined -fsanitize=address")
+    target_link_options(main BEFORE PUBLIC -fsanitize=undefined PUBLIC -fsanitize=address)
+endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 

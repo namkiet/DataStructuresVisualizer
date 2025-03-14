@@ -84,6 +84,7 @@ void World::buildScene()
 	mSceneLayers[Tree]->attachChild(std::move(root));
 	mSceneLayers[Tree]->setPosition(sf::Vector2f(1000, 100));
 
+	// v = {10,9,8,7,6,5,4};
 	// v = {44, 45, 42, 40, 41};
 	// v = {3, 7, 12, 18, 25, 31, 39, 42, 50, 57, 63, 69, 75, 81, 88, 94, 99, 105, 112, 118, 124, 130, 137, 143, 150, 157, 163, 170, 176, 183};
 	v = {144, 127, 179, 160, 187, 167};
@@ -153,8 +154,11 @@ void World::handleEvent(const sf::Event& event){
         // if (event.key.code == sf::Keyboard::B)
         //     mAVL->setPosition(mAVL->getPosition() - sf::Vector2f(50, 0));
 
-        // if (event.key.code == sf::Keyboard::C)
-        //     mAVL->leftRotate();
+        if (event.key.code == sf::Keyboard::L)
+            mAVL->leftRotate();
+
+		if (event.key.code == sf::Keyboard::R)
+            mAVL->rightRotate();
 
         if (event.key.code == sf::Keyboard::D)
         {

@@ -4,7 +4,7 @@
 #include <Core/ResourceIdentifiers.hpp>
 #include <Core/AnimationQueue.hpp>
 #include <Core/AnimationQueue.hpp>
-#include <SceneNode/Edge.hpp>
+// #include <SceneNode/Edge.hpp>
 
 class TreeNode :
     public sf::Transformable, public sf::Drawable,
@@ -19,9 +19,6 @@ public:
     int                     mHeight;
     int                     mLevel;
 
-public:
-    Edge                    mLeftEdge;
-    Edge                    mRightEdge;
 
 private:
     virtual void            updateCurrent(sf::Time dt);

@@ -1,0 +1,16 @@
+- Task:
+1. Menu
+2. Select mode creen
+3. DS:
+    - AVL
+    - Heap 
+    - LL 
+    - Graph
+4. Animmation:
+    - Move
+    - Highlight
+    - Reverse
+    - Code block
+
+- Fix:
++ Add edge animation error

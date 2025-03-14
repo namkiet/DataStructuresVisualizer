@@ -10,9 +10,10 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
     mRight(nullptr),
     mParent(nullptr),
     mHeight(1),
-    mColor(fillColor),
-    mLeftEdge(outlineColor, sf::Vector2f(0, 0), sf::Vector2f(0, 0)),
-    mRightEdge(outlineColor, sf::Vector2f(0, 0), sf::Vector2f(0, 0))
+    mColor(fillColor)
+    // ,
+    // mLeftEdge(outlineColor, sf::Vector2f(0, 0), sf::Vector2f(0, 0)),
+    // mRightEdge(outlineColor, sf::Vector2f(0, 0), sf::Vector2f(0, 0))
 {  
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
@@ -93,8 +94,8 @@ void TreeNode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) co
 {
     target.draw(mShape, states);
     target.draw(mText, states);
-    target.draw(mLeftEdge, states);
-    target.draw(mRightEdge, states);
+    // target.draw(mLeftEdge, states);
+    // target.draw(mRightEdge, states);
 }
 
 sf::Color TreeNode::getColor()
