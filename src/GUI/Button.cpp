@@ -24,6 +24,10 @@ Button::Button(sf::Font& fonts, sf::Vector2f Position, std::string text)
     mText.setPosition(mShape.getPosition() + ButtonSize / 2.f);
 }
 
+std::string Button::getText(){
+    return mText.getString().toAnsiString();
+}
+
 void Button::setCallback(Callback callback){
     mCallback = std::move(callback);
 }
@@ -72,11 +76,9 @@ void Button::deselect()
 void Button::activate()
 {
 	Component::activate();
-
 	if (mIsToggle)
 		mShape.setFillColor(mSelectedColor);
-
-    mCallback();
+    // mCallback();
 
 	if (!mIsToggle)
 		deactivate();

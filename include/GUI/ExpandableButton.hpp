@@ -5,6 +5,13 @@ namespace GUI
 {
 class ExpandableButton : public GUI::Button {
 public:
+    struct subComponentInfo{
+        int num;
+        std::vector<int> VecNum;
+        subComponentInfo(){
+            num = -1; VecNum.resize(0);
+        }
+    };
     typedef std::shared_ptr<ExpandableButton> Ptr;
 
     ExpandableButton(sf::Font& fonts, sf::Vector2f Position, std::string text);
@@ -14,10 +21,16 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     void addSubComponent(Component::Ptr component);
+    subComponentInfo getSubComponentInfo();
+    void setSubComponentInfo(int number);
+    void setSubComponentInfo(std::vector<int> vec);
 
 private:
+    subComponentInfo                Info;
     std::vector<GUI::Component::Ptr> mSubComponents;
     bool isExpanded;
+
+    int inputNum;
 };
 
 }

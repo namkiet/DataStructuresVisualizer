@@ -78,20 +78,20 @@ bool MenuState::handleEvent(const sf::Event& event)
 		switch (mOptionIndex)
 		{
 			case AVL:
-				requestStackPush(States::InApp);
+				requestStackPush(States::InAppAVL);
 				break;
 			
 			case Heap:
-				requestStackPush(States::InApp);
+				requestStackPush(States::InAppHeap);
 				break;
 
 
 			case LinkedList:
-				requestStackPush(States::InApp);
+				requestStackPush(States::InAppLinkedList);
 				break;
 
 			case Graph:
-				requestStackPush(States::InApp);
+				requestStackPush(States::InAppGraph);
 				break;
 			
 			default:
@@ -99,14 +99,6 @@ bool MenuState::handleEvent(const sf::Event& event)
 				
 
 		}
-		// if (mOptionIndex == AVL)
-		// {
-		// }
-		// else if (mOptionIndex == Exit)
-		// {
-		// 	// The exit option was chosen, by removing itself, the stack will be empty, and the game will know it is time to close.
-		// 	requestStackPop();
-		// }
 	}
 
 	else if (event.key.code == sf::Keyboard::Up)

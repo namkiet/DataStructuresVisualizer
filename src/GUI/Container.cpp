@@ -3,6 +3,7 @@
 #include "SFML/Window/Event.hpp"
 #include "SFML/Graphics/RenderStates.hpp"
 #include "SFML/Graphics/RenderTarget.hpp"
+#include <iostream>
 namespace GUI
 {
 
@@ -28,8 +29,8 @@ void Container::draw(sf::RenderTarget& target, sf::RenderStates states) const
 void Container::pack(Component::Ptr component)
  {
     mChildren.push_back(component);
-    if (!hasSelection() && component->isSelectable())
-        select(mChildren.size() - 1);
+    // if (!hasSelection() && component->isSelectable())
+    //     select(mChildren.size() - 1);
  }
 
  bool Container::isSelectable() const
@@ -43,8 +44,10 @@ void Container::pack(Component::Ptr component)
  {
     if (mChildren[index]->isSelectable())
     {
-        if (hasSelection())
-            mChildren[mSelectedChild]->deselect();
+        if (hasSelection() && mSelectedChild == index) return;
+
+        if(hasSelection()) mChildren[mSelectedChild]->deselect();
+        
         mChildren[index]->select();
         mSelectedChild = index;
     }
@@ -53,26 +56,38 @@ void Container::pack(Component::Ptr component)
     return mActivateChild >= 0;
  }
 
-void Container::ChangeOption(std::size_t index){
-    if(hasMode()) mChildren[mActivateChild]->deactivate();
+void Container::ChangeActivateChild(std::size_t index){
+    if(hasMode() && mActivateChild == index) return;
+
+    if(hasMode()) 
+    {
+        mChildren[mActivateChild]->deactivate();
+    }
     mActivateChild = index;
+    mChildren[index]->activate();
 }
 
 
   void Container::handleEvent(const sf::Event& event)
  {
-    if (event.type == sf::Event::MouseButtonPressed){
-        sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
-        for(int i = 0; i < mChildren.size();i++){
+        for(int i = 0; i < mChildren.size();i++)
+        {
             mChildren[i]->handleEvent(event);
             if(mChildren[i]->isActive()){
-                ChangeOption(i);
+                ChangeActivateChild(i);
             }
+            if(mChildren[i]->isSelectable() && mChildren[i]->isSelected()){
+                select(i);
+            }
+        
         }
-    }
  }
  int Container::getSize(){
     return mChildren.size();
+}
+
+void Container::makeEmpty(){
+    mChildren.clear();
 }
 }
 

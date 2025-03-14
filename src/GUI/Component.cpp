@@ -1,4 +1,5 @@
 #include "GUI/Component.hpp"
+#include <iostream>
 
 
 namespace GUI

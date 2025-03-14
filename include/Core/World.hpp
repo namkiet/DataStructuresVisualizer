@@ -14,7 +14,7 @@
 #include "GUI/Button.hpp"
 #include "GUI/Container.hpp"
 #include "GUI/ExpandableButton.hpp"
-#include "GUI/TextBox.hpp"
+#include "GUI/DeliverTextBox.hpp"
 class World : private sf::NonCopyable
 {
 private:
@@ -49,9 +49,9 @@ private:
     AVLTree*    mAVL; 
 
 public:
-    enum class Mode{
-        LinkedList,
+    enum Mode{
         AVL,
+        LinkedList,
         Heap,
         Graph,
         None
@@ -67,7 +67,7 @@ private:
 
 private:
     sf::View							mWorldView;
-    std::vector<GUI::ExpandableButton::Ptr>         OperationButtonsList;
+    GUI::Container::Ptr                 OperationButtonsList;
     Mode                                mMode;
     GUI::Container::Ptr                 ModeContainer;
 

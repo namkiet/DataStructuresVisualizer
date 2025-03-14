@@ -1,13 +1,14 @@
-#include "GUI/TextBox.hpp"
+#include "GUI/DeliverTextBox.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <functional>
 #include <iostream>
+#include "GUI/ExpandableButton.hpp"
 namespace GUI {
 
-const std::string TextBox::mAllowedChars = "0123456789";
+const std::string DeliverTextBox::mAllowedChars = "0123456789";
 
-TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)
+DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)
      {
     InputNum = -1;
     mBox.setSize(size);
@@ -24,27 +25,33 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
 }
 
 
-void TextBox::setCallback(CallBack callback) {
+void DeliverTextBox::setCallback(CallBack callback) {
     mCallBack = std::move(callback);
 }
 
-void TextBox::reset(){
+void DeliverTextBox::reset(){
     InputNum = 0;
     mInput = "";
     mText.setString(mInput);
 }
 
-void TextBox::handleEvent(const sf::Event& event) {
+void DeliverTextBox::handleEvent(const sf::Event& event) {
+    // std::cout<<"DeliverTextBox is handling event"<<std::endl;
+    
+
+    // std::cout << "Event detected: " << event.type << std::endl;
     if (event.type == sf::Event::KeyPressed)
-    {
+    {   
+        // std::cout<<"Key pressed is handled "<<std::endl;
         if (event.key.code == sf::Keyboard::Enter) 
-        {
+        {   
+            // std::cout<<"Enter is pressed"<<std::endl;
             if (!mInput.empty())
             {
                 InputNum = std::stoi(mInput);
-                if (mCallBack && InputNum != 0)
+                if (InputNum != 0)
                 {
-                    mCallBack(InputNum);
+                   ButtonParent->setSubComponentInfo(InputNum);
                 }
 
                 reset();
@@ -54,6 +61,7 @@ void TextBox::handleEvent(const sf::Event& event) {
     }
     else if (isSelected() && event.type == sf::Event::TextEntered) 
     {
+        // std::cout<<"text entered"<<std::endl;
         if (event.text.unicode < 128) {
             inputLogic(event.text.unicode);
         }
@@ -64,6 +72,7 @@ void TextBox::handleEvent(const sf::Event& event) {
         if (mBox.getGlobalBounds().contains(mousePos))
         {
             select();
+
         } 
         else {
             deselect();
@@ -71,7 +80,7 @@ void TextBox::handleEvent(const sf::Event& event) {
     }
 }
 
-void TextBox::inputLogic(sf::Uint32 unicode) {
+void DeliverTextBox::inputLogic(sf::Uint32 unicode) {
     char ch = static_cast<char>(unicode);
 
     if (unicode == 8) { // Backspace
@@ -84,19 +93,29 @@ void TextBox::inputLogic(sf::Uint32 unicode) {
     }
     mText.setString(mInput); 
 
+    // std::cout<<mInput<<std::endl;
+
 }
 
-void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+void DeliverTextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(mBox, states);
     target.draw(mText, states);
 }
 
-void TextBox::setText(const std::string& text) {
+void DeliverTextBox::setText(const std::string& text) {
     mInput = text;
     mText.setString(mInput);
 }
 
-std::string TextBox::getText() const {
+std::string DeliverTextBox::getText() const {
     return mInput;
+}
+
+void DeliverTextBox::setButtonParent(std::shared_ptr<ExpandableButton> Button){
+    ButtonParent = Button;
+}
+
+void DeliverTextBox::setCallBack(std::function<void()> func){
+    mCallBack = func;
 }
 }

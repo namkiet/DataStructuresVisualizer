@@ -4,7 +4,6 @@
 #include "GUI/Component.hpp"
 #include <memory>
 
-
 namespace GUI
 {
 
@@ -22,6 +21,8 @@ class Container : public Component
         virtual bool		isSelectable() const; // false
         virtual void		handleEvent(const sf::Event& event);
         int                 getSize();
+        void                makeEmpty();
+        void                ChangeActivateChild(std::size_t index);
 
     private:
         virtual void		draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -29,7 +30,7 @@ class Container : public Component
         bool				hasSelection() const;
         void				select(std::size_t index);
 
-        void                ChangeOption(std::size_t index);
+
         bool                hasMode();
 
 

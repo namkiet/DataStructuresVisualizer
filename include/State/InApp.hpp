@@ -20,11 +20,10 @@ class InApp : public State
 private:
 
 public:
-										InApp(StateStack& stack, Context context);
+										InApp(StateStack& stack, Context context, World::Mode mode);
 	virtual void						draw();
 	virtual bool						update(sf::Time dt);
 	virtual bool						handleEvent(const sf::Event& event);
-
 private:
 	World 								mWorld;
 	User								mUser;

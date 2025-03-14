@@ -5,12 +5,12 @@
 #include <random>
 #include <iostream>
 
-InApp::InApp(StateStack& stack, Context context): 
+InApp::InApp(StateStack& stack, Context context, World::Mode mode): 
     State(stack, context),
     mWorld(*context.window, *context.textures,*context.fonts),
     mUser()
 {
-
+    mWorld.setMode(mode);
 }
 
 void InApp::draw()

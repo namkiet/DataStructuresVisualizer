@@ -35,7 +35,10 @@ void App::registerStates()
 {
     mStateStack.registerState<TitleState>(States::Title);
     mStateStack.registerState<MenuState>(States::Menu);
-    mStateStack.registerState<InApp>(States::InApp);
+    mStateStack.registerState<InApp>(States::InAppAVL);
+    mStateStack.registerState<InApp>(States::InAppHeap);
+    mStateStack.registerState<InApp>(States::InAppGraph);
+    mStateStack.registerState<InApp>(States::InAppLinkedList);
 
 }
 

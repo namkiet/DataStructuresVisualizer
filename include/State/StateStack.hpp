@@ -3,7 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <State/State.hpp>
 #include <functional>
-
+#include "Core/World.hpp"
+#include <iostream>
 class StateStack : private sf::NonCopyable
 {
 public:
@@ -53,8 +54,19 @@ public:
 template <typename T>
 void StateStack::registerState(States::ID stateID)
 {
-	mFactories[stateID] = [this] ()
-	{
-		return State::Ptr(new T(*this, mContext));
-	};
+    if constexpr (std::is_constructible_v<T, StateStack&, State::Context, World::Mode>) {
+        World::Mode mode = World::Mode::AVL;
+        if (stateID == States::ID::InAppAVL) mode = World::Mode::AVL;
+        if (stateID == States::ID::InAppHeap) mode = World::Mode::Heap;
+        if (stateID == States::ID::InAppLinkedList) mode = World::Mode::LinkedList;
+        if (stateID == States::ID::InAppGraph) mode = World::Mode::Graph;
+
+        mFactories[stateID] = [this, mode]() {
+            return std::make_unique<T>(*this, mContext, mode);
+        };
+    } else {
+        mFactories[stateID] = [this]() {
+            return std::make_unique<T>(*this, mContext);
+        };
+    }
 }

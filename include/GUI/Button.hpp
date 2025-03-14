@@ -26,6 +26,7 @@ namespace GUI
         public:
                                     Button(sf::Font& fonts, sf::Vector2f Position, std::string text);
 
+            std::string                  getText();
             void					setCallback(Callback callback);
             virtual void			handleEvent(const sf::Event& event);
 
@@ -37,11 +38,13 @@ namespace GUI
             virtual void			select();
             virtual void			deselect();
 
-            virtual void			activate();
-            virtual void			deactivate();
+            void                    activate() override;
+            void                    deactivate() override;
 
-        private:
+        protected:
             Callback				mCallback;
+        private:
+
             sf::Text				mText;
             bool                    mIsToggle;
             sf::Color               mNormalColor;

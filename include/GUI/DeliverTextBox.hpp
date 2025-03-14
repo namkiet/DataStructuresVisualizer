@@ -3,26 +3,29 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <functional>
+#include "vector"
+#include "GUI/Button.hpp"
 
 namespace GUI
 {
-    class TextBox : public Component
+    class ExpandableButton;
+    class DeliverTextBox : public Component
     {
     public:
         static const std::string                    mAllowedChars;
-        typedef std::shared_ptr<TextBox>            Ptr;
+        typedef std::shared_ptr<DeliverTextBox>            Ptr;
 
     public:
-        typedef std::function<void(int num)>        CallBack;
+        typedef std::function<void()>        CallBack;
 
     private:
         CallBack                                    mCallBack;
 
     public:
-                                                    TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize = 24);
+                                                    DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize = 24);
         void                                        handleEvent(const sf::Event& event) override;
         void                                        draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
+        void                                        setCallBack(std::function<void()> func);
     public:
         void                                        setText(const std::string& text);
         std::string                                 getText() const;
@@ -30,11 +33,13 @@ namespace GUI
         void                                        setCallback(CallBack callback);
         void                                        inputLogic(sf::Uint32 unicode);
         void                                        reset();
+        void                                        setButtonParent(std::shared_ptr<ExpandableButton> Button);
 
     private:
         sf::RectangleShape mBox;
         sf::Text mText;
         std::string mInput;
         int InputNum;
+        std::shared_ptr<ExpandableButton>          ButtonParent;
     };
 }
