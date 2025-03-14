@@ -29,9 +29,9 @@ bool NodeHighlight::update(sf::Time dt)
     float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
 
     sf::Color newColor(
-        startColor.r + t * (highlightColor.r - startColor.r),
-        startColor.g + t * (highlightColor.g - startColor.g),
-        startColor.b + t * (highlightColor.b - startColor.b)
+        int(startColor.r + t * (highlightColor.r - startColor.r)),
+        int(startColor.g + t * (highlightColor.g - startColor.g)),
+        int(startColor.b + t * (highlightColor.b - startColor.b))
     );
 
     node->setColor(newColor);

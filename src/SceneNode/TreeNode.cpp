@@ -121,3 +121,8 @@ void TreeNode::setOpacity(float opacity)
     mShape.setOutlineColor(newOutlineColor);
     mText.setFillColor(newTextColor);
 }
+
+float TreeNode::getRadius()
+{
+    return mShape.getRadius() + mShape.getOutlineThickness();
+}

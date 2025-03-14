@@ -4,6 +4,7 @@
 #include <Core/ResourceIdentifiers.hpp>
 #include <SceneNode/SceneNode.hpp>
 #include <DataStructures/AVLTree.hpp>
+#include <DataStructures/HeapTree.hpp>
 #include <SceneNode/SpriteNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 #include <Core/CommandQueue.hpp>
@@ -18,6 +19,9 @@
 class World : private sf::NonCopyable
 {
 private:
+    std::vector<int> v;
+    int id;
+
 public:
     explicit							World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts);
     void								update(sf::Time dt);

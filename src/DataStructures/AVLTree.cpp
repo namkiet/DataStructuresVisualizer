@@ -50,13 +50,12 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
         }
         return node;
     }
+
     if (value < node->mValue) node->mLeft = insert(node->mLeft, node, value);
     if (value > node->mValue) node->mRight = insert(node->mRight, node, value);
 
     node = updateHeight(node);
     node = balance(node);
-
-    // align(mRoot);
     return node;
 }
 
@@ -97,7 +96,7 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
     if (!root || !root->mRight) return root;
 
     std::vector<std::unique_ptr<Animation>> animationGroup;
-    animationGroup.push_back(std::make_unique<NodeHighlight>(root, sf::Color::Yellow, 1.5f));
+    // animationGroup.push_back(std::make_unique<NodeHighlight>(root, sf::Color::Yellow, 1.5f));
 
     TreeNode* newRoot = root->mRight;
 
@@ -148,7 +147,7 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
     if (!root || !root->mLeft) return root;
 
     std::vector<std::unique_ptr<Animation>> animationGroup;
-    animationGroup.push_back(std::make_unique<NodeHighlight>(root, sf::Color::Yellow, 1.5f));
+    // animationGroup.push_back(std::make_unique<NodeHighlight>(root, sf::Color::Yellow, 0.5f));
 
     TreeNode* newRoot = root->mLeft;
 
@@ -171,12 +170,16 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
             animationGroup.push_back(std::make_unique<EdgeMove>(root->mParent->mLeftEdge, newRoot->getPosition() - root->mParent->getPosition(), 1.5f));
         }
     }
-
+    
+    
     if (newRoot->mRight)
     {
         animationGroup.push_back(std::make_unique<EdgeMove>(root->mLeftEdge, newRoot->mRight->getPosition() - root->getPosition(), 1.5f));
-        animationGroup.push_back(std::make_unique<EdgeMove>(newRoot->mRightEdge, root->getPosition() - newRoot->getPosition(), 1.5f));
     }
+    else 
+        animationGroup.push_back(std::make_unique<EdgeMove>(root->mLeftEdge, sf::Vector2f(0, 0), 1.5f));
+
+    animationGroup.push_back(std::make_unique<EdgeMove>(newRoot->mRightEdge, root->getPosition() - newRoot->getPosition(), 1.5f));
 
     root->mParent = newRoot;
     root = updateHeight(root);
@@ -196,18 +199,19 @@ TreeNode* AVLTree::balance(TreeNode* root)
     if (!root) return nullptr;
     int bf = getBalanceFactor(root);
     if (bf > 1) {
-        if (getBalanceFactor(root->mLeft) >= 0)
+        if (getBalanceFactor(root->mLeft) >= 0) // LL
             return rightRotate(root);
         else {
-            root->mLeft = leftRotate(root->mLeft);
+            root->mLeft = leftRotate(root->mLeft); // LR
             return rightRotate(root);
         }
     }
     if (bf < -1) {
-        if (getBalanceFactor(root->mRight) <= 0)
+        if (getBalanceFactor(root->mRight) <= 0) // RR
             return leftRotate(root);
         else {
-            root->mRight = rightRotate(root->mRight);
+            root->mRight = rightRotate(root->mRight); // RL
+            std::cerr << "HELLO";
             return leftRotate(root);
         }
     }   

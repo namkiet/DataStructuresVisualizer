@@ -2,30 +2,25 @@
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 
-class AVLTree: public SceneNode
+class HeapTree: public SceneNode
 {
 public:
-                            AVLTree();
+                            HeapTree();
     TreeNode*               mRoot;
+    std::vector<TreeNode*>  mHeapArray;
 
 public:
     void                    insert(int value);
     // void                    remove(int value);
     bool                    search(int value);
 
-    void                    leftRotate();
-    void                    rightRotate();
+    // void                    leftRotate();
+    // void                    rightRotate();
 
 private:
     TreeNode*               insert(TreeNode* node, TreeNode* prev, int value);
     // TreeNode*               remove(TreeNode* node, int value);
     bool                    search(TreeNode* node, int value);
-    int                     getHeight(TreeNode* root);
-    int                     getBalanceFactor(TreeNode* root);
-    TreeNode*               updateHeight(TreeNode* root);
-    TreeNode*               leftRotate(TreeNode* root);
-    TreeNode*               rightRotate(TreeNode* root);
-    TreeNode*               balance(TreeNode* root);
 
 public:
     virtual void            updateCurrent(sf::Time dt);
@@ -35,5 +30,6 @@ private:
     AnimationQueue          mAnimationQueue;
 
 private:
-    void                    align(TreeNode* root);
+    // void                    align(TreeNode* root);
+    void                    align();
 };

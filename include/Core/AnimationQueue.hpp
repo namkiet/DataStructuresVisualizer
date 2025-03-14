@@ -38,14 +38,13 @@ public:
     {
         if (!queue.empty()) {
             auto& curAnimationGroup = queue.front();
+            bool isFinished = true;
             for (int i = 0; i < curAnimationGroup.size(); i++)
             {
-                if (curAnimationGroup[i]->update(dt))
-                {
-                    queue.pop();
-                    break;
-                }
+                if (!curAnimationGroup[i]->update(dt)) isFinished = false;
             }
+            
+            if (isFinished) queue.pop();
             // if (queue.front()->update(dt)) {
             //     queue.pop(); // Move to the next animation when finished
             // }

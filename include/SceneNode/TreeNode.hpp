@@ -41,4 +41,5 @@ public:
     sf::Color               getColor();
     void                    setColor(sf::Color color);
     void                    setOpacity(float opacity);
+    float                   getRadius();
 };

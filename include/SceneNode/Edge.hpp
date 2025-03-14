@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+class TreeNode;
+
 class Edge :
     public sf::Transformable, public sf::Drawable,
     private sf::NonCopyable
@@ -10,6 +12,9 @@ private:
     sf::Vector2f                mTail;
     sf::Color                   mColor;
     sf::VertexArray             mLine;
+
+    TreeNode*                   mFrom;
+    TreeNode*                   mTo;
 
 private:
     bool                        mHasArrow;
