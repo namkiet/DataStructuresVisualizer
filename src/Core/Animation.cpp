@@ -1,4 +1,5 @@
 #include <Core/Animation.hpp>
+#include <Core/Utility.hpp>
 #include <iostream>
 #include <math.h>
 
@@ -29,9 +30,9 @@ bool NodeHighlight::update(sf::Time dt)
     float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
 
     sf::Color newColor(
-        startColor.r + t * (highlightColor.r - startColor.r),
-        startColor.g + t * (highlightColor.g - startColor.g),
-        startColor.b + t * (highlightColor.b - startColor.b)
+        int(startColor.r + t * (highlightColor.r - startColor.r)),
+        int(startColor.g + t * (highlightColor.g - startColor.g)),
+        int(startColor.b + t * (highlightColor.b - startColor.b))
     );
 
     node->setColor(newColor);
@@ -114,15 +115,17 @@ bool NodeMove::update(sf::Time dt)
     START EDGE MOVE
 */
 
-EdgeMove::EdgeMove(Edge &edge, sf::Vector2f targetPos, float duration): 
-    targetPos(targetPos)
+EdgeMove::EdgeMove(Edge* edge, TreeNode* targetNode): 
+    edge(edge),
+    targetNode(targetNode)
 {
-    this->edge = &edge;
+    // this->edge = &edge;
     elapsed = 0;
     finished = false;
     isInit = false;
 
-    this->duration = duration;
+    duration = 1.f;
+    // this->duration = duration;
 }
 
 bool EdgeMove::update(sf::Time dt)
@@ -133,18 +136,27 @@ bool EdgeMove::update(sf::Time dt)
     if (!isInit)
     {   
         startPos = edge->getTail();
+        targetPos = targetNode ? targetNode->getPosition() : edge->getHead();
         speed = (targetPos - startPos) / duration;
         isInit = true;
+
+        edge->mIsChangingTail = true;
     }
 
     elapsed += dt.asSeconds();
 
     sf::Vector2f newPos = startPos + speed * elapsed;
+    
+    // sf::Vector2f dir = newPos - edge->getHead();
+    // sf::Vector2f offset = dir * (30.f / norm(dir));
+
+    // edge->setHead(edge->getHead() + offset);
     edge->setTail(newPos);
 
     if (elapsed >= duration)
     {
-        edge->setTail(targetPos);
+        edge->mTo = targetNode;
+        edge->mIsChangingTail = false;
         finished = true;
     }
 

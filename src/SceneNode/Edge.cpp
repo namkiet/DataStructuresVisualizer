@@ -1,36 +1,51 @@
 #include <SceneNode/Edge.hpp>
 #include <Core/Utility.hpp>
+#include<iostream>
 
-Edge::Edge(sf::Color color, sf::Vector2f head, sf::Vector2f tail): 
+Edge::Edge(sf::Color color, TreeNode* from, TreeNode* to): 
+    mFrom(from),
+    mTo(to),
     mLine(sf::PrimitiveType::LineStrip, 2),
     mColor(color),
-    mHead(head),
-    mTail(tail),
-    mHasArrow(false)
+    mHead(sf::Vector2f(100, 100)),
+    mTail(sf::Vector2f(200, 200)),
+    mHasArrow(true),
+    mIsChangingTail(false)
 {   
     mArrowSize = 12;
     mArrowHead.setPointCount(3);
-    buildEdge();
+    // buildEdge();
+
+    mLine[0].color = mColor;
+    mLine[1].color = mColor;
+    mLine[0].position = mHead; 
+    mLine[1].position = mTail;
 }
+
 
 void Edge::buildEdge()
 {
     mLine[0].color = mColor;
     mLine[1].color = mColor;
-    mLine[0].position = mHead; 
-    mLine[1].position = mTail;
+    mArrowHead.setFillColor(mColor);
+
+    if (mHead == mTail) return;
+    sf::Vector2f dir = mTail - mHead;
+    sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+
+    mLine[0].position = mHead + offset;
+    mLine[1].position = mTail - offset;
 
     float theta = angle(mHead, mTail);
 
-    mArrowHead.setFillColor(mColor);
-    mArrowHead.setPoint(0, mTail);
+    mArrowHead.setPoint(0, mTail - offset);
     mArrowHead.setPoint(1, {
-        mTail.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
-        mTail.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
+        mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
+        mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
     });
     mArrowHead.setPoint(2, {
-        mTail.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
-        mTail.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
+        mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
+        mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
     });
 }
 
@@ -67,8 +82,21 @@ sf::Vector2f Edge::getTail()
     return mTail;
 }
 
+void Edge::update(sf::Time dt)
+{
+    if (!mIsChangingTail)
+    {
+        // if (mHead == mFrom->getPosition() && mTail == mTo ? mTo->getPosition() : mFrom->getPosition())
+        //     return;
+
+        mHead = mFrom->getPosition();
+        mTail = mTo ? mTo->getPosition() : mFrom->getPosition();
+        buildEdge();
+    }
+}
+
 void Edge::draw(sf::RenderTarget &target, sf::RenderStates states) const
-{   
+{
     target.draw(mLine, states);
     if (mHasArrow)
         target.draw(mArrowHead, states);

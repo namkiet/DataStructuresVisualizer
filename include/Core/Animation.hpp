@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/AnimationQueue.hpp>
 #include <SceneNode/TreeNode.hpp>
+#include <SceneNode/Edge.hpp>
 
 // Highlight node
 class NodeHighlight : public Animation {
@@ -37,9 +38,10 @@ private:
     Edge*                       edge;
     sf::Vector2f                startPos;
     sf::Vector2f                targetPos;
+    TreeNode*                   targetNode;
     sf::Vector2f                speed;
 
 public:
-                                EdgeMove(Edge &edge, sf::Vector2f targetPos, float duration);
+                                EdgeMove(Edge* edge, TreeNode* targetNode);
     bool                        update(sf::Time dt) override;
 };
