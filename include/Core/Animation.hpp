@@ -42,6 +42,6 @@ private:
     sf::Vector2f                speed;
 
 public:
-                                EdgeMove(Edge* edge, TreeNode* targetNode);
+                                EdgeMove(Edge* edge, TreeNode* targetNode, float duration);
     bool                        update(sf::Time dt) override;
 };

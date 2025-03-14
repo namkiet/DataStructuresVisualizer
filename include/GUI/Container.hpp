@@ -14,24 +14,23 @@ class Container : public Component
             
 
 	public:
-							Container();
+							            Container();
+        void                            pack(Component::Ptr component);
 
-        void				pack(Component::Ptr component);
-
-        virtual bool		isSelectable() const; // false
-        virtual void		handleEvent(const sf::Event& event);
-        int                 getSize();
-        void                makeEmpty();
-        void                ChangeActivateChild(std::size_t index);
+        virtual bool		            isSelectable() const; // false
+        virtual void		            handleEvent(const sf::Event& event);
+        int                             getSize();
+        void                            makeEmpty();
+        void                            ChangeActivateChild(std::size_t index);
 
     private:
-        virtual void		draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        virtual void		            draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-        bool				hasSelection() const;
-        void				select(std::size_t index);
+        bool				            hasSelection() const;
+        void				            select(std::size_t index);
 
 
-        bool                hasMode();
+        bool                            hasMode();
 
 
     private:

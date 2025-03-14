@@ -43,6 +43,4 @@ private:
     void                        addEdge(TreeNode* parent, TreeNode* child);
     Edge*                       findEdge(TreeNode* parent, TreeNode* child);
     void                        removeEdge(TreeNode* parent, TreeNode* child);         
-    
-    void                        changeEdgeTail(Edge* edge, TreeNode* newTail);
 };

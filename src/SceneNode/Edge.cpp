@@ -29,9 +29,8 @@ void Edge::buildEdge()
     mLine[1].color = mColor;
     mArrowHead.setFillColor(mColor);
 
-    if (mHead == mTail) return;
     sf::Vector2f dir = mTail - mHead;
-    sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+    sf::Vector2f offset = (mHead != mTail ? dir * (mFrom->getRadius() / norm(dir)) : sf::Vector2f(0, 0));
 
     mLine[0].position = mHead + offset;
     mLine[1].position = mTail - offset;

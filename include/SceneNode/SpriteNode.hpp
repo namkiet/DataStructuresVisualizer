@@ -14,7 +14,7 @@ private:
 public:
     void                    setSize(sf::Vector2f size);
     void                    setSize(float width, float height);
-    sf::FloatRect getGlobalBounds() const;
+    sf::FloatRect           getGlobalBounds() const;
 
 
 protected:

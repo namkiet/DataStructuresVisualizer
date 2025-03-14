@@ -142,14 +142,7 @@ void World::setMode(World::Mode mode){
 		});
 		
 		// Add search Button
-
 		InsertButton->addSubComponent(InputBoxInsert);
-
-		// InsertButton->setCallback([this]) {
-		// 	int val = // insertButton->DeliverTextBox->getValue;
-		// 	ds.insert(val);
-		// }
-
 		DeleteButton->addSubComponent(InputBoxDelete);
 		OperationButtonsList->pack(InsertButton);
 		OperationButtonsList->pack(DeleteButton);
@@ -162,29 +155,29 @@ void World::handleEvent(const sf::Event& event){
 	ModeContainer->handleEvent(event);
 	OperationButtonsList->handleEvent(event);
 
-	// if (event.type == sf::Event::KeyPressed)
-    // {
-    //     if (event.key.code == sf::Keyboard::A)
-    //     {
-    //         int value = std::rand() % 100;
-    //         // int value = v[id];
-    //         // id++;
-    //         std::cerr << value << "\n";
-    //         mAVL->insert(value);
-    //     }
+	if (event.type == sf::Event::KeyPressed)
+    {
+        if (event.key.code == sf::Keyboard::A)
+        {
+            // int value = std::rand() % 100;
+            int value = v[id];
+            id++;
+            std::cerr << value << "\n";
+            mAVL->insert(value);
+        }
 
-    //     // if (event.key.code == sf::Keyboard::B)
-    //     //     mAVL->setPosition(mAVL->getPosition() - sf::Vector2f(50, 0));
+        if (event.key.code == sf::Keyboard::L)
+            mAVL->leftRotate();
 
-        // if (event.key.code == sf::Keyboard::C)
-        //     mAVL->leftRotate();
+		if (event.key.code == sf::Keyboard::R)
+            mAVL->rightRotate();
 
-    //     if (event.key.code == sf::Keyboard::D)
-    //     {
-    //         if (mAVL->search(5))
-    //             std::cerr << "Found \n";
-    //         else 
-    //             std::cerr << "Cannot find \n";
-    //     }
-    // }
+        if (event.key.code == sf::Keyboard::D)
+        {
+            if (mAVL->search(5))
+                std::cerr << "Found \n";
+            else 
+                std::cerr << "Cannot find \n";
+        }
+    }
 }

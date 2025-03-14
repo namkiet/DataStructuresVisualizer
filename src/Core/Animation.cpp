@@ -115,7 +115,7 @@ bool NodeMove::update(sf::Time dt)
     START EDGE MOVE
 */
 
-EdgeMove::EdgeMove(Edge* edge, TreeNode* targetNode): 
+EdgeMove::EdgeMove(Edge* edge, TreeNode* targetNode, float duration): 
     edge(edge),
     targetNode(targetNode)
 {
@@ -124,8 +124,8 @@ EdgeMove::EdgeMove(Edge* edge, TreeNode* targetNode):
     finished = false;
     isInit = false;
 
-    duration = 1.f;
-    // this->duration = duration;
+    // duration = 1.f;
+    this->duration = duration;
 }
 
 bool EdgeMove::update(sf::Time dt)
@@ -139,18 +139,11 @@ bool EdgeMove::update(sf::Time dt)
         targetPos = targetNode ? targetNode->getPosition() : edge->getHead();
         speed = (targetPos - startPos) / duration;
         isInit = true;
-
         edge->mIsChangingTail = true;
     }
 
     elapsed += dt.asSeconds();
-
     sf::Vector2f newPos = startPos + speed * elapsed;
-    
-    // sf::Vector2f dir = newPos - edge->getHead();
-    // sf::Vector2f offset = dir * (30.f / norm(dir));
-
-    // edge->setHead(edge->getHead() + offset);
     edge->setTail(newPos);
 
     if (elapsed >= duration)
