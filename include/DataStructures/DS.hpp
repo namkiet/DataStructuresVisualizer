@@ -1,17 +1,30 @@
-// #pragma once
-// #include <SceneNode/SceneNode.hpp>
-// #include <SceneNode/TreeNode.hpp>
+#pragma once
+#include <SceneNode/SceneNode.hpp>
+#include <SceneNode/TreeNode.hpp>
+#include <SceneNode/Edge.hpp>
+#include <Core/Animation.hpp>
 
-// class DS: public SceneNode
-// {
-// public:
-//     void                    insert(int value);
-//     // void                    remove(int value);
-//     bool                    search(int value);
-// public:
-//     virtual void            updateCurrent(sf::Time dt);
-//     virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+class DS: public SceneNode
+{
+public:
+    virtual void                    insert(int value) = 0;
+    virtual void                    remove(int value) = 0;
+    virtual bool                    search(int value) = 0;
 
-// private:
-//     AnimationQueue          mAnimationQueue;
-// };
+public:
+    virtual void                    updateCurrent(sf::Time dt);
+    virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+
+protected:
+    AnimationQueue                  mAnimationQueue;
+    std::vector<CircleNode::Ptr>    mNodeList;
+    std::vector<Edge::Ptr>          mEdgeList;
+
+protected:
+    void                            addNode(CircleNode* node);
+    void                            removeNode(CircleNode* node);
+
+    void                            addEdge(CircleNode* parent, CircleNode* child);
+    Edge*                           findEdge(CircleNode* parent, CircleNode* child);
+    void                            removeEdge(CircleNode* parent, CircleNode* child); 
+};

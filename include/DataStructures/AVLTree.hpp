@@ -2,22 +2,23 @@
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 #include <SceneNode/Edge.hpp>
+#include <DataStructures/DS.hpp>
+#include <Core/Animation.hpp>
 
-class AVLTree: public SceneNode
+class AVLTree: public DS
 {
 public:
                                 AVLTree();
-    TreeNode*                   mRoot;
 
-public:
-    void                        insert(int value);
-    void                        remove(int value);
-    bool                        search(int value);
+    void                        insert(int value) override;
+    void                        remove(int value) override;
+    bool                        search(int value) override;
 
     void                        leftRotate();
     void                        rightRotate();
 
 private:
+    TreeNode*                   mRoot;
     TreeNode*                   insert(TreeNode* node, TreeNode* prev, int value);
     TreeNode*                   remove(TreeNode* node, int value);
     bool                        search(TreeNode* node, int value);
@@ -27,20 +28,5 @@ private:
     TreeNode*                   leftRotate(TreeNode* root);
     TreeNode*                   rightRotate(TreeNode* root);
     TreeNode*                   balance(TreeNode* root);
-
-public:
-    virtual void                updateCurrent(sf::Time dt);
-    virtual void                drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-
-private:
-    AnimationQueue              mAnimationQueue;
-
-private:
-    void                        align(TreeNode* root);
-
-private:
-    std::vector<Edge::Ptr>      edges;
-    void                        addEdge(TreeNode* parent, TreeNode* child);
-    Edge*                       findEdge(TreeNode* parent, TreeNode* child);
-    void                        removeEdge(TreeNode* parent, TreeNode* child);         
+    void                        align(TreeNode* root);        
 };

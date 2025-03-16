@@ -1,6 +1,7 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/TreeNode.hpp>
+#include <Core/Animation.hpp>
 
 class HeapTree: public SceneNode
 {

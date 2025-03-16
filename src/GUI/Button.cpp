@@ -6,7 +6,7 @@ namespace GUI
 {
 const sf::Vector2f ButtonSize(150.f, 40.f);
 
-Button::Button(sf::Font& fonts, sf::Vector2f Position, std::string text)
+Button::Button(sf::Font& font, sf::Vector2f Position, std::string text)
 {
     mIsToggle = true;
     mNormalColor = sf::Color::Blue;
@@ -16,7 +16,7 @@ Button::Button(sf::Font& fonts, sf::Vector2f Position, std::string text)
     mShape.setPosition(Position);
     mShape.setFillColor(sf::Color::Blue);
     
-    mText.setFont(fonts);
+    mText.setFont(font);
     mText.setString(text);
     mText.setCharacterSize(24);
     mText.setFillColor(sf::Color::White);

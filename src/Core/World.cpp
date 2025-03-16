@@ -14,10 +14,8 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	mMode(World::Mode::None),
 	mFont(fonts),
 	ModeContainer(std::make_shared<GUI::Container>())
-	// mAVL()
 {
 	CreateModeContainer();
-	// mRootNode = std::move(mRootNode);
     loadTextures();
     buildScene();
 
@@ -81,9 +79,9 @@ void World::buildScene()
 	}
 
 	std::unique_ptr<AVLTree> root(new AVLTree());
-	mAVL = root.get();
-	mSceneLayers[Tree]->attachChild(std::move(root));
-	mSceneLayers[Tree]->setPosition(sf::Vector2f(1000, 100));
+	mDataStructure = root.get();
+	mSceneLayers[DataStructure]->attachChild(std::move(root));
+	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
 
 	v = {42, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
 	// v = {74, 12, 217, 36, 61, 77, 286, 153, 337, 93, 121, 47, 463, 248, 146};
@@ -95,19 +93,17 @@ void World::buildScene()
 	id = 0;
 }
 
+
 void World::setMode(World::Mode mode){
 	ModeContainer->ChangeActivateChild(mode); // ensure that the Modecontainer handle the true index of activated child
 	OperationButtonsList->makeEmpty();
 	if(mode == World::Mode::AVL)
 	{
-		// mRootNode = std::make_unique<AVLTree>(); 
-		// mRootNode->setPosition(sf::Vector2f(600,100));
-   		// mSceneLayers[Tree]->attachChild(std::move(mRootNode));
 
-		std::unique_ptr<AVLTree> root(new AVLTree());
-		mAVL = root.get();
-		mAVL->setPosition(sf::Vector2f(600, 100));
-		mSceneLayers[Tree]->attachChild(std::move(root));
+		// std::unique_ptr<AVLTree> root(new AVLTree());
+		// mDataStructure = root.get();
+		// mDataStructure->setPosition(sf::Vector2f(600, 100));
+		// mSceneLayers[DataStructure]->attachChild(std::move(root));
 
 		/* FUNCTIONAL BUTTONS */
 		sf::Vector2f insertButtonPos(20.f, mWindow.getSize().y - GUI::ButtonSize.y - 20.f); 
@@ -117,13 +113,13 @@ void World::setMode(World::Mode mode){
 		InputBoxInsert->setButtonParent(InsertButton);
 		InsertButton->setCallback([this,InsertButton](){
 			if(InsertButton->getSubComponentInfo().num != -1) {
-				this->mAVL->insert(InsertButton->getSubComponentInfo().num);
+				this->mDataStructure->insert(InsertButton->getSubComponentInfo().num);
 				InsertButton->setSubComponentInfo(-1);
 				std::cout<<"Insert ok";
 			}
 			else if(InsertButton->getSubComponentInfo().VecNum.size() != 0){
 				for(auto& element: InsertButton->getSubComponentInfo().VecNum){
-					this->mAVL->insert(element);
+					this->mDataStructure->insert(element);
 				}
 			}
 		});
@@ -135,13 +131,13 @@ void World::setMode(World::Mode mode){
 		InputBoxDelete->setButtonParent(DeleteButton);
 		DeleteButton->setCallback([this,DeleteButton](){
 			if(DeleteButton->getSubComponentInfo().num != -1){
-				this->mAVL->remove(DeleteButton->getSubComponentInfo().num);
+				this->mDataStructure->remove(DeleteButton->getSubComponentInfo().num);
 				DeleteButton->setSubComponentInfo(-1);
 				std::cout<<"Delete num"<<std::endl;
 			}
 			else if(DeleteButton->getSubComponentInfo().VecNum.size() != 0){
 				for(auto& element: DeleteButton->getSubComponentInfo().VecNum){
-					this->mAVL->remove(element);
+					this->mDataStructure->remove(element);
 					std::cout<<"Delete list of num"<<std::endl;
 				}
 			}
@@ -169,18 +165,18 @@ void World::handleEvent(const sf::Event& event){
             int value = v[id];
             id++;
             std::cerr << value << "\n";
-            mAVL->insert(value);
+            mDataStructure->insert(value);
         }
 
-        if (event.key.code == sf::Keyboard::L)
-            mAVL->leftRotate();
+        // if (event.key.code == sf::Keyboard::L)
+        //     mDataStructure->leftRotate();
 
-		if (event.key.code == sf::Keyboard::R)
-            mAVL->rightRotate();
+		// if (event.key.code == sf::Keyboard::R)
+        //     mDataStructure->rightRotate();
 
         if (event.key.code == sf::Keyboard::D)
         {
-            if (mAVL->search(5))
+            if (mDataStructure->search(5))
                 std::cerr << "Found \n";
             else 
                 std::cerr << "Cannot find \n";

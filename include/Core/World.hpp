@@ -6,7 +6,6 @@
 #include <DataStructures/AVLTree.hpp>
 #include <DataStructures/HeapTree.hpp>
 #include <SceneNode/SpriteNode.hpp>
-#include <SceneNode/TreeNode.hpp>
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
 #include <array>
@@ -16,6 +15,7 @@
 #include "GUI/Container.hpp"
 #include "GUI/ExpandableButton.hpp"
 #include "GUI/DeliverTextBox.hpp"
+
 class World : private sf::NonCopyable
 {
 private:
@@ -38,9 +38,8 @@ private:
 private:
     enum Layer
     {
-        Tree,
+        DataStructure,
         Background,
-        Objects,
         CodeBox,
         Controller,
         OperationButtons,
@@ -49,8 +48,8 @@ private:
 
     SceneNode							mSceneGraph;
     std::array<SceneNode*, LayerCount>	mSceneLayers;
-    // SceneNode::Ptr                      mRootNode;
-    AVLTree*    mAVL; 
+
+    DS*                                 mDataStructure;
 
 public:
     enum Mode{

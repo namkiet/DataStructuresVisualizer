@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <SceneNode/TreeNode.hpp>
+#include <SceneNode/CircleNode.hpp>
 
 class Edge :
     public sf::Transformable, public sf::Drawable,
@@ -10,14 +10,14 @@ public:
     typedef std::unique_ptr<Edge> Ptr;
 
 public:
-                                Edge(sf::Color color, TreeNode* from, TreeNode* to, bool hasArrow);
+                                Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow);
     virtual void                draw(sf::RenderTarget &target, sf::RenderStates states) const;
     virtual void                update(sf::Time dt);
 
 
 public:
-    TreeNode*                   mFrom;
-    TreeNode*                   mTo;
+    CircleNode*                 mFrom;
+    CircleNode*                 mTo;
     bool                        mIsChangingTail;
 
 private:
@@ -34,7 +34,7 @@ private:
 private:
     bool                        mHasWeight;
     int                         mWeight;
-
+    
     void                        buildEdge();
 
 public:

@@ -6,11 +6,11 @@
     - Heap 
     - LL 
     - Graph
-4. Animmation:
+4. Animation:
     - Move
     - Highlight
     - Reverse
     - Code block
 
 - Fix:
-+ Add edge animation error
++ Delete Animation error

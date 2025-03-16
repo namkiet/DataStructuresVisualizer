@@ -2,7 +2,7 @@
 #include <Core/Utility.hpp>
 #include<iostream>
 
-Edge::Edge(sf::Color color, TreeNode* from, TreeNode* to, bool hasArrow): 
+Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow): 
     mFrom(from),
     mTo(to),
     mLine(sf::PrimitiveType::LineStrip, 2),
@@ -84,9 +84,6 @@ void Edge::update(sf::Time dt)
 {
     if (!mIsChangingTail)
     {
-        // if (mHead == mFrom->getPosition() && mTail == mTo ? mTo->getPosition() : mFrom->getPosition())
-        //     return;
-
         mHead = mFrom->getPosition();
         mTail = mTo ? mTo->getPosition() : mFrom->getPosition();
         buildEdge();
