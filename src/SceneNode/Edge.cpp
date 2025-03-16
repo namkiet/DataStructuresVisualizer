@@ -2,24 +2,21 @@
 #include <Core/Utility.hpp>
 #include<iostream>
 
-Edge::Edge(sf::Color color, TreeNode* from, TreeNode* to): 
+Edge::Edge(sf::Color color, TreeNode* from, TreeNode* to, bool hasArrow): 
     mFrom(from),
     mTo(to),
     mLine(sf::PrimitiveType::LineStrip, 2),
     mColor(color),
-    mHead(sf::Vector2f(100, 100)),
-    mTail(sf::Vector2f(200, 200)),
-    mHasArrow(true),
+    mHasArrow(hasArrow),
     mIsChangingTail(false)
 {   
     mArrowSize = 12;
     mArrowHead.setPointCount(3);
-    // buildEdge();
 
-    mLine[0].color = mColor;
-    mLine[1].color = mColor;
-    mLine[0].position = mHead; 
-    mLine[1].position = mTail;
+    mHead = mFrom->getPosition();
+    mTail = (mTo ? mTo->getPosition() : mFrom->getPosition());
+
+    buildEdge();
 }
 
 
@@ -30,6 +27,8 @@ void Edge::buildEdge()
     mArrowHead.setFillColor(mColor);
 
     sf::Vector2f dir = mTail - mHead;
+    if (norm(dir) <= 2 * mFrom->getRadius()) return;
+
     sf::Vector2f offset = (mHead != mTail ? dir * (mFrom->getRadius() / norm(dir)) : sf::Vector2f(0, 0));
 
     mLine[0].position = mHead + offset;

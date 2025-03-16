@@ -10,23 +10,21 @@ public:
     typedef std::unique_ptr<Edge> Ptr;
 
 public:
-                                // Edge(sf::Color color, sf::Vector2f head, sf::Vector2f tail);
-                                Edge(sf::Color color, TreeNode* from, TreeNode* to);
+                                Edge(sf::Color color, TreeNode* from, TreeNode* to, bool hasArrow);
     virtual void                draw(sf::RenderTarget &target, sf::RenderStates states) const;
     virtual void                update(sf::Time dt);
+
+
+public:
+    TreeNode*                   mFrom;
+    TreeNode*                   mTo;
+    bool                        mIsChangingTail;
 
 private:
     sf::Vector2f                mHead;
     sf::Vector2f                mTail;
     sf::Color                   mColor;
     sf::VertexArray             mLine;
-
-public:
-    TreeNode*                   mFrom;
-    TreeNode*                   mTo;
-
-public:
-    bool                        mIsChangingTail;
 
 private:
     bool                        mHasArrow;

@@ -25,7 +25,6 @@ public:
     {
         std::vector<std::unique_ptr<Animation>> newAnimation;
         newAnimation.push_back(std::move(anim));
-        // queue.push(std::move(anim));
         queue.push(std::move(newAnimation));
     }
 
@@ -36,18 +35,15 @@ public:
 
     void update(sf::Time dt) 
     {
-        if (!queue.empty()) {
+        if (!queue.empty())
+        {
             auto& curAnimationGroup = queue.front();
             bool isFinished = true;
             for (int i = 0; i < curAnimationGroup.size(); i++)
-            {
-                if (!curAnimationGroup[i]->update(dt)) isFinished = false;
-            }
+                if (!curAnimationGroup[i]->update(dt)) 
+                    isFinished = false;
             
             if (isFinished) queue.pop();
-            // if (queue.front()->update(dt)) {
-            //     queue.pop(); // Move to the next animation when finished
-            // }
         }
     }
 

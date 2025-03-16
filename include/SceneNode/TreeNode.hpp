@@ -12,6 +12,7 @@ class TreeNode :
 {
 public:
                             TreeNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
+                            ~TreeNode();
     int                     mValue;
     TreeNode*               mLeft;
     TreeNode*               mRight;

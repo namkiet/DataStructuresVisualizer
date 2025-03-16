@@ -93,7 +93,7 @@ bool NodeMove::update(sf::Time dt)
         node->setOpacity(opacity);
     }
 
-    if (elapsed >= duration)
+    if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
     {
         node->setPosition(targetPos);
         node->setOpacity(1);
@@ -115,40 +115,51 @@ bool NodeMove::update(sf::Time dt)
     START EDGE MOVE
 */
 
-EdgeMove::EdgeMove(Edge* edge, TreeNode* targetNode, float duration): 
-    edge(edge),
-    targetNode(targetNode)
+EdgeMove::EdgeMove(const std::vector<Edge::Ptr> &edges, TreeNode* parent, TreeNode* child, TreeNode* target, float duration):
+    edges(edges),
+    parent(parent),
+    child(child),
+    target(target),
+    edge(nullptr)
 {
-    // this->edge = &edge;
+
     elapsed = 0;
     finished = false;
     isInit = false;
 
-    // duration = 1.f;
     this->duration = duration;
 }
 
 bool EdgeMove::update(sf::Time dt)
 {
-    if (!edge) return true;
     if (finished) return true;
 
     if (!isInit)
     {   
+        for (auto& e : edges) {
+            if (e->mFrom == parent && e->mTo == child) {
+                edge = e.get();
+            }
+        }
+
+        if (!edge) return true;
+
         startPos = edge->getTail();
-        targetPos = targetNode ? targetNode->getPosition() : edge->getHead();
+        targetPos = target ? target->getPosition() : edge->getHead();
         speed = (targetPos - startPos) / duration;
         isInit = true;
         edge->mIsChangingTail = true;
     }
 
+    if (!edge) return true;
+
     elapsed += dt.asSeconds();
     sf::Vector2f newPos = startPos + speed * elapsed;
     edge->setTail(newPos);
 
-    if (elapsed >= duration)
+    if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
     {
-        edge->mTo = targetNode;
+        edge->mTo = target;
         edge->mIsChangingTail = false;
         finished = true;
     }
@@ -159,4 +170,20 @@ bool EdgeMove::update(sf::Time dt)
 
 /*
     END EDGE MOVE
+*/
+
+/*
+    START NODE ASSIGN
+*/
+
+NodeAssign::NodeAssign(TreeNode* &a, TreeNode* b): a(a), b(b) {}
+
+bool NodeAssign::update(sf::Time dt)
+{
+    a = b;
+    return true;
+}
+
+/* 
+    END NODE ASSIGN
 */

@@ -85,10 +85,13 @@ void World::buildScene()
 	mSceneLayers[Tree]->attachChild(std::move(root));
 	mSceneLayers[Tree]->setPosition(sf::Vector2f(1000, 100));
 
+	v = {42, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
+	// v = {74, 12, 217, 36, 61, 77, 286, 153, 337, 93, 121, 47, 463, 248, 146};
 	// v = {10,9,8,7,6,5,4};
 	// v = {44, 45, 42, 40, 41};
 	// v = {3, 7, 12, 18, 25, 31, 39, 42, 50, 57, 63, 69, 75, 81, 88, 94, 99, 105, 112, 118, 124, 130, 137, 143, 150, 157, 163, 170, 176, 183};
-	v = {144, 127, 179, 160, 187, 167};
+	// v = {144, 127, 179, 160, 150, 187, 167};	
+	// v = {144, 179, 127, 135, 100, 130};
 	id = 0;
 }
 
@@ -113,7 +116,7 @@ void World::setMode(World::Mode mode){
 		GUI::DeliverTextBox::Ptr InputBoxInsert = std::make_shared<GUI::DeliverTextBox>(mFont.get(Fonts::ID::Main),inputBoxInsertPos,sf::Vector2f(100.f, 40.f));
 		InputBoxInsert->setButtonParent(InsertButton);
 		InsertButton->setCallback([this,InsertButton](){
-			if(InsertButton->getSubComponentInfo().num != -1){
+			if(InsertButton->getSubComponentInfo().num != -1) {
 				this->mAVL->insert(InsertButton->getSubComponentInfo().num);
 				InsertButton->setSubComponentInfo(-1);
 				std::cout<<"Insert ok";
@@ -132,10 +135,13 @@ void World::setMode(World::Mode mode){
 		InputBoxDelete->setButtonParent(DeleteButton);
 		DeleteButton->setCallback([this,DeleteButton](){
 			if(DeleteButton->getSubComponentInfo().num != -1){
+				this->mAVL->remove(DeleteButton->getSubComponentInfo().num);
+				DeleteButton->setSubComponentInfo(-1);
 				std::cout<<"Delete num"<<std::endl;
 			}
 			else if(DeleteButton->getSubComponentInfo().VecNum.size() != 0){
 				for(auto& element: DeleteButton->getSubComponentInfo().VecNum){
+					this->mAVL->remove(element);
 					std::cout<<"Delete list of num"<<std::endl;
 				}
 			}

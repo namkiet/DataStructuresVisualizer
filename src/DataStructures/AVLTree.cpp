@@ -3,10 +3,7 @@
 #include <queue>
 #include <iostream>
 
-AVLTree::AVLTree():
-    mRoot(nullptr)
-{    
-}
+AVLTree::AVLTree(): mRoot(nullptr) {}
 
 void AVLTree::insert(int value)
 {
@@ -14,10 +11,11 @@ void AVLTree::insert(int value)
     align(mRoot);
 }
 
-// void AVLTree::remove(int value)
-// {
-//     mRoot = remove(mRoot, value);
-// }
+void AVLTree::remove(int value)
+{
+    mRoot = remove(mRoot, value);
+    align(mRoot);
+}
 
 bool AVLTree::search(int value)
 {
@@ -26,24 +24,23 @@ bool AVLTree::search(int value)
 
 TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
 {
-    if (node)
-        mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 0.25f));
-
     if (!node)
     {
         node = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
         node->mParent = prev;
+        addEdge(node, nullptr);
+        addEdge(node, nullptr);
         if (prev) // Not root node
         {
-            node->setPosition(node->mParent->getPosition());
+            node->setPosition(prev->getPosition());
             node->setOpacity(0);
-            node->mLevel = node->mParent->mLevel + 1;
+            node->mLevel = prev->mLevel + 1;
             if (value < prev->mValue) // is left child
-                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, node->mParent->getPosition() + sf::Vector2f(-500 / (1 << node->mLevel), 100), 0.25f, true));
+                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, prev->getPosition() + sf::Vector2f(-500 / (1 << node->mLevel), 100), 0.25f, true));
             else // is right child
-                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, node->mParent->getPosition() + sf::Vector2f(500 / (1 << node->mLevel), 100), 0.25f, true));
+                mAnimationQueue.addAnimation(std::make_unique<NodeMove>(node, prev->getPosition() + sf::Vector2f(500 / (1 << node->mLevel), 100), 0.25f, true));
             
-            addEdge(node->mParent, node);
+            findEdge(prev, nullptr)->mTo = node;
         }
         else
         {
@@ -53,11 +50,129 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
         return node;
     }
 
+    mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 0.25f));
     if (value < node->mValue) node->mLeft = insert(node->mLeft, node, value);
     if (value > node->mValue) node->mRight = insert(node->mRight, node, value);
 
     node = updateHeight(node);
     node = balance(node);
+    return node;
+}
+
+TreeNode* AVLTree::remove(TreeNode* node, int value)
+{
+    if (!node) return nullptr;
+
+    if (value < node->mValue) node->mLeft = remove(node->mLeft, value);
+    else if (value > node->mValue) node->mRight = remove(node->mRight, value);
+    else 
+    {
+        if (!node->mLeft)
+        {
+            if (node->mParent)
+            {
+                mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(edges, node->mParent, node, nullptr, 3.f));
+                if (node == node->mParent->mLeft)
+                {
+                    node->mParent->mLeft = nullptr;
+                }
+                if (node == node->mParent->mRight)
+                {
+                    node->mParent->mRight = nullptr;
+                }
+            }
+
+            TreeNode* tmp = node->mRight;
+            removeEdge(node, node->mLeft);
+            removeEdge(node, node->mRight);
+            // delete node;
+            return tmp;
+        } 
+        else if (!node->mRight)
+        {
+            if (node->mParent)
+            {
+                mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(edges, node->mParent, node, nullptr, 3.f));
+                if (node == node->mParent->mLeft)
+                {
+                    node->mParent->mLeft = nullptr;
+                }
+                if (node == node->mParent->mRight)
+                {
+                    node->mParent->mRight = nullptr;
+                }
+            }
+
+            TreeNode* tmp = node->mLeft;
+            removeEdge(node, node->mLeft);
+            removeEdge(node, node->mRight);
+            // delete node;
+            return tmp;
+        }
+        else
+        {
+            TreeNode* prev = node;
+            TreeNode* cur = node->mRight;
+
+            TreeNode* l = node->mLeft;
+            TreeNode* r = node->mRight;
+            TreeNode* p = node->mParent;
+
+            while (cur && cur->mLeft) 
+            {
+                prev = cur;
+                cur = cur->mLeft;
+            }
+
+            std::vector<std::unique_ptr<Animation>> deleteAnimations;
+
+            mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(edges, cur, cur->mLeft, node->mLeft, 3.5f));
+            mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(edges, cur, cur->mRight, node->mRight, 3.5f));
+
+            if (cur == prev->mLeft)
+            {
+                deleteAnimations.push_back(std::make_unique<EdgeMove>(edges, prev, prev->mLeft, nullptr, 0.5f));
+                prev->mLeft = nullptr;
+            }
+            if (cur == prev->mRight)
+            {
+                deleteAnimations.push_back(std::make_unique<EdgeMove>(edges, prev, prev->mRight, nullptr, 0.5f));
+                prev->mRight = nullptr;
+            }            
+
+            if (p)
+            {
+                if (node == p->mLeft)
+                {
+                    deleteAnimations.push_back(std::make_unique<EdgeMove>(edges, p, p->mLeft, cur , 0.5f));
+                    p->mLeft = cur;
+                }
+                if (node == p->mRight)
+                {
+                    deleteAnimations.push_back(std::make_unique<EdgeMove>(edges, p, p->mRight, cur, 0.5f));
+                    p->mRight = cur;
+                }
+            }
+
+            cur->mParent = node->mParent;
+            cur->mLeft = node->mLeft;
+            cur->mRight = node->mRight;
+
+            if (node->mLeft) node->mLeft->mParent = cur;
+            if (node->mRight) node->mRight->mParent = cur;
+
+            mAnimationQueue.addAnimationGroup(deleteAnimations);
+
+
+            removeEdge(node, node->mLeft);
+            removeEdge(node, node->mRight);
+
+            return cur;
+        }
+    }
+
+    // node = updateHeight(node);
+    // node = balance(node);
     return node;
 }
 
@@ -96,57 +211,37 @@ TreeNode* AVLTree::updateHeight(TreeNode* root)
 TreeNode* AVLTree::leftRotate(TreeNode* root)
 {
     if (!root || !root->mRight) return root;
-
-    TreeNode* newRoot = root->mRight;
-
-    std::vector<std::unique_ptr<Animation>> animationGroup;
+    std::vector<std::unique_ptr<Animation>> leftRotateAnimations;
     
-    if (root->mParent)
-    {
-        if (root->mParent->mLeft == root)
-        {
-            animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(root->mParent, root), newRoot, 2.f));
-            root->mParent->mLeft = newRoot;
-        }
-        else
-        {
-            animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(root->mParent, root), newRoot, 2.f));
-            root->mParent->mRight = newRoot;
-        }
-    }
+    TreeNode* newRoot = root->mRight;
+    TreeNode* par = root->mParent;
 
-    if (root->mRight)
+    newRoot->mParent = par;
+
+    if (par)
     {
-        animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(root, root->mRight), newRoot->mLeft, 2.f));
-        root->mRight = newRoot->mLeft;
-    }
-    else
-    {
-        addEdge(root, newRoot->mLeft);
-        root->mRight = newRoot->mLeft;
+        leftRotateAnimations.push_back(std::make_unique<EdgeMove>(edges, par, root, newRoot, 0.5f));
+        if (par->mLeft == root) 
+            par->mLeft = newRoot;
+        else 
+            par->mRight = newRoot;
     }
 
     if (newRoot->mLeft) 
         newRoot->mLeft->mParent = root;
 
-    newRoot->mParent = root->mParent;
+    leftRotateAnimations.push_back(std::make_unique<EdgeMove>(edges, root, root->mRight, newRoot->mLeft, 0.5f));
+    root->mRight = newRoot->mLeft;
+
+    leftRotateAnimations.push_back(std::make_unique<EdgeMove>(edges, newRoot, newRoot->mLeft, root, 0.5f));
+    newRoot->mLeft = root;
 
     root->mParent = newRoot;
+
     root = updateHeight(root);
-
-    if (newRoot->mLeft)
-    {
-        animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(newRoot, newRoot->mLeft), root, 2.f));
-        newRoot->mLeft = root;
-    }
-    else
-    {
-        addEdge(newRoot, root);
-        newRoot->mLeft = root;
-    }
-
     newRoot = updateHeight(newRoot);
-    mAnimationQueue.addAnimationGroup(animationGroup);
+
+    mAnimationQueue.addAnimationGroup(leftRotateAnimations);
 
     align(root->mValue == mRoot->mValue ? newRoot : mRoot);
     return newRoot;
@@ -155,57 +250,37 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
 TreeNode* AVLTree::rightRotate(TreeNode* root)
 {
     if (!root || !root->mLeft) return root;
+    std::vector<std::unique_ptr<Animation>> rightRotateAnimations;
 
     TreeNode* newRoot = root->mLeft;
+    TreeNode* par = root->mParent;
 
-    std::vector<std::unique_ptr<Animation>> animationGroup;
-    
-    if (root->mParent)
-    {
-        if (root->mParent->mRight == root)
-        {
-            animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(root->mParent, root), newRoot, 2.f));
-            root->mParent->mRight = newRoot;
-        }
-        else
-        {
-            animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(root->mParent, root), newRoot, 2.f));
-            root->mParent->mLeft = newRoot;
-        }
-    }
+    newRoot->mParent = par;
 
-    if (root->mLeft)
+    if (par)
     {
-        animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(root, root->mLeft), newRoot->mRight, 2.f));
-        root->mLeft = newRoot->mRight;
-    }
-    else
-    {
-        addEdge(root, newRoot->mRight);
-        root->mLeft = newRoot->mRight;
+        rightRotateAnimations.push_back(std::make_unique<EdgeMove>(edges, par, root, newRoot, 0.5f));
+        if (par->mRight == root) 
+            par->mRight = newRoot;
+        else 
+            par->mLeft = newRoot;
     }
 
     if (newRoot->mRight) 
         newRoot->mRight->mParent = root;
 
-    newRoot->mParent = root->mParent;
+    rightRotateAnimations.push_back(std::make_unique<EdgeMove>(edges, root, root->mLeft, newRoot->mRight, 0.5f));
+    root->mLeft = newRoot->mRight;
 
+    rightRotateAnimations.push_back(std::make_unique<EdgeMove>(edges, newRoot, newRoot->mRight, root, 0.5f));
+    newRoot->mRight = root;
+    
     root->mParent = newRoot;
+
     root = updateHeight(root);
-
-    if (newRoot->mRight)
-    {
-        animationGroup.push_back(std::make_unique<EdgeMove>(findEdge(newRoot, newRoot->mRight), root, 2.f));
-        newRoot->mRight = root;
-    }
-    else
-    {
-        addEdge(newRoot, root);
-        newRoot->mRight = root;
-    }
-
     newRoot = updateHeight(newRoot);
-    mAnimationQueue.addAnimationGroup(animationGroup);
+
+    mAnimationQueue.addAnimationGroup(rightRotateAnimations);
 
     align(root->mValue == mRoot->mValue ? newRoot : mRoot);
     return newRoot;
@@ -220,6 +295,7 @@ TreeNode* AVLTree::balance(TreeNode* root)
             return rightRotate(root);
         else {
             root->mLeft = leftRotate(root->mLeft); // LR
+            std::cerr << "---------\n";
             return rightRotate(root);
         }
     }
@@ -243,6 +319,14 @@ void AVLTree::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) con
 
 void AVLTree::updateCurrent(sf::Time dt)   
 {
+
+    std::cerr << "_______________\n";
+
+    for (auto &e: edges)
+    {
+        std::cerr << e->mFrom->mValue << " === " << (e->mTo ? e->mTo->mValue : -1) << "\n";
+    }
+
     mAnimationQueue.update(dt);
     if (mRoot) mRoot->update(dt);
 
@@ -312,9 +396,7 @@ void AVLTree::align(TreeNode* root)
 }
 
 void AVLTree::addEdge(TreeNode* parent, TreeNode* child) {
-    if (!findEdge(parent, child)) {
-        edges.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child));
-    }
+    edges.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child, true));
 }
 
 Edge* AVLTree::findEdge(TreeNode* parent, TreeNode* child) {

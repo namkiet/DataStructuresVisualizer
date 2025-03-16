@@ -7,11 +7,11 @@ class AVLTree: public SceneNode
 {
 public:
                                 AVLTree();
-    TreeNode*                       mRoot;
+    TreeNode*                   mRoot;
 
 public:
     void                        insert(int value);
-    // void                     remove(int value);
+    void                        remove(int value);
     bool                        search(int value);
 
     void                        leftRotate();
@@ -19,7 +19,7 @@ public:
 
 private:
     TreeNode*                   insert(TreeNode* node, TreeNode* prev, int value);
-    // TreeNode*                remove(TreeNode* node, int value);
+    TreeNode*                   remove(TreeNode* node, int value);
     bool                        search(TreeNode* node, int value);
     int                         getHeight(TreeNode* root);
     int                         getBalanceFactor(TreeNode* root);

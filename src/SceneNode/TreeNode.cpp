@@ -31,6 +31,10 @@ TreeNode::TreeNode(int value, float radius, sf::Color fillColor, sf::Color outli
     mText.setPosition(mShape.getPosition());
 }
 
+TreeNode::~TreeNode()
+{
+}
+
 void TreeNode::update(sf::Time dt)
 {
     updateCurrent(dt);
