@@ -21,13 +21,14 @@ public:
 
 protected:
     sf::CircleShape         mShape;
-    sf::Color               mColor;
     sf::Text                mText;
     sf::Font                mFont;
 
 public:
-    sf::Color               getColor();
-    void                    setColor(sf::Color color);
+    sf::Color               getFillColor();
+    void                    setFillColor(sf::Color color);
+    sf::Color               getOutlineColor();
+    void                    setOutlineColor(sf::Color color);
     void                    setOpacity(float opacity);
     float                   getRadius();
 };

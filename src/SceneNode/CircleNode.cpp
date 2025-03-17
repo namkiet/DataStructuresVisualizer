@@ -2,8 +2,7 @@
 #include <Core/Utility.hpp>
 
 CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor):
-    mValue(value),
-    mColor(fillColor)
+    mValue(value)
 {
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
@@ -32,15 +31,26 @@ void CircleNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(mText, states);
 }
 
-sf::Color CircleNode::getColor()
+sf::Color CircleNode::getFillColor()
 {
     return mShape.getFillColor();
 }
 
-void CircleNode::setColor(sf::Color color)
+void CircleNode::setFillColor(sf::Color color)
 {
     mShape.setFillColor(color);
 }
+
+sf::Color CircleNode::getOutlineColor()
+{
+    return mShape.getOutlineColor();
+}
+
+void CircleNode::setOutlineColor(sf::Color color)
+{
+    mShape.setOutlineColor(color);
+}
+
 
 void CircleNode::setOpacity(float opacity)
 {

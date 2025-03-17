@@ -9,12 +9,14 @@
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
 #include <array>
-#include<vector>
+#include <vector>
 #include <queue>
-#include "GUI/Button.hpp"
-#include "GUI/Container.hpp"
-#include "GUI/ExpandableButton.hpp"
-#include "GUI/DeliverTextBox.hpp"
+#include <GUI/Button.hpp>
+#include <GUI/Container.hpp>
+#include <GUI/ExpandableButton.hpp>
+#include <GUI/DeliverTextBox.hpp>
+
+#include <SceneNode/PseudoCode.hpp>
 
 class World : private sf::NonCopyable
 {
@@ -31,9 +33,20 @@ private:
     sf::RenderWindow&					mWindow;
     TextureHolder						mTextures;
 
+public:
+    enum Mode{
+        AVL,
+        LinkedList,
+        Heap,
+        Graph,
+        None
+    };
+
 private:
     void								loadTextures();
     void								buildScene();
+    // void                                initPseudoCode();
+    void                                CreateModeContainer();
 
 private:
     enum Layer
@@ -50,20 +63,13 @@ private:
     std::array<SceneNode*, LayerCount>	mSceneLayers;
 
     DS*                                 mDataStructure;
+    PseudoCode*                         mPseudoCode;
 
 public:
-    enum Mode{
-        AVL,
-        LinkedList,
-        Heap,
-        Graph,
-        None
-    };
-    void                                CreateModeContainer();
-
     CommandQueue&						getCommandQueue();
     void                                handleEvent(const sf::Event& event);
     void                                setMode(World::Mode mode);
+    
 private:
     CommandQueue						mCommandQueue;
     FontHolder&                         mFont;

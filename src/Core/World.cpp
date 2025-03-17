@@ -21,8 +21,8 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 
 }
 
-void World::CreateModeContainer(){
-
+void World::CreateModeContainer()
+{
 	float buttonX = 20.f;	
 	sf::Vector2f avlButtonPos(buttonX, 20.f);
 	sf::Vector2f linkedListButtonPos(buttonX, avlButtonPos.y + GUI::ButtonSize.y + 10.f);
@@ -42,7 +42,7 @@ void World::CreateModeContainer(){
 	ModeContainer->pack(LinkedListButton);
 	ModeContainer->pack(HeapButton);
 	ModeContainer->pack(GraphButton);
-	}
+}
 
 void World::update(sf::Time dt)
 {
@@ -56,6 +56,7 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 	mWindow.draw(*ModeContainer);
 	mWindow.draw(*OperationButtonsList);
+	if (mPseudoCode) mPseudoCode->draw(mWindow);
 }
 
 CommandQueue& World::getCommandQueue()
@@ -83,6 +84,12 @@ void World::buildScene()
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
 	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
 
+	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 600, 400);
+
+	mDataStructure->updateStepCallback = [this](int step) {
+		this->mPseudoCode->setNextStep(step);
+	};
+
 	v = {42, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
 	// v = {74, 12, 217, 36, 61, 77, 286, 153, 337, 93, 121, 47, 463, 248, 146};
 	// v = {10,9,8,7,6,5,4};
@@ -92,7 +99,6 @@ void World::buildScene()
 	// v = {144, 179, 127, 135, 100, 130};
 	id = 0;
 }
-
 
 void World::setMode(World::Mode mode){
 	ModeContainer->ChangeActivateChild(mode); // ensure that the Modecontainer handle the true index of activated child

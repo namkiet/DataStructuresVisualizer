@@ -15,6 +15,13 @@ public:
     virtual void                    updateCurrent(sf::Time dt);
     virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
+public:
+    std::function<void(int)>        updateStepCallback; 
+
+protected:
+    float                           mMaxWidth = 1200;
+    float                           mVerticalSpacing = 100;
+
 protected:
     AnimationQueue                  mAnimationQueue;
     std::vector<CircleNode::Ptr>    mNodeList;

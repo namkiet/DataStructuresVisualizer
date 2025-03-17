@@ -22,7 +22,7 @@ bool NodeHighlight::update(sf::Time dt)
 
     if (!isInit)
     {   
-        startColor = node->getColor();
+        startColor = node->getFillColor();
         isInit = true;
     }
 
@@ -35,11 +35,11 @@ bool NodeHighlight::update(sf::Time dt)
         int(startColor.b + t * (highlightColor.b - startColor.b))
     );
 
-    node->setColor(newColor);
+    node->setFillColor(newColor);
 
     if (elapsed >= duration)
     {
-        node->setColor(startColor);
+        node->setFillColor(startColor);
         finished = true;
     }
  
