@@ -13,6 +13,8 @@ void DS::updateCurrent(sf::Time dt)
 {
     mAnimationQueue.update(dt);
 
+    mActionQueue.update(dt);
+
     for (auto &node: mNodeList)
         if (node) node->update(dt);
     
@@ -57,4 +59,88 @@ void DS::removeEdge(CircleNode* parent, CircleNode* child) {
         }),
         mEdgeList.end()
     );
+}
+
+void DS::createNewActionGroup()
+{
+    mActionQueue.createNewBatch();
+}
+
+void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
+{
+    mActionQueue.pushAction([node, targetPos, duration, appearEffect, 
+                            elapsed = 0.0f, isInit = false, 
+                            startPos = sf::Vector2f(), speed = sf::Vector2f(), opacity = 1.0f](sf::Time dt) mutable -> bool {
+        if (!node) return true;
+
+        if (!isInit)
+        {
+            opacity = appearEffect ? 0 : 1;
+            startPos = node->getPosition();
+            speed = (targetPos - startPos) / duration;
+            isInit = true;
+        }
+
+        elapsed += dt.asSeconds();
+
+        sf::Vector2f newPos = startPos + speed * elapsed;
+        node->setPosition(newPos);
+
+        if (appearEffect)
+        {
+            float t = std::sin((elapsed / duration) * 3.14159f / 2);
+            opacity = t;
+            node->setOpacity(opacity);
+        }
+
+        if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
+        {
+            node->setPosition(targetPos);
+            node->setOpacity(1);
+            return true;
+        }
+
+        return false;
+    });
+}
+
+void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* target, float duration)
+{
+    mActionQueue.pushAction([this, parent, child, target, duration, 
+                                elapsed = 0.0f, isInit = false, 
+                                edge = static_cast<Edge*>(nullptr), 
+                                startPos = sf::Vector2f(), targetPos = sf::Vector2f(), 
+                                speed = sf::Vector2f()](sf::Time dt) mutable -> bool {
+        if (!isInit)
+        {
+            for (auto &e : mEdgeList) {
+                if (e->mFrom == parent && e->mTo == child) {
+                    edge = e.get();
+                    break;
+                }
+            }
+
+            if (!edge) return true;
+
+            startPos = edge->getTail();
+            targetPos = target ? target->getPosition() : edge->getHead();
+            speed = (targetPos - startPos) / duration;
+            isInit = true;
+            edge->mIsChangingTail = true;
+        }
+
+        if (!edge) return true;
+
+        elapsed += dt.asSeconds();
+        sf::Vector2f newPos = startPos + speed * elapsed;
+        edge->setTail(newPos);
+
+        if (speed == sf::Vector2f(0, 0) || elapsed >= duration) {
+            edge->mTo = target;
+            edge->mIsChangingTail = false;
+            return true;
+        }
+
+        return false;
+    });        
 }

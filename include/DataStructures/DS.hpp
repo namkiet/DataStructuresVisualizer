@@ -1,8 +1,9 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/TreeNode.hpp>
+#include <SceneNode/CircleNode.hpp>
 #include <SceneNode/Edge.hpp>
 #include <Core/Animation.hpp>
+#include <Core/ActionQueue.hpp>
 
 class DS: public SceneNode
 {
@@ -19,19 +20,25 @@ public:
     std::function<void(int)>        updateStepCallback; 
 
 protected:
+    float                           mAnimationSpeed = 0.75f;
     float                           mMaxWidth = 1200;
     float                           mVerticalSpacing = 100;
 
 protected:
     AnimationQueue                  mAnimationQueue;
+    ActionQueue                     mActionQueue;
     std::vector<CircleNode::Ptr>    mNodeList;
     std::vector<Edge::Ptr>          mEdgeList;
 
 protected:
+    void                            createNewActionGroup();
+
     void                            addNode(CircleNode* node);
     void                            removeNode(CircleNode* node);
+    void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
 
     void                            addEdge(CircleNode* parent, CircleNode* child);
     Edge*                           findEdge(CircleNode* parent, CircleNode* child);
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
+    void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* target, float duration);
 };

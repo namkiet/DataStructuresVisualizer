@@ -14,3 +14,4 @@
 
 - Fix:
 + Delete Animation error
++ Sync PseudoCode with Animation

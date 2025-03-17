@@ -84,10 +84,10 @@ void World::buildScene()
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
 	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
 
-	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 600, 400);
+	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 700, 520);
 
 	mDataStructure->updateStepCallback = [this](int step) {
-		this->mPseudoCode->setNextStep(step);
+		this->mPseudoCode->setStep(step);
 	};
 
 	v = {42, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
