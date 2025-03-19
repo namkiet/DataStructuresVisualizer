@@ -24,7 +24,11 @@ void DS::updateCurrent(sf::Time dt)
 
 void DS::addNode(CircleNode* node)
 {
-    mNodeList.push_back(CircleNode::Ptr(node));
+    mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
+    {
+        mNodeList.push_back(CircleNode::Ptr(node));
+        return true;
+    });
 }
 
 void DS::removeNode(CircleNode* node)
@@ -38,8 +42,13 @@ void DS::removeNode(CircleNode* node)
     );
 }
 
-void DS::addEdge(CircleNode* parent, CircleNode* child) {
-    mEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child, false));
+void DS::addEdge(CircleNode* parent, CircleNode* child) 
+{
+    mActionQueue.pushAction([this, parent, child](sf::Time dt) mutable -> bool
+    {
+        mEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child, false));
+        return true;
+    });
 }
 
 Edge* DS::findEdge(CircleNode* parent, CircleNode* child) {
@@ -66,37 +75,41 @@ void DS::createNewActionGroup()
     mActionQueue.createNewBatch();
 }
 
-void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
+void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration)
 {
-    mActionQueue.pushAction([node, targetPos, duration, appearEffect, 
-                            elapsed = 0.0f, isInit = false, 
-                            startPos = sf::Vector2f(), speed = sf::Vector2f(), opacity = 1.0f](sf::Time dt) mutable -> bool {
-        if (!node) return true;
-
+    mActionQueue.pushAction([node, highlightColor, duration, 
+                            elapsed = 0.0f, isInit = false,
+                            startFillColor = sf::Color(), startOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
+    {   
         if (!isInit)
-        {
-            opacity = appearEffect ? 0 : 1;
-            startPos = node->getPosition();
-            speed = (targetPos - startPos) / duration;
+        {   
+            startFillColor = node->getFillColor();
+            startOutlineColor = node->getOutlineColor();
             isInit = true;
         }
 
         elapsed += dt.asSeconds();
+        float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
 
-        sf::Vector2f newPos = startPos + speed * elapsed;
-        node->setPosition(newPos);
+        sf::Color newFillColor(
+            int(startFillColor.r + t * (highlightColor.r - startFillColor.r)),
+            int(startFillColor.g + t * (highlightColor.g - startFillColor.g)),
+            int(startFillColor.b + t * (highlightColor.b - startFillColor.b))
+        );
 
-        if (appearEffect)
+        sf::Color newOutlineColor(
+            int(startOutlineColor.r + t * (highlightColor.r - startOutlineColor.r)),
+            int(startOutlineColor.g + t * (highlightColor.g - startOutlineColor.g)),
+            int(startOutlineColor.b + t * (highlightColor.b - startOutlineColor.b))
+        );
+
+        node->setFillColor(newFillColor);
+        node->setOutlineColor(newOutlineColor);
+
+        if (elapsed >= duration)
         {
-            float t = std::sin((elapsed / duration) * 3.14159f / 2);
-            opacity = t;
-            node->setOpacity(opacity);
-        }
-
-        if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
-        {
-            node->setPosition(targetPos);
-            node->setOpacity(1);
+            node->setFillColor(startFillColor);
+            node->setOutlineColor(startOutlineColor);
             return true;
         }
 
@@ -104,43 +117,64 @@ void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool
     });
 }
 
-void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* target, float duration)
+void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
 {
-    mActionQueue.pushAction([this, parent, child, target, duration, 
-                                elapsed = 0.0f, isInit = false, 
-                                edge = static_cast<Edge*>(nullptr), 
-                                startPos = sf::Vector2f(), targetPos = sf::Vector2f(), 
-                                speed = sf::Vector2f()](sf::Time dt) mutable -> bool {
-        if (!isInit)
-        {
-            for (auto &e : mEdgeList) {
-                if (e->mFrom == parent && e->mTo == child) {
-                    edge = e.get();
-                    break;
-                }
-            }
+    if (!node) return;
+    sf::Vector2f prevPos = node->getPosition();
+    mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration, appearEffect));
+    mActionQueue.pushUndo(Action::MoveNode(node, prevPos, duration, false));
+}
 
+void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
+{
+    mActionQueue.pushAction(Action::MoveEdge(mEdgeList, parent, child, targetTail, duration)); 
+    mActionQueue.pushUndo(Action::MoveEdge(mEdgeList, parent, targetTail, child, duration));
+}
+
+void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
+{
+    mActionQueue.pushAction([this, parent, child, highlightColor, duration, 
+        elapsed = 0.0f, isInit = false, 
+        edge = static_cast<Edge*>(nullptr), 
+        startColor = sf::Color()](sf::Time dt) mutable -> bool 
+    {
+        if (!child) return true;
+
+        if (!isInit)
+        {   
+            edge = findEdge(parent, child);
             if (!edge) return true;
 
-            startPos = edge->getTail();
-            targetPos = target ? target->getPosition() : edge->getHead();
-            speed = (targetPos - startPos) / duration;
+            startColor = edge->getColor();
             isInit = true;
-            edge->mIsChangingTail = true;
         }
 
-        if (!edge) return true;
-
         elapsed += dt.asSeconds();
-        sf::Vector2f newPos = startPos + speed * elapsed;
-        edge->setTail(newPos);
+        float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
 
-        if (speed == sf::Vector2f(0, 0) || elapsed >= duration) {
-            edge->mTo = target;
-            edge->mIsChangingTail = false;
+        sf::Color newColor(
+            int(startColor.r + t * (highlightColor.r - startColor.r)),
+            int(startColor.g + t * (highlightColor.g - startColor.g)),
+            int(startColor.b + t * (highlightColor.b - startColor.b))
+        );
+
+
+        edge->setColor(newColor);
+
+        if (elapsed >= duration)
+        {
+            edge->setColor(startColor);
             return true;
         }
 
         return false;
-    });        
+    });
+}
+
+#include <iostream>
+
+void DS::undo()
+{
+    std::cerr << "HELLO\n";
+    mActionQueue.undo();
 }

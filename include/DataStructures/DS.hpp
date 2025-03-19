@@ -4,6 +4,7 @@
 #include <SceneNode/Edge.hpp>
 #include <Core/Animation.hpp>
 #include <Core/ActionQueue.hpp>
+#include <Core/Action.hpp>
 
 class DS: public SceneNode
 {
@@ -20,7 +21,7 @@ public:
     std::function<void(int)>        updateStepCallback; 
 
 protected:
-    float                           mAnimationSpeed = 0.75f;
+    float                           mAnimationSpeed = 0.5f;
     float                           mMaxWidth = 1200;
     float                           mVerticalSpacing = 100;
 
@@ -36,9 +37,14 @@ protected:
     void                            addNode(CircleNode* node);
     void                            removeNode(CircleNode* node);
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
+    void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration);
 
     void                            addEdge(CircleNode* parent, CircleNode* child);
     Edge*                           findEdge(CircleNode* parent, CircleNode* child);
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
-    void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* target, float duration);
+    void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
+    void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+
+public:
+    void undo();
 };

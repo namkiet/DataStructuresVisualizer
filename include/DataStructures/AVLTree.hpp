@@ -14,6 +14,7 @@ public:
     void                        remove(int value) override;
     bool                        search(int value) override;
 
+    // Just for debug
     void                        leftRotate();
     void                        rightRotate();
 

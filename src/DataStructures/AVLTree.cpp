@@ -44,19 +44,25 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
     {
         node = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
         node->mParent = prev;
+
+        createNewActionGroup();
         addNode(node);
         addEdge(node, nullptr);
         addEdge(node, nullptr);
+
         if (prev) // Not root node
         {
             node->setPosition(prev->getPosition());
             node->setOpacity(0);
             node->mLevel = prev->mLevel + 1;
+
+            createNewActionGroup();
             if (value < prev->mValue) // is left child
                 moveNode(node, prev->getPosition() + sf::Vector2f(-mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), mAnimationSpeed, true);
             else // is right child
                 moveNode(node, prev->getPosition() + sf::Vector2f(mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), mAnimationSpeed, true);
             
+
             createNewActionGroup();
             moveEdge(prev, nullptr, node, mAnimationSpeed);
         }
@@ -68,9 +74,21 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
         return node;
     }
     
-    mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 0.25f));
-    if (value < node->mValue) node->mLeft = insert(node->mLeft, node, value);
-    if (value > node->mValue) node->mRight = insert(node->mRight, node, value);
+    createNewActionGroup();
+    highlightNode(node, sf::Color::Red, mAnimationSpeed);
+
+    if (value < node->mValue) 
+    {
+        createNewActionGroup();
+        traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
+        node->mLeft = insert(node->mLeft, node, value);
+    }
+    if (value > node->mValue) 
+    {
+        createNewActionGroup();
+        traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
+        node->mRight = insert(node->mRight, node, value);
+    }
 
     node = updateHeight(node);
     node = balance(node);
@@ -147,9 +165,6 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
 
             std::vector<std::unique_ptr<Animation>> deleteAnimations;
 
-            // mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(mEdgeList, cur, cur->mLeft, node->mLeft, 3.5f));
-            // mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(mEdgeList, cur, cur->mRight, node->mRight, 3.5f));
-
             if (cur == prev->mLeft)
             {
                 deleteAnimations.push_back(std::make_unique<EdgeMove>(mEdgeList, prev, prev->mLeft, nullptr, mAnimationSpeed));
@@ -201,11 +216,17 @@ bool AVLTree::search(TreeNode* node, int value)
     if (!node) return false;
     if (value == node->mValue)
     {
-        // mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Blue, 0.3f));
-        // mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Blue, 0.3f));
-        // mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Blue, 0.3f));
+        int blinkTimes = 3;
+        while (blinkTimes--)
+        {
+            createNewActionGroup();
+            highlightNode(node, sf::Color::Blue, mAnimationSpeed * 0.4f);
+        }
         return true;
     }
+
+    createNewActionGroup();
+    highlightNode(node, sf::Color::Red, mAnimationSpeed);
     // mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 1.0f));
     if (value < node->mValue) return search(node->mLeft, value);
     if (value > node->mValue) return search(node->mRight, value);

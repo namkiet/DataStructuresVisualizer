@@ -174,11 +174,14 @@ void World::handleEvent(const sf::Event& event){
             mDataStructure->insert(value);
         }
 
-        // if (event.key.code == sf::Keyboard::L)
-        //     mDataStructure->leftRotate();
+		if (event.key.code == sf::Keyboard::U)
+			mDataStructure->undo();
 
-		// if (event.key.code == sf::Keyboard::R)
-        //     mDataStructure->rightRotate();
+        if (event.key.code == sf::Keyboard::L)
+            mDataStructure->leftRotate();
+
+		if (event.key.code == sf::Keyboard::R)
+            mDataStructure->rightRotate();
 
         if (event.key.code == sf::Keyboard::D)
         {

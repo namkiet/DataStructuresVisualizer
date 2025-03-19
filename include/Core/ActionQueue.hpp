@@ -1,44 +1,49 @@
 #include <SFML/System/Time.hpp>
 #include <queue>
+#include <stack>
 #include <functional>
 
-class ActionQueue {
+class ActionQueue 
+{
+public:
+    using ActionFunc = std::function<bool(sf::Time)>;
+
+    void pushUndo(ActionFunc action) {
+        undoStack.push(std::move(action));
+        redoStack = std::stack<ActionFunc>(); // Xóa redo khi có hành động mới
+    }
+
+    void pushRedo(ActionFunc action) {
+        redoStack.push(std::move(action));
+    }
+
+    void undo() {
+        if (undoStack.empty() || !queue.empty()) return;
+        auto action = std::move(undoStack.top());
+        undoStack.pop();
+        redoStack.push(action);
+        pushAction(action);
+    }
+
+    void redo() {
+        // if (redoStack.empty()) return;
+        // auto action = std::move(redoStack.top());
+        // redoStack.pop();
+        // undoStack.push(action);
+        // return action(dt);
+    }
+
+    bool canUndo() const { return !undoStack.empty(); }
+    bool canRedo() const { return !redoStack.empty(); }
+
 private:
-    std::deque<std::vector<std::function<bool(sf::Time)>>> queue;
+    std::stack<ActionFunc> undoStack;
+    std::stack<ActionFunc> redoStack;
+    std::deque<std::vector<ActionFunc>> queue;
 
 public:
-    void pushAction(std::function<bool(sf::Time)> action)
-    {
-        if (queue.empty())
-            queue.emplace_back();
-
-        queue.back().push_back(std::move(action));
-    }
-
-    void update(sf::Time dt) {
-        if (!queue.empty()) {
-            auto &currentBatch = queue.front();
-            bool allFinished = true;
-
-            for (auto it = currentBatch.begin(); it != currentBatch.end(); ) {
-                if ((*it)(dt)) {
-                    it = currentBatch.erase(it);
-                } else {
-                    ++it;
-                    allFinished = false;
-                }
-            }
-
-            if (allFinished) {
-                queue.pop_front();
-            }
-        }
-    }
-
-    void createNewBatch()
-    {
-        queue.emplace_back();
-    }
-
-    bool empty() const { return queue.empty(); }
+    void pushAction(ActionFunc action);
+    void update(sf::Time dt);
+    void createNewBatch();
+    bool empty() const;
 };

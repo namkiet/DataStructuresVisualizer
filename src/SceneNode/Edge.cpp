@@ -2,10 +2,11 @@
 #include <Core/Utility.hpp>
 #include<iostream>
 
-Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow): 
+Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness): 
     mFrom(from),
     mTo(to),
-    mLine(sf::PrimitiveType::LineStrip, 2),
+    mLine(sf::Quads, 4),
+    mThickness(thickness),
     mColor(color),
     mHasArrow(hasArrow),
     mIsChangingTail(false)
@@ -16,23 +17,30 @@ Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow):
     mHead = mFrom->getPosition();
     mTail = (mTo ? mTo->getPosition() : mFrom->getPosition());
 
-    buildEdge();
+    updateEdge();
 }
 
 
-void Edge::buildEdge()
+void Edge::updateEdge()
 {
     mLine[0].color = mColor;
     mLine[1].color = mColor;
+    mLine[2].color = mColor;
+    mLine[3].color = mColor;
     mArrowHead.setFillColor(mColor);
 
     sf::Vector2f dir = mTail - mHead;
+    sf::Vector2f perp(-dir.y, dir.x);
+
     if (norm(dir) <= 2 * mFrom->getRadius()) return;
 
-    sf::Vector2f offset = (mHead != mTail ? dir * (mFrom->getRadius() / norm(dir)) : sf::Vector2f(0, 0));
+    sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+    perp = perp * ((mThickness / 2) / norm(perp));
 
-    mLine[0].position = mHead + offset;
-    mLine[1].position = mTail - offset;
+    mLine[0].position = mHead + offset - perp;
+    mLine[1].position = mHead + offset + perp;
+    mLine[2].position = mTail - offset + perp;
+    mLine[3].position = mTail - offset - perp;
 
     float theta = angle(mHead, mTail);
 
@@ -50,19 +58,25 @@ void Edge::buildEdge()
 void Edge::setHead(sf::Vector2f head)
 {
     mHead = head;
-    buildEdge();
+    updateEdge();
 }
 
 void Edge::setTail(sf::Vector2f tail)
 {
     mTail = tail;
-    buildEdge();
+    updateEdge();
 }
 
 void Edge::setColor(sf::Color color)
 {
     mColor = color;
-    buildEdge();
+    updateEdge();
+}
+
+void Edge::setThickness(float thickness)
+{
+    mThickness = thickness;
+    updateEdge();
 }
 
 sf::Color Edge::getColor()
@@ -86,7 +100,7 @@ void Edge::update(sf::Time dt)
     {
         mHead = mFrom->getPosition();
         mTail = mTo ? mTo->getPosition() : mFrom->getPosition();
-        buildEdge();
+        updateEdge();
     }
 }
 
