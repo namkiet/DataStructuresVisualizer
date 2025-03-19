@@ -1,6 +1,7 @@
 #pragma once
 #include <SceneNode/CircleNode.hpp>
 #include <SceneNode/Edge.hpp>
+#include <functional>
 
 namespace Action
 {
