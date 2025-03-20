@@ -6,6 +6,10 @@
 #include <Core/ActionQueue.hpp>
 #include <Core/Action.hpp>
 
+
+#include <SceneNode/TreeNode.hpp>
+#include <iostream>
+
 class DS: public SceneNode
 {
 public:

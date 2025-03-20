@@ -227,25 +227,42 @@ bool AVLTree::search(TreeNode* node, int value)
 
     createNewActionGroup();
     highlightNode(node, sf::Color::Red, mAnimationSpeed);
-    // mAnimationQueue.addAnimation(std::make_unique<NodeHighlight>(node, sf::Color::Red, 1.0f));
-    if (value < node->mValue) return search(node->mLeft, value);
-    if (value > node->mValue) return search(node->mRight, value);
+    
+    if (value < node->mValue) 
+    {
+        createNewActionGroup();
+        traverseEdge(node, node->mLeft, sf::Color::Red, mAnimationSpeed);
+        return search(node->mLeft, value);
+    }
+    if (value > node->mValue)
+    {
+        createNewActionGroup();
+        traverseEdge(node, node->mRight, sf::Color::Red, mAnimationSpeed);
+        return search(node->mRight, value);
+    }
     return true;
 }
 
 int AVLTree::getHeight(TreeNode* root) {
-    return root ? root->mHeight : 0;
+    if (root)
+        return root->mHeight;
+    return 0;
 }
 
 int AVLTree::getBalanceFactor(TreeNode* root) 
 {
-    return root ? getHeight(root->mLeft) - getHeight(root->mRight) : 0;
+    if (root)
+        return getHeight(root->mLeft) - getHeight(root->mRight);
+    return 0;
 }
 
 TreeNode* AVLTree::updateHeight(TreeNode* root)
 {
     if (updateStepCallback) updateStepCallback(1);
-    if (!root) return nullptr;
+
+    if (!root) 
+        return nullptr;
+
     root->mHeight = 1 + std::max(getHeight(root->mLeft), getHeight(root->mRight));
     return root;
 }
@@ -391,47 +408,27 @@ void AVLTree::rightRotate()
     align(mRoot);
 }
 
-void AVLTree::align(TreeNode* root) // BFS
+void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, float curSpacingY) // DFS
 {
-    if (!root) return;
-    createNewActionGroup();
+    if (!curNode) return;
 
-    std::queue<std::pair<TreeNode*, sf::Vector2f>> q;
-    q.push(std::make_pair(root, sf::Vector2f(0, 0)));
-
-    while (!q.empty())
+    if (!curNode->mParent)
     {
-        int levelSize = q.size();
-        for (int i = 0; i < levelSize; i++)
-        {
-            TreeNode* cur = q.front().first;
-            sf::Vector2f prevPos = q.front().second;
-            q.pop();
-
-            // Find position for the current node
-            sf::Vector2f curPos;
-            if (cur->mParent)
-            {
-                cur->mLevel = cur->mParent->mLevel + 1;
-                if (cur->mValue < cur->mParent->mValue) // if current node is left child
-                    curPos = prevPos + sf::Vector2f(-mMaxWidth / (1 << (cur->mLevel + 1)), mVerticalSpacing);
-                else // if current node is right child
-                    curPos = prevPos + sf::Vector2f(mMaxWidth / (1 << (cur->mLevel + 1)), mVerticalSpacing);
-            }
-            else
-            {
-                cur->mLevel = 0;
-                curPos = sf::Vector2f(mMaxWidth / 2, mVerticalSpacing);
-            }
-
-            // Move current node to the desired position
-            moveNode(cur, curPos, mAnimationSpeed, false);
-
-            if (cur->mLeft) 
-                q.push(std::make_pair(cur->mLeft, curPos));
-            
-            if (cur->mRight) 
-                q.push(std::make_pair(cur->mRight, curPos));
-        }
+        curNode->mLevel = 0;
+        createNewActionGroup();
     }
+    else
+        curNode->mLevel = curNode->mParent->mLevel + 1;
+    
+    moveNode(curNode, curPos, mAnimationSpeed, false);
+    
+    // DFS down to their children
+    sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
+    sf::Vector2f rightChildPos = curPos + sf::Vector2f(curSpacingX, curSpacingY);
+
+    float newSpacingX = curSpacingX / 2;
+    float newSpacingY = curSpacingY;
+
+    align(curNode->mLeft, leftChildPos, newSpacingX, newSpacingY);
+    align(curNode->mRight, rightChildPos, newSpacingX, newSpacingY);
 }

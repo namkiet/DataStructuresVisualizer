@@ -1,36 +1,22 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/TreeNode.hpp>
+#include <DataStructures/DS.hpp>
 #include <Core/Animation.hpp>
 
-class HeapTree: public SceneNode
+class HeapTree: public DS
 {
 public:
                             HeapTree();
+
+public:
+    void                    insert(int value) override;
+    void                    remove(int value) override;
+    bool                    search(int value) override;
+
+private:
     TreeNode*               mRoot;
-    std::vector<TreeNode*>  mHeapArray;
-
-public:
-    void                    insert(int value);
-    // void                    remove(int value);
-    bool                    search(int value);
-
-    // void                    leftRotate();
-    // void                    rightRotate();
 
 private:
-    TreeNode*               insert(TreeNode* node, TreeNode* prev, int value);
-    // TreeNode*               remove(TreeNode* node, int value);
-    bool                    search(TreeNode* node, int value);
-
-public:
-    virtual void            updateCurrent(sf::Time dt);
-    virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-
-private:
-    AnimationQueue          mAnimationQueue;
-
-private:
-    // void                    align(TreeNode* root);
-    void                    align();
+    void                    align(int index, sf::Vector2f curPos = sf::Vector2f(600, 100), float curSpacingX = 300, float curSpacingY = 100);  
 };

@@ -62,7 +62,7 @@ private:
     SceneNode							mSceneGraph;
     std::array<SceneNode*, LayerCount>	mSceneLayers;
 
-    AVLTree*                                 mDataStructure;
+    DS*                                 mDataStructure;
     PseudoCode*                         mPseudoCode;
 
 public:

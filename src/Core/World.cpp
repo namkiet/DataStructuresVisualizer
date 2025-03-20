@@ -56,7 +56,7 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 	mWindow.draw(*ModeContainer);
 	mWindow.draw(*OperationButtonsList);
-	if (mPseudoCode) mPseudoCode->draw(mWindow);
+	// if (mPseudoCode) mPseudoCode->draw(mWindow);
 }
 
 CommandQueue& World::getCommandQueue()
@@ -79,7 +79,7 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	std::unique_ptr<AVLTree> root(new AVLTree());
+	std::unique_ptr<HeapTree> root(new HeapTree());
 	mDataStructure = root.get();
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
 	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
@@ -170,18 +170,18 @@ void World::handleEvent(const sf::Event& event){
             // int value = std::rand() % 100;
             int value = v[id];
             id++;
-            std::cerr << value << "\n";
+            // std::cerr << value << "\n";
             mDataStructure->insert(value);
         }
 
 		if (event.key.code == sf::Keyboard::U)
 			mDataStructure->undo();
 
-        if (event.key.code == sf::Keyboard::L)
-            mDataStructure->leftRotate();
+        // if (event.key.code == sf::Keyboard::L)
+        //     mDataStructure->leftRotate();
 
-		if (event.key.code == sf::Keyboard::R)
-            mDataStructure->rightRotate();
+		// if (event.key.code == sf::Keyboard::R)
+        //     mDataStructure->rightRotate();
 
         if (event.key.code == sf::Keyboard::D)
         {

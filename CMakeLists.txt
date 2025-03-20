@@ -13,7 +13,6 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-
 file(GLOB SRC_FILES 
     src/*.cpp
     src/GUI/*.cpp
@@ -22,6 +21,7 @@ file(GLOB SRC_FILES
     src/SceneNode/*.cpp
     src/DataStructures/*.cpp
 )
+
 add_executable(main ${SRC_FILES} ${HEADER_FILES})
 
 # add_executable(main src/main.cpp)
