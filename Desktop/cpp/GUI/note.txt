@@ -1,0 +1,17 @@
+- Task:
+1. Menu
+2. Select mode creen
+3. DS:
+    - AVL
+    - Heap 
+    - LL 
+    - Graph
+4. Animation:
+    - Move
+    - Highlight
+    - Reverse
+    - Code block
+
+- Fix:
++ Delete Animation error
++ Sync PseudoCode with Animation
