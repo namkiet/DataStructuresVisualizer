@@ -410,10 +410,8 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     moveNode(curNode, curPos, mAnimationSpeed, false);
     
     // DFS down to their children
-    sf::Vector2f leftChildPos = sf::Vector2i(curPos + sf::Vector2f(-curSpacingX, curSpacingY));
+    sf::Vector2f leftChildPos = sf::curPos + sf::Vector2f(-curSpacingX, curSpacingY);
     sf::Vector2f rightChildPos = curPos + sf::Vector2f(curSpacingX, curSpacingY);
-
-    sf::Vector2i
 
     float newSpacingX = curSpacingX / 2;
     float newSpacingY = curSpacingY;
