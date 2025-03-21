@@ -31,4 +31,8 @@ public:
     void                    setOutlineColor(sf::Color color);
     void                    setOpacity(float opacity);
     float                   getRadius();
+    void                    setValue(int value);
+
+protected:
+    void                    updateValue();
 };

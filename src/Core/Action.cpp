@@ -112,7 +112,8 @@ namespace Action
             if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
             {
                 std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is switched to " << parent->mValue << "-" << (targetTail ? targetTail->mValue : -1) << "\n";
-        
+                
+                edge->setTail(targetPos);
                 edge->mTo = targetTail;
                 edge->mIsChangingTail = false;
                 return true;

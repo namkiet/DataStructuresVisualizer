@@ -56,7 +56,7 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 	mWindow.draw(*ModeContainer);
 	mWindow.draw(*OperationButtonsList);
-	// if (mPseudoCode) mPseudoCode->draw(mWindow);
+	if (mPseudoCode) mPseudoCode->draw(mWindow);
 }
 
 CommandQueue& World::getCommandQueue()
@@ -79,7 +79,7 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	std::unique_ptr<HeapTree> root(new HeapTree());
+	std::unique_ptr<AVLTree> root(new AVLTree());
 	mDataStructure = root.get();
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
 	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
@@ -90,7 +90,7 @@ void World::buildScene()
 		this->mPseudoCode->setStep(step);
 	};
 
-	v = {42, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
+	v = {42, 5, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
 	// v = {74, 12, 217, 36, 61, 77, 286, 153, 337, 93, 121, 47, 463, 248, 146};
 	// v = {10,9,8,7,6,5,4};
 	// v = {44, 45, 42, 40, 41};
@@ -185,10 +185,11 @@ void World::handleEvent(const sf::Event& event){
 
         if (event.key.code == sf::Keyboard::D)
         {
-            if (mDataStructure->search(5))
-                std::cerr << "Found \n";
-            else 
-                std::cerr << "Cannot find \n";
+			mDataStructure->remove(5);
+            // if (mDataStructure->remove(5))
+            //     std::cerr << "Found \n";
+            // else 
+            //     std::cerr << "Cannot find \n";
         }
     }
 }

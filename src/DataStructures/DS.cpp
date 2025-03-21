@@ -33,12 +33,23 @@ void DS::addNode(CircleNode* node)
 
 void DS::removeNode(CircleNode* node)
 {
-    node->setPosition(0, 0);
-    for (auto& edge : mEdgeList) {
-        if (edge->mTo == node) {
-            edge->mTo = nullptr;    
-        }
-    }
+    mActionQueue.pushAction([this, node](sf::Time dt) mutable->bool
+    {
+        mEdgeList.erase(
+            std::remove_if(mEdgeList.begin(), mEdgeList.end(),
+                [node](const std::unique_ptr<Edge>& edge) {
+                    return edge->mFrom == node;
+                }),
+            mEdgeList.end()
+        );
+
+        mNodeList.erase(
+            std::remove_if(mNodeList.begin(), mNodeList.end(),
+            [node](const CircleNode::Ptr& ptr) { return ptr.get() == node; }),
+            mNodeList.end()
+        );
+        return true;
+    });
 }
 void DS::addEdge(CircleNode* parent, CircleNode* child) 
 {
@@ -90,6 +101,7 @@ void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool
 
 void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
 {
+    std::cerr << "HELLO\n";
     mActionQueue.pushAction(Action::MoveEdge(mEdgeList, parent, child, targetTail, duration)); 
     mActionQueue.pushUndo(Action::MoveEdge(mEdgeList, parent, targetTail, child, duration));
 }

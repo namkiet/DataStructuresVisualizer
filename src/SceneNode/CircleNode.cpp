@@ -15,9 +15,7 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
     mText.setColor(sf::Color::Black);
     mText.setCharacterSize(radius * 0.75);
     mText.setFont(mFont);
-    mText.setString(std::to_string(value));
-    centerOrigin(mText);
-    mText.setPosition(mShape.getPosition());
+    updateValue();
 }
 
 void CircleNode::update(sf::Time dt) 
@@ -70,4 +68,17 @@ void CircleNode::setOpacity(float opacity)
 float CircleNode::getRadius()
 {
     return mShape.getRadius() + mShape.getOutlineThickness();
+}
+
+void CircleNode::setValue(int value)
+{
+    mValue = value;
+    updateValue();
+}
+
+void CircleNode::updateValue()
+{
+    mText.setString(std::to_string(mValue));
+    centerOrigin(mText);
+    mText.setPosition(mShape.getPosition());
 }
