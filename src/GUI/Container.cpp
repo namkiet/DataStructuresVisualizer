@@ -1,8 +1,5 @@
-#include "GUI/Container.hpp"
-
-#include "SFML/Window/Event.hpp"
-#include "SFML/Graphics/RenderStates.hpp"
-#include "SFML/Graphics/RenderTarget.hpp"
+#include <SFML/Graphics.hpp>
+#include <GUI/Container.hpp>
 #include <iostream>
 namespace GUI
 {

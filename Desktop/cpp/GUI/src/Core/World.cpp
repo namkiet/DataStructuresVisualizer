@@ -6,7 +6,7 @@
 #include "GUI/Container.hpp"
 #include "DataStructures/AVLTree.hpp"
 #include "GUI/ExpandableButton.hpp"
-#include "GUI/mainUI.hpp"
+#include "GUI/MainUI.hpp"
 
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
@@ -110,7 +110,7 @@ void World::buildScene()
 
 void World::setMode(World::Mode mode){
 	//ModeContainer->ChangeActivateChild(mode); // ensure that the Modecontainer handle the true index of activated child
-	mMainUI->CreateButtonList(mode,mDataStructure);
+	mMainUI->CreateButtonList(mode, mDataStructure);
 	// OperationButtonsList->makeEmpty();
 	// if(mode == World::Mode::AVL)
 	// {
@@ -171,8 +171,6 @@ void World::handleEvent(const sf::Event& event){
 
 	ModeContainer->handleEvent(event);
 	mMainUI->handleEvent(event);
-
-
 	updateBackRequest();
 
 	if (event.type == sf::Event::KeyPressed)

@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
-#include <State/State.hpp>
 #include <GUI/Container.hpp>
 #include <GUI/Button.hpp>
 #include <GUI/ExpandableButton.hpp>
@@ -18,17 +17,12 @@ namespace GUI
         private:
             sf::Font                            mFont;
 
-            sf::RectangleShape                  toolbox;
+            sf::RectangleShape                  Toolbox;
             sf::RectangleShape                  Background;
             std::vector<sf::VertexArray>        mSeperateToolBoxLine;
             sf::RectangleShape                  OperationBox;
             std::vector<sf::Vector2f>           OperationButtonPosition;
             bool                                BackRequest;
-
-            
-
-
-
 
             GUI::Container::Ptr                 OperationButtonsList;
             GUI::Button::Ptr                    BackButtons;
@@ -37,11 +31,16 @@ namespace GUI
 
 
         public:
-            MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts);
+                                                MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts);
             void			                    draw(sf::RenderTarget& target, sf::RenderStates states) const;
-            void                                CreateButtonList(World::Mode mode, DS* mDataStructure);
             void                                handleEvent(const sf::Event& event);
+        
+        public:
+            void                                CreateButtonList(World::Mode mode, DS* mDataStructure);
             bool                                getBackRequest();
+
+        private:
+            void                                updateTheme();
     };
     
 

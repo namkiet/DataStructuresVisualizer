@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include "GUI/Container.hpp"
-#include "DataStructures/AVLTree.hpp"
-#include "GUI/ExpandableButton.hpp"
+#include <GUI/Container.hpp>
+#include <DataStructures/AVLTree.hpp>
+#include <GUI/ExpandableButton.hpp>
 
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),

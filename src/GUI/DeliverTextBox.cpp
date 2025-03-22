@@ -1,11 +1,11 @@
-#include "GUI/DeliverTextBox.hpp"
 #include <SFML/Graphics.hpp>
+#include <GUI/DeliverTextBox.hpp>
+#include <GUI/ExpandableButton.hpp>
 #include <string>
 #include <functional>
 #include <iostream>
-#include "GUI/ExpandableButton.hpp"
-namespace GUI {
 
+namespace GUI {
 const std::string DeliverTextBox::mAllowedChars = "0123456789";
 
 DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)

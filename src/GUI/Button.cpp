@@ -1,6 +1,6 @@
-#include "GUI/Button.hpp"
+#include <GUI/Button.hpp>
 #include <iostream>
-#include "Core/Utility.hpp"
+#include <Core/Utility.hpp>
 
 namespace GUI
 {

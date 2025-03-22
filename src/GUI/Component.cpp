@@ -1,4 +1,4 @@
-#include "GUI/Component.hpp"
+#include <GUI/Component.hpp>
 #include <iostream>
 
 
