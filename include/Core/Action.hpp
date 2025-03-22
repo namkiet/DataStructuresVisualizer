@@ -9,6 +9,7 @@ namespace Action
 
     ActionFunc HighlightNode(CircleNode* node, sf::Color highlightColor, float duration);
     ActionFunc MoveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
+    ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration);
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
 

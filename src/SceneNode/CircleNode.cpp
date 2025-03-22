@@ -11,11 +11,11 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
     mShape.setOutlineThickness(2);
     mShape.setPointCount(10000);
 
+
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
-    mText.setColor(sf::Color::Black);
-    mText.setCharacterSize(radius * 0.75);
     mText.setFont(mFont);
-    updateValue();
+    mTextSize = radius * 0.75;
+    updateText();
 }
 
 void CircleNode::update(sf::Time dt) 
@@ -73,12 +73,25 @@ float CircleNode::getRadius()
 void CircleNode::setValue(int value)
 {
     mValue = value;
-    updateValue();
+    updateText();
 }
 
-void CircleNode::updateValue()
+void CircleNode::updateText()
 {
+    mText.setColor(sf::Color::Black);
+    mText.setCharacterSize(mTextSize);
     mText.setString(std::to_string(mValue));
     centerOrigin(mText);
     mText.setPosition(mShape.getPosition());
+}
+
+float CircleNode::getTextSize()
+{
+    return mText.getCharacterSize();
+}
+
+void CircleNode::setTextSize(float textSize)
+{
+    mTextSize = textSize;
+    updateText();
 }

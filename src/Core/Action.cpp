@@ -85,6 +85,37 @@ namespace Action
         };
     }
 
+    ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration)
+    {
+        return [node, targetValue, duration, 
+            elapsed = 0.f, isInit = false, startTextSize = 0.f]
+            (sf::Time dt) mutable ->bool
+        {
+            if (!isInit)
+            {
+                startTextSize = node->getTextSize();
+                isInit = true;
+            }
+
+            elapsed += dt.asSeconds();
+            float t = std::sin((elapsed / duration) * 3.14159f);
+
+            if (elapsed >= duration / 2)
+                node->setValue(targetValue);
+                
+            node->setTextSize(startTextSize * (1 - t));
+
+            if (elapsed >= duration)
+            {
+                node->setTextSize(startTextSize);
+                return true;
+            }
+
+            return false;
+        };
+
+    }
+
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
     {
         return [&edgeList, parent, child, targetTail, duration, 

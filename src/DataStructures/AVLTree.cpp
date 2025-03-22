@@ -186,16 +186,25 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             while (cur->mLeft)
                 cur = cur->mLeft;
             
-            node->setValue(cur->mValue);
-            cur->setValue(value);
-            node->mRight = remove(node->mRight, value);
+            // node->setValue(cur->mValue);
+            // cur->setValue(value);
+            mActionQueue.pushAction(Action::ChangeNodeValue(node, cur->mValue, 0.5f));
+            mActionQueue.pushAction(Action::ChangeNodeValue(cur, value, 0.5f));
+
+            createNewActionGroup();
+
+            mActionQueue.pushAction([this, node, value](sf::Time dt) mutable -> bool
+            {
+                node->mRight = remove(node->mRight, value);   
+                // return true;
+            });
 
             return node;
         }
     }
 
-    // node = updateHeight(node);
-    // node = balance(node);
+    node = updateHeight(node);
+    node = balance(node);
     return node;
 }
 
@@ -407,10 +416,12 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     else
         curNode->mLevel = curNode->mParent->mLevel + 1;
     
+    std::cerr << curPos.x << "-" << curPos.y << "\n";
+
     moveNode(curNode, curPos, mAnimationSpeed, false);
     
     // DFS down to their children
-    sf::Vector2f leftChildPos = sf::curPos + sf::Vector2f(-curSpacingX, curSpacingY);
+    sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
     sf::Vector2f rightChildPos = curPos + sf::Vector2f(curSpacingX, curSpacingY);
 
     float newSpacingX = curSpacingX / 2;
