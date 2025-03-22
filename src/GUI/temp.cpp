@@ -1,6 +1,7 @@
-#include "GUI/mainUI.hpp"
+#include "GUI/MainUI.hpp"
 #include "Core/World.hpp"
 #include <memory>
+
 GUI:: MainUI::MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts)
     {
         BackRequest = false;

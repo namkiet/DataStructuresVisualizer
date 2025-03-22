@@ -25,11 +25,6 @@ namespace GUI
             std::vector<sf::Vector2f>           OperationButtonPosition;
             bool                                BackRequest;
 
-            
-
-
-
-
             GUI::Container::Ptr                 OperationButtonsList;
             GUI::Button::Ptr                    BackButtons;
 

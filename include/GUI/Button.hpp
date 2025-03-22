@@ -1,15 +1,15 @@
-    #pragma once
-    #include "Core/ResourceHolder.hpp"
-    #include "SFML/Graphics.hpp"
-    #include <vector>
-    #include <string>
-    #include <memory>
-    #include <functional>
-    #include "Core/ResourceIdentifiers.hpp"
-    #include "Core/User.hpp"
-    #include<vector>
+#pragma once
+#include "Core/ResourceHolder.hpp"
+#include "SFML/Graphics.hpp"
+#include <vector>
+#include <string>
+#include <memory>
+#include <functional>
+#include "Core/ResourceIdentifiers.hpp"
+#include "Core/User.hpp"
+#include<vector>
 
-    #include "GUI/Component.hpp"
+#include "GUI/Component.hpp"
 
 
 namespace GUI
@@ -67,8 +67,3 @@ namespace GUI
 
     };
 }
-
-
-
-
-
