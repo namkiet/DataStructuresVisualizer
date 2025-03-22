@@ -6,7 +6,7 @@
 #include <GUI/Button.hpp>
 #include <GUI/ExpandableButton.hpp>
 #include <Core/World.hpp>
-#include "DataStructures/DS.hpp"
+#include <DataStructures/DS.hpp>
 
 namespace GUI
 {
@@ -28,7 +28,6 @@ namespace GUI
             GUI::Button::Ptr                    BackButtons;
 
             // GUI::Container::Ptr                 ModeContainer;
-
 
         public:
                                                 MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts);
