@@ -30,7 +30,7 @@ class Container : public Component
         void				            select(std::size_t index);
 
 
-        bool                            hasMode();
+        bool                            hasActivation();
 
 
     private:

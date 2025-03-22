@@ -18,6 +18,11 @@
 
 #include <SceneNode/PseudoCode.hpp>
 
+namespace GUI
+{
+    class MainUI;
+}
+
 class World : private sf::NonCopyable
 {
 private:
@@ -47,6 +52,8 @@ private:
     void								buildScene();
     // void                                initPseudoCode();
     void                                CreateModeContainer();
+    void                                updateBackRequest();
+
 
 private:
     enum Layer
@@ -69,6 +76,7 @@ public:
     CommandQueue&						getCommandQueue();
     void                                handleEvent(const sf::Event& event);
     void                                setMode(World::Mode mode);
+    bool                                getBackRequest();
     
 private:
     CommandQueue						mCommandQueue;
@@ -79,5 +87,8 @@ private:
     GUI::Container::Ptr                 OperationButtonsList;
     Mode                                mMode;
     GUI::Container::Ptr                 ModeContainer;
+    std::shared_ptr<GUI::MainUI>        mMainUI;
+    bool                                BackRequest;
+
 
 };

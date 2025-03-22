@@ -1,76 +1,73 @@
-#include <GUI/MainUI.hpp>
-#include <Core/Variables.hpp>
+#include "GUI/mainUI.hpp"
+#include "Core/World.hpp"
+#include <memory>
+GUI:: MainUI::MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts)
+    {
+        BackRequest = false;
+        mFont = fonts.get(Fonts::ID::Main);
+        OperationButtonsList = std::make_shared<GUI::Container>();
+        Background.setSize(window.getView().getSize());
+        Background.setFillColor(sf::Color(37, 50, 56));
+        Background.setPosition(0.f,0.f);
 
-GUI::MainUI::MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts)
-{
-    BackRequest = false;
-    mFont = fonts.get(Fonts::ID::Main);
-    OperationButtonsList = std::make_shared<GUI::Container>();
-    Background.setSize(window.getView().getSize());
-    Background.setPosition(0.f,0.f);
+        toolbox.setSize(sf::Vector2f(300.f,540.f));
+        toolbox.setFillColor(sf::Color(31, 42, 47));
+        toolbox.setPosition(0.f,(Background.getSize().y - toolbox.getSize().y)/2);
 
-    Toolbox.setSize(sf::Vector2f(300.f,540.f));
-    Toolbox.setPosition(0.f,(Background.getSize().y - Toolbox.getSize().y)/2);
+        sf::Vector2f ToolboxPosition = toolbox.getPosition();
+        sf::Vector2f ToolBoxSize = toolbox.getSize();
 
-    sf::Vector2f ToolboxPosition = Toolbox.getPosition();
-    sf::Vector2f ToolBoxSize = Toolbox.getSize();
 
-    mSeperateToolBoxLine.resize(3);
-    mSeperateToolBoxLine[0] = sf::VertexArray(sf::Lines, 2);
-    mSeperateToolBoxLine[0][0].position = sf::Vector2f(ToolboxPosition.x, ToolboxPosition.y + 0.4 * ToolBoxSize.y);
-    mSeperateToolBoxLine[0][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.4 * ToolBoxSize.y);
-    
-    mSeperateToolBoxLine[1] = sf::VertexArray(sf::Lines, 2);
-    mSeperateToolBoxLine[1][0].position = sf::Vector2f(ToolboxPosition.x, ToolboxPosition.y + 0.5 * ToolBoxSize.y);
-    mSeperateToolBoxLine[1][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.5 * ToolBoxSize.y);
+        mSeperateToolBoxLine.resize(3);
+        mSeperateToolBoxLine[0] = sf::VertexArray(sf::Lines, 2);
+        mSeperateToolBoxLine[0][0].position = sf::Vector2f(ToolboxPosition.x, ToolboxPosition.y + 0.4 * ToolBoxSize.y);
+        mSeperateToolBoxLine[0][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.4 * ToolBoxSize.y);
+        
+        mSeperateToolBoxLine[1] = sf::VertexArray(sf::Lines, 2);
+        mSeperateToolBoxLine[1][0].position = sf::Vector2f(ToolboxPosition.x, ToolboxPosition.y + 0.5 * ToolBoxSize.y);
+        mSeperateToolBoxLine[1][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.5 * ToolBoxSize.y);
 
-    mSeperateToolBoxLine[2] = sf::VertexArray(sf::Lines, 2);
-    mSeperateToolBoxLine[2][0].position = sf::Vector2f(ToolboxPosition.x, ToolboxPosition.y + 0.85 * ToolBoxSize.y);
-    mSeperateToolBoxLine[2][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.85 * ToolBoxSize.y);
+        mSeperateToolBoxLine[2] = sf::VertexArray(sf::Lines, 2);
+        mSeperateToolBoxLine[2][0].position = sf::Vector2f(ToolboxPosition.x, ToolboxPosition.y + 0.85 * ToolBoxSize.y);
+        mSeperateToolBoxLine[2][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.85 * ToolBoxSize.y);
 
-    OperationBox.setSize(sf::Vector2f(ToolBoxSize.x * 0.4, 0.35 * ToolBoxSize.y));
-    OperationBox.setPosition(mSeperateToolBoxLine[1][0].position);
+        OperationBox.setSize(sf::Vector2f(ToolBoxSize.x * 0.4, 0.35 * ToolBoxSize.y));
+        OperationBox.setFillColor(sf::Color(56, 71, 79));
+        OperationBox.setPosition(mSeperateToolBoxLine[1][0].position);
 
-    OperationButtonPosition.resize(5);
-    OperationButtonPosition[0] = sf::Vector2f(OperationBox.getPosition());
-    OperationButtonPosition[1] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.2);
-    OperationButtonPosition[2] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.4);
-    OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
-    OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
+        OperationButtonPosition.resize(5);
+        OperationButtonPosition[0] = sf::Vector2f(OperationBox.getPosition());
+        OperationButtonPosition[1] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.2);
+        OperationButtonPosition[2] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.4);
+        OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
+        OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
 
-    sf::Sprite HomeSprite;
-    HomeSprite.setTexture(textures.get(Textures::HomeIcon));
-    BackButtons = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f,20.f), "", sf::Vector2f(50.f,50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
-    BackButtons->setSprite(HomeSprite);
+        sf::Sprite HomeSprite;
+        HomeSprite.setTexture(textures.get(Textures::HomeIcon));
+        BackButtons = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f,20.f), "", sf::Vector2f(50.f,50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+        BackButtons->setSprite(HomeSprite);
+        
 
-    THEME::SetTheme(THEME::DARK_MODE);
-    updateTheme();
-}
 
-void GUI::MainUI::updateTheme()
-{
-    Background.setFillColor(THEME::BackgroundColor);
-    Toolbox.setFillColor(THEME::ToolBoxColor);
-    OperationBox.setFillColor(THEME::OperationBoxColor);
-}
 
+
+    }
 void GUI::MainUI::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     
     target.draw(Background);
-    target.draw(Toolbox);
-    for (auto& lines: mSeperateToolBoxLine)
+    target.draw(toolbox);
+    for(auto& lines: mSeperateToolBoxLine){
         target.draw(lines);
+    }
     target.draw(OperationBox);
     target.draw(*OperationButtonsList);
     target.draw(*BackButtons);
 }
 
-void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure)
-{
+void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
         OperationButtonsList->makeEmpty();
-        if(mode == World::Mode::AVL)
-        {
+        if(mode == World::Mode::AVL){
             GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
 
@@ -90,8 +87,8 @@ void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure)
             // 		}
             // 	}
             // });
-            sf::Vector2f insertButtonSize(Toolbox.getSize().x * 0.3,ButtonSize.y);
-            sf::Vector2f inputBoxInsertPos(Toolbox.getSize().x * 0.55,  OperationButtonPosition[2].y);
+            sf::Vector2f insertButtonSize(toolbox.getSize().x * 0.3,ButtonSize.y);
+            sf::Vector2f inputBoxInsertPos(toolbox.getSize().x * 0.55,  OperationButtonPosition[2].y);
             GUI::DeliverTextBox::Ptr InputBoxInsert = std::make_shared<GUI::DeliverTextBox>(mFont,inputBoxInsertPos,insertButtonSize);
             InputBoxInsert->setButtonParent(InsertButton);
             InsertButton->setCallback([this,InsertButton,mDataStructure](){

@@ -1,6 +1,6 @@
 #include <Core/Action.hpp>
 #include <iostream>
-
+#include <cmath>
 namespace Action
 {
     ActionFunc HighlightNode(CircleNode* node, sf::Color highlightColor, float duration)

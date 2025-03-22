@@ -1,5 +1,8 @@
-#include <SFML/Graphics.hpp>
-#include <GUI/Container.hpp>
+#include "GUI/Container.hpp"
+
+#include "SFML/Window/Event.hpp"
+#include "SFML/Graphics/RenderStates.hpp"
+#include "SFML/Graphics/RenderTarget.hpp"
 #include <iostream>
 namespace GUI
 {
@@ -49,14 +52,14 @@ void Container::pack(Component::Ptr component)
         mSelectedChild = index;
     }
  }
- bool Container::hasMode(){
+ bool Container::hasActivation(){
     return mActivateChild >= 0;
  }
 
 void Container::ChangeActivateChild(std::size_t index){
-    if(hasMode() && mActivateChild == index) return;
+    if(hasActivation() && mActivateChild == index) return;
 
-    if(hasMode()) 
+    if(hasActivation()) 
     {
         mChildren[mActivateChild]->deactivate();
     }

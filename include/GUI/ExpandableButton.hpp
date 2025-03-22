@@ -12,9 +12,10 @@ public:
             num = -1; VecNum.resize(0);
         }
     };
+
     typedef std::shared_ptr<ExpandableButton> Ptr;
 
-    ExpandableButton(sf::Font& fonts, sf::Vector2f Position, std::string text);
+    ExpandableButton(sf::Font& fonts, sf::Vector2f Position, std::string text,sf::Vector2f ButtonSize, GUI::Button::ShapeType shapeType = GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType content = GUI::Button::ContentType::Text);
 
     // void toggleMenu();
     void handleEvent(const sf::Event& event) override;
