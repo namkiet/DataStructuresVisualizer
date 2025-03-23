@@ -26,25 +26,6 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 
 void World::CreateModeContainer()
 {
-// 	float buttonX = 20.f;	
-// 	sf::Vector2f avlButtonPos(buttonX, 20.f);
-// 	sf::Vector2f linkedListButtonPos(buttonX, avlButtonPos.y + GUI::ButtonSize.y + 10.f);
-// 	sf::Vector2f heapButtonPos(buttonX, linkedListButtonPos.y + GUI::ButtonSize.y + 10.f);
-// 	sf::Vector2f graphButtonPos(buttonX, heapButtonPos.y + GUI::ButtonSize.y + 10.f);
-// 	GUI::Button::Ptr AVLButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), avlButtonPos, "AVL");
-// 	AVLButton->setCallback([this]() { setMode(World::Mode::AVL); });
-
-// 	GUI::Button::Ptr LinkedListButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), linkedListButtonPos, "LinkedList");
-// 	LinkedListButton->setCallback([this]() { setMode(World::Mode::LinkedList); });
-// 	GUI::Button::Ptr HeapButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), heapButtonPos, "Heap");
-// 	HeapButton->setCallback([this]() { setMode(World::Mode::Heap); });
-// 	GUI::Button::Ptr GraphButton = std::make_shared<GUI::Button>(mFont.get(Fonts::ID::Main), graphButtonPos, "Graph");
-// 	GraphButton->setCallback([this]() { setMode(World::Mode::Graph); });
-
-// 	ModeContainer->pack(AVLButton);
-// 	ModeContainer->pack(LinkedListButton);
-// 	ModeContainer->pack(HeapButton);
-// 	ModeContainer->pack(GraphButton);
 }
 
 

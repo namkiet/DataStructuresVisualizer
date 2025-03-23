@@ -8,7 +8,6 @@
 #include <Core/Command.hpp>
 #include <Core/CommandQueue.hpp>
 #include <Core/ResourceHolder.hpp>
-#include <Core/User.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <memory>
 #include <array>
@@ -26,5 +25,4 @@ public:
 	virtual bool						handleEvent(const sf::Event& event);
 private:
 	World 								mWorld;
-	User								mUser;
 };

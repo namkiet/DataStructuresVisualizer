@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <GUI/Button.hpp>
+#include <GUI/RectangleButton.hpp>
 #include <Core/Variables.hpp>
 #include <vector>
 #include <string>
@@ -10,30 +10,31 @@ class Carousel
 public:
     struct Item
     {
-        enum ItemType       {AVL, HEAP, LINKED_LIST, GRAPH};
+        enum ItemType           {AVL, HEAP, LINKED_LIST, GRAPH};
 
-        sf::Texture         mTexture;
-        sf::Sprite          mSprite;
-        GUI::Button         mButton;
-        sf::CircleShape     mDot;
-        ItemType            mType;
-        bool                mIsSelected;
-        sf::Vector2f        mInitialPosition;
+        GUI::RectangleButton*   mButton;
+        sf::CircleShape         mDot;
+        ItemType                mType;
+        bool                    mIsSelected;
+        sf::Vector2f            mInitialPosition;
     
-        Item(ItemType type, std::string imageName)
-            : mType(type), mIsSelected(false), mButton(GUI::Button(sf::Vector2f(100, 100), sf::Vector2f(300, 300)))
+        Item(ItemType type, std::string imageName): 
+            mType(type), 
+            mIsSelected(false)
         {
-            if (!mTexture.loadFromFile("assets/images/" + imageName))
+            sf::Texture texture;
+            if (!texture.loadFromFile("assets/images/" + imageName))
                 exit(0);
     
-            mSprite.setTexture(mTexture);
-            mSprite.setOrigin(mTexture.getSize().x / 2, mTexture.getSize().y / 2);
+            // mSprite.setTexture(texture);
+            // mSprite.setOrigin(texture.getSize().x / 2, texture.getSize().y / 2);
     
             mDot.setRadius(5);
             mDot.setFillColor(sf::Color::White);
             mDot.setOrigin(5, 5);
 
-            mButton.setSprite(mSprite);
+
+            mButton = new GUI::RectangleButton(sf::Vector2f(100, 100), sf::Vector2f(300, 300), texture);
         }
     
         void setDotPosition(sf::Vector2f position)
@@ -43,24 +44,25 @@ public:
     
         void setScale(float scale)
         {
-            mSprite.setScale(sf::Vector2f(scale, scale));
+            // mSprite.setScale(sf::Vector2f(scale, scale));
         }
     
         float getScale() const
         {
-            return mSprite.getScale().x;
+            return 0;
+            // return mSprite.getScale().x;
         }
     
         void setOffset(sf::Vector2f offset)
         {
-            mButton.setPosition(mInitialPosition + offset);
+            mButton->setPosition(mInitialPosition + offset);
         }
     
         void setOpacity(float alpha)
         {
-            sf::Color color = mSprite.getColor();
-            color.a = alpha * 255.f;
-            mSprite.setColor(color);
+            // sf::Color color = mSprite.getColor();
+            // color.a = alpha * 255.f;
+            // mSprite.setColor(color);
         }
     
         void setDotOpacity(float alpha)
@@ -72,23 +74,24 @@ public:
     
         bool isClicked(sf::Vector2f mousePos)
         {
-            return mSprite.getGlobalBounds().contains(mousePos);
+            // return mSprite.getGlobalBounds().contains(mousePos);
+            return true;
         }
     
         void draw(sf::RenderWindow& window)
         {
-            window.draw(mButton);
+            window.draw(*mButton);
             window.draw(mDot);
         }
 
         void setCallback(GUI::Button::Callback callback)
         {
-            mButton.setCallback(callback);
+            mButton->setCallback(callback);
         }
 
         void handleEvent(sf::Event event)
         {
-            mButton.handleEvent(event);
+            mButton->handleEvent(event);
         }
     };
 
