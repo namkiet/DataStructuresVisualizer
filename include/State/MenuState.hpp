@@ -1,7 +1,7 @@
 #pragma once
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics.hpp>
 #include <State/StateStack.hpp>
+#include <GUI/Carousel.hpp>
 
 
 class MenuState : public State
@@ -13,22 +13,5 @@ public:
 	virtual bool			handleEvent(const sf::Event& event);
 
 private:
-	void					updateOptionText();
-
-private:
-	enum OptionNames
-	{
-		AVL,
-		Heap,
-		LinkedList,
-		Graph
-	};
-
-
-private:
-	sf::Sprite				mBackgroundSprite;
-
-private:
-	std::vector<sf::Text>	mOptions;
-	std::size_t				mOptionIndex;
+	Carousel				mCarousel;
 };

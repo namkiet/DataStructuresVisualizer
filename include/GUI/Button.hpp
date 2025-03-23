@@ -14,56 +14,72 @@
 
 namespace GUI
 {
-    extern const sf::Vector2f ButtonSize;
 
-    class Button: public Component
-    {
-        public:
-            typedef std::shared_ptr<Button>		Ptr;
-            typedef std::function<void()>		Callback;
+extern const sf::Vector2f ButtonSize;
+
+class Button: public Component
+{
+    public:
+        typedef std::shared_ptr<Button>		Ptr;
+        typedef std::function<void()>		Callback;
+
         enum class ShapeType {
             Rectangle,
             Circle
         };
+        
         enum class ContentType{
             Text,
             Image
-            };
-        public:
-                                    Button(sf::Font& fonts, sf::Vector2f Position, std::string text,sf::Vector2f ButtonSize, ShapeType shapeType = ShapeType::Rectangle, ContentType content = ContentType::Text);
+        };
+    
+    public:
+                                Button(sf::Vector2f position, sf::Vector2f buttonSize);
+                                Button(sf::Font& font, sf::Vector2f Position, std::string text,sf::Vector2f ButtonSize, ShapeType shapeType = ShapeType::Rectangle, ContentType content = ContentType::Text);
 
-            std::string             getText();
-            void					setCallback(Callback callback);
-            virtual void			handleEvent(const sf::Event& event);
+        virtual void			handleEvent(const sf::Event& event);
+        void			        draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-            void			        draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    public:
+        std::string             getText();
+        void					setToggle(bool flag); 
+        virtual bool			isSelectable() const;
+        virtual void			select();
+        virtual void			deselect();
+        void                    activate() override;
+        void                    deactivate() override;
+    
+    
+        void                    setSprite(sf::Sprite sprite);
+    protected:
+        Callback				mCallback;
+    public:
+        void					setCallback(Callback callback);
 
-            void					setToggle(bool flag); 
+    private:
+        bool                    mIsToggle;
+        sf::Color               mNormalColor;
+        sf::Color               mSelectedColor;
+        sf::Color               mActivatedColor;
+        
+        ShapeType               mShapeType;
+        ContentType             mContentType;
 
-            virtual bool			isSelectable() const;
-            virtual void			select();
-            virtual void			deselect();
+    protected:
+        sf::RectangleShape      mShape;
+        sf::CircleShape         mCircle;
+        sf::Text				mText;
+        sf::Sprite              mSprite;
+        // default Rectangle and Text
+    
+    public:
+        void                    setSize(sf::Vector2f size);
+        void                    setPosition(sf::Vector2f position);
+    
+    private:
+        void                    updateSpriteSize();
+        void                    updateSpritePosition();
 
-            void                    activate() override;
-            void                    deactivate() override;
-            void                    setSprite(sf::Sprite sprite);
-        protected:
-            Callback				mCallback;
-        private:
-            bool                    mIsToggle;
-            sf::Color               mNormalColor;
-            sf::Color               mSelectedColor;
-            sf::Color               mActivatedColor;
-            
-            ShapeType               mShapeType;
-            ContentType             mContentType;
+};
 
-        protected:
-            sf::RectangleShape      mShape;
-            sf::CircleShape         mCircle;
-            sf::Text				mText;
-            sf::Sprite              mSprite;
-            // default Rectangle and Text
-
-    };
 }

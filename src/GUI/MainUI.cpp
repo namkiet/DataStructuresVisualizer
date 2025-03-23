@@ -47,11 +47,6 @@ GUI:: MainUI::MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHold
         HomeSprite.setTexture(textures.get(Textures::HomeIcon));
         BackButtons = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f,20.f), "", sf::Vector2f(50.f,50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
         BackButtons->setSprite(HomeSprite);
-        
-
-
-
-
     }
 void GUI::MainUI::draw(sf::RenderTarget& target, sf::RenderStates states) const{
     

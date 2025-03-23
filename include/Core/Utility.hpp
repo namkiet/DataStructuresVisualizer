@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
+void centerOrigin(sf::Shape& shape);
 void centerOrigin(sf::Sprite& sprite);
 void centerOrigin(sf::Text& text);
 

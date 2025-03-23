@@ -2,23 +2,36 @@
 #include <iostream>
 #include "Core/Utility.hpp"
 #include <cmath>
-namespace GUI
-{
 
-Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf::Vector2f ButtonSize,ShapeType shapeType, ContentType content) : mCallback(), mShapeType(shapeType)
+GUI::Button::Button(sf::Vector2f position, sf::Vector2f buttonSize)
 {
-    mShapeType = shapeType;
-    mContentType = content;
+    mShapeType = ShapeType::Rectangle;
+    mContentType = ContentType::Image;
+
     mIsToggle = true;
     mNormalColor = sf::Color(56, 71, 79);
     mSelectedColor = sf::Color(76, 91, 99);
     mActivatedColor = sf::Color(96, 121, 129);
 
+    mShape.setSize(buttonSize);
+    mShape.setPosition(position);
+    mShape.setFillColor(mNormalColor);
+}
+
+GUI::Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf::Vector2f ButtonSize, ShapeType shapeType, ContentType content) : mCallback(), mShapeType(shapeType)
+{
+    mShapeType = shapeType;
+    mContentType = content;
+    mIsToggle = true;
+    mNormalColor = sf::Color(56, 71, 79);   
+    mSelectedColor = sf::Color(76, 91, 99);
+    mActivatedColor = sf::Color(96, 121, 129);
 
     mText.setFont(font);
     mText.setString(text);
     mText.setCharacterSize(20);
     mText.setFillColor(sf::Color::White);
+
     if(mShapeType == ShapeType::Rectangle)
     {
         mShape.setSize(ButtonSize);
@@ -30,7 +43,7 @@ Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf::Vect
             mText.setPosition(mShape.getPosition() + ButtonSize / 2.f);
         }
     }
-    else if(mShapeType == ShapeType::Circle)
+    else if (mShapeType == ShapeType::Circle)
     {
         float radius = ButtonSize.x / 2.f;
         mCircle.setRadius(radius);
@@ -45,33 +58,101 @@ Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf::Vect
     }
 }
 
-void Button::setSprite(sf::Sprite sprite)
+void GUI::Button::setSize(sf::Vector2f size)
+{
+    switch (mShapeType)
+    {
+        case ShapeType::Rectangle:
+            mShape.setSize(size);
+            break;
+        
+        case ShapeType::Circle:
+            mCircle.setRadius(size.x / 2.f);
+            break;
+        
+        default:
+            break;
+    }   
+
+    updateSpriteSize();
+}   
+
+void GUI::Button::setPosition(sf::Vector2f position)
+{
+    switch (mShapeType)
+    {
+        case ShapeType::Rectangle:
+            mShape.setPosition(position);
+            break;
+        
+        case ShapeType::Circle:
+            mCircle.setPosition(position);
+            break;
+        
+        default:
+            break;
+    }   
+
+    updateSpritePosition();
+}   
+
+void GUI::Button::updateSpriteSize()
+{
+    sf::Vector2f size;
+    switch (mShapeType)
+    {
+        case ShapeType::Rectangle:
+            size = mShape.getSize() / std::sqrt(2.f);
+            break;
+        
+        case ShapeType::Circle:
+            size = sf::Vector2f(1, 1) * mCircle.getRadius() * sqrt(2.f);
+            break;
+        
+        default:
+            break;
+    }
+
+    spriteResize(mSprite, size);
+}
+
+void GUI::Button::updateSpritePosition()
+{
+    sf::Vector2f position;
+    switch (mShapeType)
+    {
+        case ShapeType::Rectangle:
+            position = mShape.getPosition() + mShape.getSize() / 2.f;
+            break;
+        
+        case ShapeType::Circle:
+            position = mCircle.getPosition() + sf::Vector2f(mCircle.getRadius(), mCircle.getRadius());
+            break;
+        
+        default:
+            break;
+    }
+    mSprite.setPosition(position);
+}
+
+
+void GUI::Button::setSprite(sf::Sprite sprite)
 {
     mSprite = sprite;
     centerOrigin(mSprite);
-    if(mShapeType == ShapeType::Rectangle)
-    {   
-        sf::Vector2f size = mShape.getSize() / std::sqrt(2.f);
-        spriteResize(mSprite, size);
-        mSprite.setPosition(mShape.getPosition() + mShape.getSize() / 2.f);
-    }
-    else if(mShapeType == ShapeType::Circle)
-    {
-        sf::Vector2f size = sf::Vector2f(mCircle.getRadius() * 2.f / std::sqrt(2.f), mCircle.getRadius() * 2.f/ std::sqrt(2.f));
-        spriteResize(mSprite, size);
-        mSprite.setPosition(mCircle.getPosition() + sf::Vector2f(mCircle.getRadius(), mCircle.getRadius()));
-    }
+    updateSpriteSize();
+    updateSpritePosition();
 }
 
-std::string Button::getText(){
+std::string GUI::Button::getText(){
     return mText.getString().toAnsiString();
 }
 
-void Button::setCallback(Callback callback){
+void GUI::Button::setCallback(Callback callback){
     mCallback = std::move(callback);
 }
 
-void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+void GUI::Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     if(mShapeType == ShapeType::Rectangle)
         target.draw(mShape, states);
     else if(mShapeType == ShapeType::Circle)
@@ -79,70 +160,70 @@ void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
     if(mContentType == ContentType::Text)
         target.draw(mText, states);
-    else if(mContentType == ContentType::Image)
+    else if (mContentType == ContentType::Image)
+        target.draw(mSprite, states);
+}
+
+void GUI::Button::handleEvent(const sf::Event& event)
+{
+    if (event.type == sf::Event::MouseButtonPressed) 
+    {
+        sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
+
+        if (mShapeType == ShapeType::Rectangle && mShape.getGlobalBounds().contains(mousePos)
+            || mShapeType == ShapeType::Circle && mCircle.getGlobalBounds().contains(mousePos))
         {
-            target.draw(mSprite, states);
+            std::cerr << "Click " << this->mText.getString().toAnsiString() << std::endl;
+            this->activate();
+        }
+    }
+    else if (event.type == sf::Event::MouseMoved)
+    {
+        sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
+        bool hoverNow = false;
+        if(mShapeType == ShapeType::Rectangle)
+            hoverNow = mShape.getGlobalBounds().contains(mousePos);
+        else if(mShapeType == ShapeType::Circle)
+            hoverNow = mCircle.getGlobalBounds().contains(mousePos);
+
+        if (hoverNow && !isActive())
+        {
+            select();
+        }
+        else if(!hoverNow && isSelected() && !isActive())
+        {
+            deselect();
+        }
     }
 }
 
-void Button::handleEvent(const sf::Event& event)
-{
-if (event.type == sf::Event::MouseButtonPressed) 
-{
-    sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
-
-    if (mShapeType == ShapeType::Rectangle && mShape.getGlobalBounds().contains(mousePos)
-        || mShapeType == ShapeType::Circle && mCircle.getGlobalBounds().contains(mousePos))
-    {
-        
-        std::cout << "Click " << this->mText.getString().toAnsiString() << std::endl;
-        this->activate();
-    }
-}
-else if(event.type == sf::Event::MouseMoved){
-    sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
-    bool hoverNow = false;
-    if(mShapeType == ShapeType::Rectangle)
-        hoverNow = mShape.getGlobalBounds().contains(mousePos);
-    else if(mShapeType == ShapeType::Circle)
-        hoverNow = mCircle.getGlobalBounds().contains(mousePos);
-    if(hoverNow && !isActive())
-    {
-        select();
-    }
-    else if(!hoverNow && isSelected() && !isActive())
-    {
-        deselect();
-    }
-}
-}
-
-void Button::setToggle(bool flag)
+void GUI::Button::setToggle(bool flag)
 {
 	mIsToggle = flag;
 }
 
-bool Button::isSelectable() const
+bool GUI::Button::isSelectable() const
 {
     return true;
 }
 
-void Button::select()
+void GUI::Button::select()
 {
 	Component::select();
-    std::cout<<"Select"<<std::endl;
+    std::cerr << "Select \n";
     if (mIsToggle){
-        std::cout<<"OK"<<std::endl;
-        if(mShapeType == ShapeType::Rectangle)
+        std::cerr << "OK\n";
+        if (mShapeType == ShapeType::Rectangle)
             mShape.setFillColor(mSelectedColor);
-        else if(mShapeType == ShapeType::Circle)
+        else if (mShapeType == ShapeType::Circle)
             mCircle.setFillColor(mSelectedColor);
     }
-    if(!mIsToggle)
+
+    if (!mIsToggle)
         deselect();
 }
 
-void Button::deselect()
+void GUI::Button::deselect()
 {
 	Component::deselect();
     if(mIsToggle && !isActive())
@@ -154,23 +235,24 @@ void Button::deselect()
     }
 }
 
-void Button::activate()
+void GUI::Button::activate()
 {
 	Component::activate();
 	if (mIsToggle)
-		{
-            if(mShapeType == ShapeType::Rectangle)
-                mShape.setFillColor(mActivatedColor);
-            else if(mShapeType == ShapeType::Circle)
-                mCircle.setFillColor(mActivatedColor);
-        }
-    // mCallback();
+    {
+        if(mShapeType == ShapeType::Rectangle)
+            mShape.setFillColor(mActivatedColor);
+        else if(mShapeType == ShapeType::Circle)
+            mCircle.setFillColor(mActivatedColor);
+    }
+
+    mCallback();
 	// if (!mIsToggle)
 	// 	deactivate();
 }
 
 
-void Button::deactivate()
+void GUI::Button::deactivate()
 {   
 	Component::deactivate();
 	if (mIsToggle)
@@ -180,7 +262,4 @@ void Button::deactivate()
         else if(mShapeType == ShapeType::Circle)
             mCircle.setFillColor(mSelectedColor);
     }
-}
-
-
 }
