@@ -40,11 +40,11 @@ void DS::removeNode(CircleNode* node)
         }
     }
 }
-void DS::addEdge(CircleNode* parent, CircleNode* child) 
+void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
 {
-    mActionQueue.pushAction([this, parent, child](sf::Time dt) mutable -> bool
+    mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
     {
-        mEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child, false));
+        mEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child,hasArrow));
         return true;
     });
 }

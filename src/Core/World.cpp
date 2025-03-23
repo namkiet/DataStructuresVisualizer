@@ -3,16 +3,17 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <GUI/Container.hpp>
-#include <DataStructures/AVLTree.hpp>
-#include <GUI/ExpandableButton.hpp>
-#include <GUI/MainUI.hpp>
+#include "GUI/Container.hpp"
+#include "DataStructures/AVLTree.hpp"
+#include "GUI/ExpandableButton.hpp"
+#include "GUI/mainUI.hpp"
+#include "DataStructures/LinkedList.hpp"
 
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
     mWorldView(mWindow.getDefaultView()),
 	// OperationButtonsList(std::make_shared<GUI::Container>()),
-	mMode(World::Mode::None),
+	mMode(World::Mode::NoneMode),
 	mFont(fonts),
 	ModeContainer(std::make_shared<GUI::Container>()),
 	mMainUI(std::make_shared<GUI::MainUI>(window,textures,fonts)),
@@ -86,17 +87,17 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	std::unique_ptr<AVLTree> root(new AVLTree());
-	mDataStructure = root.get();
+	// std::unique_ptr<AVLTree> root(new AVLTree());
+	// mDataStructure = root.get();
 	
-	mSceneLayers[DataStructure]->attachChild(std::move(root));
-	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
+	// mSceneLayers[DataStructure]->attachChild(std::move(root));
+	// mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
 
 	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 700, 520);
 
-	mDataStructure->updateStepCallback = [this](int step) {
-		this->mPseudoCode->setStep(step);
-	};
+	// mDataStructure->updateStepCallback = [this](int step) {
+	// 	this->mPseudoCode->setStep(step);
+	// };
 
 	// v = {42, 17, 93, 56, 81, 12, 65, 37, 29, 74, 8, 90, 33, 50, 22, 99, 5, 47, 86, 60, 15, 78, 3, 69, 25, 91, 40, 7, 88, 54, 31};
 	// // v = {74, 12, 217, 36, 61, 77, 286, 153, 337, 93, 121, 47, 463, 248, 146};
@@ -110,6 +111,33 @@ void World::buildScene()
 
 void World::setMode(World::Mode mode){
 	//ModeContainer->ChangeActivateChild(mode); // ensure that the Modecontainer handle the true index of activated child
+	// delete mDataStructure;
+	// mDataStructure = new LinkedList();
+
+	// if(mDataStructure){
+	// 	delete mDataStructure;
+	// }
+
+	if(mode == World::Mode::AVLMode){
+		std::unique_ptr<AVLTree> root(new AVLTree());
+		mDataStructure = root.get();
+		mSceneLayers[DataStructure]->attachChild(std::move(root));
+		mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
+	}
+	else if(mode == World::Mode::LinkedListMode){
+		std::unique_ptr<LinkedList> root(new LinkedList());
+		mDataStructure = root.get();
+		mSceneLayers[DataStructure]->attachChild(std::move(root));
+		mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
+	}
+	else if(mode == World::Mode::HeapMode){
+		// mDataStructure = new Heap();
+	}
+	else if(mode == World::Mode::GraphMode){
+		// mDataStructure = new Graph();
+	}
+
+	
 	mMainUI->CreateButtonList(mode,mDataStructure);
 	// OperationButtonsList->makeEmpty();
 	// if(mode == World::Mode::AVL)
@@ -175,34 +203,34 @@ void World::handleEvent(const sf::Event& event){
 
 	updateBackRequest();
 
-	if (event.type == sf::Event::KeyPressed)
-    {
-        if (event.key.code == sf::Keyboard::A)
-        {
-            // int value = std::rand() % 100;
-            int value = v[id];
-            id++;
-            // std::cerr << value << "\n";
-            mDataStructure->insert(value);
-        }
+	// if (event.type == sf::Event::KeyPressed)
+    // {
+    //     if (event.key.code == sf::Keyboard::A)
+    //     {
+    //         // int value = std::rand() % 100;
+    //         int value = v[id];
+    //         id++;
+    //         // std::cerr << value << "\n";
+    //         mDataStructure->insert(value);
+    //     }
 
-		if (event.key.code == sf::Keyboard::U)
-			mDataStructure->undo();
+	// 	if (event.key.code == sf::Keyboard::U)
+	// 		mDataStructure->undo();
 
-        // if (event.key.code == sf::Keyboard::L)
-        //     mDataStructure->leftRotate();
+    //     // if (event.key.code == sf::Keyboard::L)
+    //     //     mDataStructure->leftRotate();
 
-		// if (event.key.code == sf::Keyboard::R)
-        //     mDataStructure->rightRotate();
+	// 	// if (event.key.code == sf::Keyboard::R)
+    //     //     mDataStructure->rightRotate();
 
-        if (event.key.code == sf::Keyboard::D)
-        {
-            if (mDataStructure->search(5))
-                std::cerr << "Found \n";
-            else 
-                std::cerr << "Cannot find \n";
-        }
-    }
+    //     if (event.key.code == sf::Keyboard::D)
+    //     {
+    //         if (mDataStructure->search(5))
+    //             std::cerr << "Found \n";
+    //         else 
+    //             std::cerr << "Cannot find \n";
+    //     }
+    // }
 }
 
 void World::updateBackRequest()

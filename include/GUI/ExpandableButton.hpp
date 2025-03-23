@@ -6,9 +6,11 @@ namespace GUI
 class ExpandableButton : public GUI::Button {
 public:
     struct subComponentInfo{
-        int num;
-        std::vector<int> VecNum;
+        int InfoID;
+        int num; // to add/ delete single value;
+        std::vector<int> VecNum; // to add/ delete multiple value;
         subComponentInfo(){
+            InfoID = -1;
             num = -1; VecNum.resize(0);
         }
     };
@@ -23,8 +25,9 @@ public:
 
     void addSubComponent(Component::Ptr component);
     subComponentInfo getSubComponentInfo();
-    void setSubComponentInfo(int number);
-    void setSubComponentInfo(std::vector<int> vec);
+    void setSubComponentInfo(int number, int InfoID);
+    void setSubComponentInfo(std::vector<int> vec, int InfoID);
+    void resetSubComponentInfo();
 
 private:
     subComponentInfo                Info;

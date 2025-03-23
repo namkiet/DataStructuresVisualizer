@@ -10,6 +10,7 @@ const std::string DeliverTextBox::mAllowedChars = "0123456789";
 
 DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)
     {
+    mInfoID = 0; // default;
     mSelectOutlineColor = sf::Color(66, 133, 244);
     mDefaultOutlineColor = sf::Color(76, 91, 99);
     InputNum = -1;
@@ -26,6 +27,9 @@ DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::
     mText.setString("");
 }
 
+void DeliverTextBox::setInfoID(int id){
+    mInfoID = id;
+}
 
 void DeliverTextBox::setCallback(CallBack callback) {
     mCallBack = std::move(callback);
@@ -63,7 +67,7 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
                 InputNum = std::stoi(mInput);
                 if (InputNum != 0)
                 {
-                   ButtonParent->setSubComponentInfo(InputNum);
+                   ButtonParent->setSubComponentInfo(InputNum, mInfoID);
                 }
 
                 reset();
