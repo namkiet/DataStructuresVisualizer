@@ -15,40 +15,11 @@ void AVLTree::insert(int value)
         });
     }
 
-    mRoot = insert(mRoot, nullptr, value);
-    align(mRoot);
+    createNewActionGroup();
 
-    if (updateStepCallback) 
-    {
-        mActionQueue.pushAction([this](sf::Time dt) {
-            this->updateStepCallback(-1);
-            return true;
-        });
-    }
-
-    mActionQueue.pushAction([this](sf::Time dt) mutable->bool {
-        for (auto& e: mEdgeList)
-        {
-            if (e)
-            std::cerr << e->mFrom->mValue << " - " << (e->mTo ? e->mTo->mValue : -1) << "\n";
-            else  
-            std::cerr << "Invalid Edge here \n";
-        }
-        std::cerr << "\n";
-
-        std::queue<TreeNode*> q;
-        q.push(mRoot);
-
-        while (!q.empty())
-        {
-            TreeNode* cur = q.front();
-            q.pop();
-
-            if (!cur) continue; 
-            std::cerr << cur->mValue << ": " << (cur->mParent ? cur->mParent->mValue : -1) << " " << (cur->mLeft ? cur->mLeft->mValue : -1) << " " << (cur->mRight ? cur->mRight->mValue : -1) << "\n";
-            q.push(cur->mLeft);
-            q.push(cur->mRight);
-        }
+    mActionQueue.pushAction([=](sf::Time){
+        mRoot = insert(mRoot, nullptr, value);
+        align(mRoot);
         return true;
     });
 }
@@ -196,7 +167,7 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             mActionQueue.pushAction([this, node, value](sf::Time dt) mutable -> bool
             {
                 node->mRight = remove(node->mRight, value);   
-                // return true;
+                return true;
             });
 
             return node;

@@ -4,7 +4,6 @@
 #include <iostream>
 #include "State/InApp.hpp"
 
-
 App::App(): 
     
     mContextSettings(0, 0, 16),
