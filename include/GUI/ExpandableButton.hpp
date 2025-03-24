@@ -1,36 +1,37 @@
 #pragma once
 
-#include "GUI/Button.hpp"
+#include <GUI/RectangleButton.hpp>
 namespace GUI
 {
-class ExpandableButton : public GUI::Button {
+class ExpandableButton : public Button {
 public:
-    struct subComponentInfo{
+    struct SubComponentInfo
+    {
         int num;
         std::vector<int> VecNum;
-        subComponentInfo(){
-            num = -1; VecNum.resize(0);
+        SubComponentInfo()
+        {
+            num = -1; 
+            VecNum.resize(0);
         }
     };
+
     typedef std::shared_ptr<ExpandableButton> Ptr;
 
-    ExpandableButton(sf::Font& fonts, sf::Vector2f Position, std::string text);
+                                        ExpandableButton(sf::Vector2f position, sf::Vector2f buttonSize, sf::Font &font, std::string text);
+    void                                handleEvent(const sf::Event& event) override;
+    void                                draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    // void toggleMenu();
-    void handleEvent(const sf::Event& event) override;
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
-    void addSubComponent(Component::Ptr component);
-    subComponentInfo getSubComponentInfo();
-    void setSubComponentInfo(int number);
-    void setSubComponentInfo(std::vector<int> vec);
+    void                                addSubComponent(Component::Ptr component);
+    SubComponentInfo                    getSubComponentInfo();
+    void                                setSubComponentInfo(int number);
+    void                                setSubComponentInfo(std::vector<int> vec);
 
 private:
-    subComponentInfo                Info;
-    std::vector<GUI::Component::Ptr> mSubComponents;
-    bool isExpanded;
-
-    int inputNum;
+    SubComponentInfo                    Info;
+    std::vector<GUI::Component::Ptr>    mSubComponents;
+    bool                                isExpanded;
+    int                                 inputNum;
 };
 
 }

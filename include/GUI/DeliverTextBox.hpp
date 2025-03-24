@@ -27,6 +27,7 @@ namespace GUI
         void                                        draw(sf::RenderTarget& target, sf::RenderStates states) const override;
         void                                        setCallBack(std::function<void()> func);
     public:
+        void                                        setColor(sf::Color color);
         void                                        setText(const std::string& text);
         std::string                                 getText() const;
         bool                                        isSelectable() const override { return true; }
@@ -34,12 +35,16 @@ namespace GUI
         void                                        inputLogic(sf::Uint32 unicode);
         void                                        reset();
         void                                        setButtonParent(std::shared_ptr<ExpandableButton> Button);
-
+        virtual void                                select() override;
+        virtual void                                deselect() override;
     private:
         sf::RectangleShape mBox;
         sf::Text mText;
         std::string mInput;
         int InputNum;
         std::shared_ptr<ExpandableButton>          ButtonParent;
+
+        sf::Color                                  mSelectOutlineColor;
+        sf::Color                                  mDefaultOutlineColor;
     };
 }

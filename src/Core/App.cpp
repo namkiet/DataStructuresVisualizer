@@ -2,12 +2,13 @@
 #include <State/TitleState.hpp>
 #include <State/MenuState.hpp>
 #include <iostream>
-#include "State/InApp.hpp"
+#include <State/InApp.hpp>
+#include <Core/Variables.hpp>
 
 App::App(): 
     
     mContextSettings(0, 0, 16),
-    mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
+    mWindow(sf::VideoMode(WINDOW::ScreenWidth, WINDOW::ScreenHeight), "My App", sf::Style::Default, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
     mView(mWindow.getDefaultView()),
     mIsPaused(false)
@@ -20,8 +21,8 @@ App::App():
 
 void App::loadTextures()
 {
-    mTextures.load(Textures::TitleScreen, "assets/images/TitleScreen.png");
     mTextures.load(Textures::Button, "assets/images/button.jpg");
+    mTextures.load(Textures::HomeIcon, "assets/images/home.png");
 }
 
 void App::loadFonts()
