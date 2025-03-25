@@ -18,7 +18,7 @@ public:
 
 public:
     int                     mValue;
-
+    
 protected:
     sf::CircleShape         mShape;
     sf::Text                mText;

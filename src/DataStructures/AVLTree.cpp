@@ -17,7 +17,6 @@ void AVLTree::insert(int value)
 
     mRoot = insert(mRoot, nullptr, value);
     align(mRoot);
-
     if (updateStepCallback) 
     {
         mActionQueue.pushAction([this](sf::Time dt) {

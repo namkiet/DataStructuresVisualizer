@@ -16,6 +16,7 @@
 #include <GUI/ExpandableButton.hpp>
 #include <GUI/DeliverTextBox.hpp>
 
+#include <DataStructures/LinkedList.hpp>
 #include <SceneNode/PseudoCode.hpp>
 
 namespace GUI
@@ -39,13 +40,13 @@ private:
     TextureHolder						mTextures;
 
 public:
-    enum Mode{
-        AVL,
-        LinkedList,
-        Heap,
-        Graph,
-        None
-    };
+    enum Mode {
+    AVLMode,
+    LinkedListMode,
+    HeapMode,
+    GraphMode,
+    NoneMode
+};
 
 private:
     void								loadTextures();

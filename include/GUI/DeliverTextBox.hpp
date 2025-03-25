@@ -37,12 +37,14 @@ namespace GUI
         void                                        setButtonParent(std::shared_ptr<ExpandableButton> Button);
         virtual void                                select() override;
         virtual void                                deselect() override;
+        void                                        setInfoID(int id);
     private:
         sf::RectangleShape mBox;
         sf::Text mText;
         std::string mInput;
         int InputNum;
         std::shared_ptr<ExpandableButton>          ButtonParent;
+        int                                        mInfoID;
 
         sf::Color                                  mSelectOutlineColor;
         sf::Color                                  mDefaultOutlineColor;

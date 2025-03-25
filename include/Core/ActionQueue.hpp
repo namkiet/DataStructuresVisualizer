@@ -22,7 +22,7 @@ public:
         auto action = std::move(undoStack.top());
         undoStack.pop();
         redoStack.push(action);
-        pushAction(action);
+        pushAction(action); //
     }
 
     void redo() {

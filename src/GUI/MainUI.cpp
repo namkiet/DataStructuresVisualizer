@@ -1,7 +1,7 @@
 #include "GUI/MainUI.hpp"
 #include "Core/World.hpp"
 #include <memory>
-
+#include <DataStructures/LinkedList.hpp>
 GUI:: MainUI::MainUI(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts)
     {
         BackRequest = false;
@@ -63,26 +63,11 @@ void GUI::MainUI::draw(sf::RenderTarget& target, sf::RenderStates states) const{
 void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
         OperationButtonsList->makeEmpty();
-        if(mode == World::Mode::AVL){
+        if(mode == World::Mode::AVLMode){
             GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
 
             GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
-            // GUI::DeliverTextBox::Ptr InputBoxDelete = std::make_shared<GUI::DeliverTextBox>(mFont, inputBoxDeletePos, sf::Vector2f(100.f, 40.f));
-            // InputBoxDelete->setButtonParent(DeleteButton);
-            // DeleteButton->setCallback([this,DeleteButton](){
-            // 	if(DeleteButton->getSubComponentInfo().num != -1){
-            // 		this->mDataStructure->remove(DeleteButton->getSubComponentInfo().num);
-            // 		DeleteButton->setSubComponentInfo(-1);
-            // 		std::cout<<"Delete num"<<std::endl;
-            // 	}
-            // 	else if(DeleteButton->getSubComponentInfo().VecNum.size() != 0){
-            // 		for(auto& element: DeleteButton->getSubComponentInfo().VecNum){
-            // 			this->mDataStructure->remove(element);
-            // 			std::cout<<"Delete list of num"<<std::endl;
-            // 		}
-            // 	}
-            // });
             sf::Vector2f insertButtonSize(toolbox.getSize().x * 0.3,ButtonSize.y);
             sf::Vector2f inputBoxInsertPos(toolbox.getSize().x * 0.55,  OperationButtonPosition[2].y);
             GUI::DeliverTextBox::Ptr InputBoxInsert = std::make_shared<GUI::DeliverTextBox>(mFont,inputBoxInsertPos,insertButtonSize);
@@ -90,7 +75,7 @@ void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
             InsertButton->setCallback([this,InsertButton,mDataStructure](){
             	if(InsertButton->getSubComponentInfo().num != -1) {
             		mDataStructure->insert(InsertButton->getSubComponentInfo().num);
-            		InsertButton->setSubComponentInfo(-1);
+            		InsertButton->resetSubComponentInfo();
         
             		std::cout<<"Insert ok"<<std::endl;
 
@@ -111,7 +96,7 @@ void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
             DeleteButton->setCallback([this,DeleteButton,mDataStructure](){
             	if(DeleteButton->getSubComponentInfo().num != -1){
             		mDataStructure->remove(DeleteButton->getSubComponentInfo().num);
-            		DeleteButton->setSubComponentInfo(-1);
+            		DeleteButton->resetSubComponentInfo();
             		std::cout<<"Delete num"<<std::endl;
             	}
             	else if(DeleteButton->getSubComponentInfo().VecNum.size() != 0){
@@ -129,7 +114,7 @@ void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
             SearchButton->setCallback([this,SearchButton, mDataStructure](){
             	if(SearchButton->getSubComponentInfo().num != -1){
             		mDataStructure->search(SearchButton->getSubComponentInfo().num);
-            		SearchButton->setSubComponentInfo(-1);
+            		SearchButton->resetSubComponentInfo();
             		std::cout<<"Search num"<<std::endl;
             	}
             	else if(SearchButton->getSubComponentInfo().VecNum.size() != 0){
@@ -149,6 +134,79 @@ void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
             OperationButtonsList->pack(SearchButton);
 
 	}
+        else if(mode == World::Mode::LinkedListMode){
+            mDataStructure = dynamic_cast<LinkedList*>(mDataStructure);
+
+            GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
+
+            GUI::DeliverTextBox::Ptr InputBoxCreate = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+            InputBoxCreate->setButtonParent(CreateButton);
+            CreateButton->addSubComponent(InputBoxCreate);
+
+            CreateButton->setCallback([this,CreateButton,mDataStructure](){
+                if(CreateButton->getSubComponentInfo().num != -1) {
+                    auto mlinkedlist = dynamic_cast<LinkedList*>(mDataStructure);
+                    // mlinkedlist->CreateNode(CreateButton->getSubComponentInfo().num);
+                    CreateButton->resetSubComponentInfo();
+                    std::cout<<"Create ok"<<std::endl;
+                }
+                // else if(CreateButton->getSubComponentInfo().VecNum.size() != 0){
+                //     for(auto& element: CreateButton->getSubComponentInfo().VecNum){
+                //         mDataStructure->insert(element);
+                //     }
+                // }
+                std::cout<<"Create Linked List"<<std::endl;
+            });
+
+            GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
+
+            GUI::DeliverTextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f));
+            InputBoxInsertAtHead->setButtonParent(InsertButton);
+            InputBoxInsertAtHead->setInfoID(0);
+            InsertButton->addSubComponent(InputBoxInsertAtHead);
+            GUI::DeliverTextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f));
+            InputBoxInsertAtLast->setButtonParent(InsertButton);
+            InputBoxInsertAtLast->setInfoID(1);
+            InsertButton->addSubComponent(InputBoxInsertAtLast);
+
+            InsertButton->setCallback([this,InsertButton,mDataStructure](){
+                if(InsertButton->getSubComponentInfo().num != -1 && InsertButton->getSubComponentInfo().InfoID == 0) {
+                    auto mlinkedlist = dynamic_cast<LinkedList*>(mDataStructure);
+                    mlinkedlist->InsertAtHead(InsertButton->getSubComponentInfo().num);
+                    InsertButton->resetSubComponentInfo();
+                    std::cout<<"Insert node at head"<<std::endl;
+                }
+                else if(InsertButton->getSubComponentInfo().num != -1){
+                    auto mlinkedlist = dynamic_cast<LinkedList*>(mDataStructure);
+                    mlinkedlist->InsertAtLast(InsertButton->getSubComponentInfo().num);
+                    InsertButton->resetSubComponentInfo();
+                    std::cout<<"Insert node at last"<<std::endl;
+                }
+            });
+
+            GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Delete",ButtonSize);
+            DeleteButton->setCallback([this](){
+                std::cout<<"Delete Linked List"<<std::endl;
+            });
+
+            GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
+            GUI::DeliverTextBox::Ptr InputBoxSearch = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f));
+            InputBoxSearch->setButtonParent(SearchButton);
+            SearchButton->addSubComponent(InputBoxSearch);
+            SearchButton->setCallback([this,SearchButton,mDataStructure](){
+                auto mlinkedlist = dynamic_cast<LinkedList*>(mDataStructure);
+                if(SearchButton->getSubComponentInfo().num != -1){
+                    mlinkedlist->search(SearchButton->getSubComponentInfo().num);
+                    SearchButton->resetSubComponentInfo();
+                    std::cout<<"Search num"<<std::endl;
+                }
+            });
+
+            OperationButtonsList->pack(CreateButton);
+            OperationButtonsList->pack(InsertButton);
+            OperationButtonsList->pack(DeleteButton);
+            OperationButtonsList->pack(SearchButton);
+        }
 }
 
 void GUI::MainUI::handleEvent(const sf::Event& event){

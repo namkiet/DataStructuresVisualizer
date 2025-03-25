@@ -60,13 +60,21 @@ void ExpandableButton::draw(sf::RenderTarget& target, sf::RenderStates states) c
     }
 }
 
-void ExpandableButton::setSubComponentInfo(int number){
+void ExpandableButton::setSubComponentInfo(int number, int InfoID){
     Info.num = number;
+    Info.InfoID = InfoID;
 }
-void ExpandableButton::setSubComponentInfo(std::vector<int> vec){
+void ExpandableButton::setSubComponentInfo(std::vector<int> vec, int InfoID){
     Info.VecNum = vec;
+    Info.InfoID = InfoID;
 }
 GUI::ExpandableButton::subComponentInfo ExpandableButton::getSubComponentInfo(){
     return Info;
+}
+
+void ExpandableButton::resetSubComponentInfo(){
+    Info.num = -1;
+    Info.VecNum.resize(0);
+    Info.InfoID = -1;
 }
 }
