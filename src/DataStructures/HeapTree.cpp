@@ -10,41 +10,99 @@ HeapTree::HeapTree():
 
 void HeapTree::insert(int value)
 {
-    TreeNode* newNode = new TreeNode(value, 20.f, sf::Color::White, sf::Color::Black);
-    // addNode(newNode);
+    TreeNode* newNode = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
+    // newNode->mParent = prev;
 
-    mNodeList.push_back(CircleNode::Ptr(newNode));
-
+    createNewActionGroup();
+    addNode(newNode);
     addEdge(newNode, nullptr);
     addEdge(newNode, nullptr);
-
-    int n = mNodeList.size() - 1;
-    if (n >= 1)
-    {
-        CircleNode* par = mNodeList[(n - 1) / 2].get();
-        newNode->setPosition(par->getPosition());
-        moveEdge(par, nullptr, newNode, 0.5f);
-    }
     
-    while (n)
-    {
-        if (mNodeList[n]->mValue < mNodeList[(n - 1) / 2]->mValue)
+    createNewActionGroup();
+    mActionQueue.pushAction([=](sf::Time) mutable->bool {
+        int n = mNodeList.size() - 1;
+        if (n >= 1)
         {
-            swap(mNodeList[n], mNodeList[(n - 1) / 2]);
-            align(0);
+            CircleNode* par = mNodeList[(n - 1) / 2].get();
+            newNode->setPosition(par->getPosition());
+            createNewActionGroup();
+            moveEdge(par, nullptr, newNode, 0.5f);
         }
-        else
-            break;
-        
-        n = (n - 1) / 2;
-    }
+        align(0);
 
-    align(0);
+        // FIX
+        while (n)
+        {
+            createNewActionGroup();
+            mActionQueue.pushAction(Action::Wait(0.2f));
+            // createNewActionGroup();
+            // mActionQueue.pushAction(Action::HighlightNode(mNodeList[n].get(), sf::Color::Red, 0.5f));
+            // mActionQueue.pushAction(Action::HighlightNode(mNodeList[(n - 1) / 2].get(), sf::Color::Red, 0.5f));
+
+            if (mNodeList[n]->mValue < mNodeList[(n - 1) / 2]->mValue)
+            {
+                int parVal = mNodeList[(n - 1) / 2]->mValue;
+                int curVal = mNodeList[n]->mValue;
+
+                mNodeList[n]->mValue = parVal;
+                mNodeList[(n - 1) / 2]->mValue = curVal;
+    
+                createNewActionGroup();
+                mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[n].get(), mNodeList[(n - 1) / 2].get(), 0.5f));
+                align(0);
+            }
+            else
+                break;
+            
+            n = (n - 1) / 2;
+        }
+
+        return true;
+    });
 }
 
 void HeapTree::remove(int value)
 {
-    // mRoot = remove(mRoot, value);
+    if (mNodeList.size() == 0) return;
+
+    int n = mNodeList.size();
+    if (n > 1)
+        mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[0].get(), mNodeList[n - 1].get(), mAnimationSpeed));
+
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::FadeNode(mNodeList[n - 1].get(), mAnimationSpeed));
+    if (n > 1)
+        moveEdge(mNodeList[(n - 2) / 2].get(), mNodeList[n - 1].get(), nullptr, mAnimationSpeed);
+
+    createNewActionGroup();
+    removeNode(mNodeList[n - 1].get());
+
+    createNewActionGroup();
+    mActionQueue.pushAction([=](sf::Time) mutable -> bool
+    {
+        int i = 0;
+        int n = mNodeList.size();
+        while (i < n)
+        {
+            int largest = i;
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            if (left < n && mNodeList[largest]->mValue > mNodeList[left]->mValue)
+                largest = left;
+            if (right < n && mNodeList[largest]->mValue > mNodeList[right]->mValue)
+                largest = right;
+            if (largest != i)
+            {
+                createNewActionGroup();
+                mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[i].get(), mNodeList[largest].get(), mAnimationSpeed));
+                i = largest;
+            }
+            else
+                break;
+        }
+
+        return true;
+    });
 }
 
 bool HeapTree::search(int value)
@@ -57,12 +115,7 @@ void HeapTree::align(int index, sf::Vector2f curPos, float curSpacingX, float cu
     if (index >= mNodeList.size()) return;
 
     if (index == 0) // is root node
-    {
-        // curNode->mLevel = 0;
         createNewActionGroup();
-    }
-    // else
-    //     curNode->mLevel = curNode->mParent->mLevel + 1;
     
     moveNode(mNodeList[index].get(), curPos, mAnimationSpeed, false);
     

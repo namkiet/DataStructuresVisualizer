@@ -23,6 +23,7 @@ protected:
     sf::CircleShape         mShape;
     sf::Text                mText;
     sf::Font                mFont;
+    float                   mTextSize;
 
 public:
     sf::Color               getFillColor();
@@ -30,5 +31,12 @@ public:
     sf::Color               getOutlineColor();
     void                    setOutlineColor(sf::Color color);
     void                    setOpacity(float opacity);
+    float                   getOpacity();
     float                   getRadius();
+    void                    setValue(int value);
+    float                   getTextSize();
+    void                    setTextSize(float textSize);   
+
+protected:
+    void                    updateText();
 };

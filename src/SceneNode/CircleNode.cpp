@@ -11,13 +11,11 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
     mShape.setOutlineThickness(2);
     mShape.setPointCount(10000);
 
+
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
-    mText.setColor(sf::Color::Black);
-    mText.setCharacterSize(radius * 0.75);
     mText.setFont(mFont);
-    mText.setString(std::to_string(value));
-    centerOrigin(mText);
-    mText.setPosition(mShape.getPosition());
+    mTextSize = radius * 0.75;
+    updateText();
 }
 
 void CircleNode::update(sf::Time dt) 
@@ -55,19 +53,51 @@ void CircleNode::setOutlineColor(sf::Color color)
 void CircleNode::setOpacity(float opacity)
 {
     if (opacity > 1) return;
+    int alpha = int(255 * opacity);
     sf::Color newFillColor = mShape.getFillColor();
-    newFillColor.a = 255 * opacity;
+    newFillColor.a = alpha;
     sf::Color newOutlineColor = mShape.getOutlineColor();
-    newOutlineColor.a = 255 * opacity;
+    newOutlineColor.a = alpha;
     sf::Color newTextColor = mText.getFillColor();
-    newTextColor.a = 255 * opacity;
+    newTextColor.a = alpha;
     
     mShape.setFillColor(newFillColor);
     mShape.setOutlineColor(newOutlineColor);
     mText.setFillColor(newTextColor);
 }
 
+float CircleNode::getOpacity()
+{
+    return mShape.getFillColor().a / 255.f;
+}
+
 float CircleNode::getRadius()
 {
     return mShape.getRadius() + mShape.getOutlineThickness();
+}
+
+void CircleNode::setValue(int value)
+{
+    mValue = value;
+    updateText();
+}
+
+void CircleNode::updateText()
+{
+    mText.setColor(sf::Color::Black);
+    mText.setCharacterSize(mTextSize);
+    mText.setString(std::to_string(mValue));
+    centerOrigin(mText);
+    mText.setPosition(mShape.getPosition());
+}
+
+float CircleNode::getTextSize()
+{
+    return mText.getCharacterSize();
+}
+
+void CircleNode::setTextSize(float textSize)
+{
+    mTextSize = textSize;
+    updateText();
 }

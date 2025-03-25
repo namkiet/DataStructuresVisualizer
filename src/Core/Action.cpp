@@ -1,8 +1,19 @@
 #include <Core/Action.hpp>
 #include <iostream>
-
+#include <cmath>
 namespace Action
 {
+    ActionFunc Wait(float duration)
+    {
+        return [duration, elapsed = 0.f](sf::Time dt) mutable -> bool
+        {
+            elapsed += dt.asSeconds();
+            if (elapsed >= duration)
+                return true;
+            return false;
+        };
+    }
+
     ActionFunc HighlightNode(CircleNode* node, sf::Color highlightColor, float duration)
     {
         return [node, highlightColor, duration, 
@@ -85,6 +96,78 @@ namespace Action
         };
     }
 
+    ActionFunc FadeNode(CircleNode* node, float duration)
+    {
+        return [node, duration, 
+            elapsed = 0.f, opacity = 0.f, isInit = false](sf::Time dt) mutable->bool 
+        {
+            if (!isInit)
+            {
+                opacity = node->getOpacity();
+                isInit = true;
+            }
+
+            elapsed += dt.asSeconds();
+            float t = std::cos((elapsed / duration) * 3.14159f / 2);
+            opacity = t;
+            node->setOpacity(opacity);
+            if (elapsed >= duration)
+            {
+                node->setOpacity(0);
+                return true;
+            }
+            return false;
+        };
+    }
+
+    ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration)
+    {
+        return [node, targetValue, duration, 
+            elapsed = 0.f, isInit = false, startTextSize = 0.f]
+            (sf::Time dt) mutable ->bool
+        {
+            if (!isInit)
+            {
+                startTextSize = node->getTextSize();
+                node->mValue = targetValue;
+                isInit = true;
+            }
+
+            elapsed += dt.asSeconds();
+            float t = std::sin((elapsed / duration) * 3.14159f);
+
+            if (elapsed >= duration / 2)
+                node->setValue(targetValue);
+                
+            node->setTextSize(startTextSize * (1 - t));
+
+            if (elapsed >= duration)
+            {
+                node->setTextSize(startTextSize);
+                return true;
+            }
+
+            return false;
+        };
+    }
+
+    ActionFunc SwapNodeValues(CircleNode* nodeA, CircleNode* nodeB, float duration)
+    {
+        int valueA = nodeA->mValue;
+        int valueB = nodeB->mValue;
+
+        ActionFunc changeA = ChangeNodeValue(nodeA, valueB, duration);
+        ActionFunc changeB = ChangeNodeValue(nodeB, valueA, duration);
+
+        return [changeA, changeB](sf::Time dt) mutable -> bool
+        {
+            bool doneA = changeA(dt);
+            bool doneB = changeB(dt);
+            return doneA && doneB;
+        };
+    }
+
+
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
     {
         return [&edgeList, parent, child, targetTail, duration, 
@@ -112,7 +195,8 @@ namespace Action
             if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
             {
                 std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is switched to " << parent->mValue << "-" << (targetTail ? targetTail->mValue : -1) << "\n";
-        
+                
+                edge->setTail(targetPos);
                 edge->mTo = targetTail;
                 edge->mIsChangingTail = false;
                 return true;

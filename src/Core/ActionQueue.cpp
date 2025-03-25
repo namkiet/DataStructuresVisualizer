@@ -15,13 +15,13 @@ void ActionQueue::update(sf::Time dt)
         auto &currentBatch = queue.front();
         bool allFinished = true;
 
-        for (auto batchIterator = currentBatch.begin(); batchIterator != currentBatch.end(); )
+        for (auto currentBatchIterator = currentBatch.begin(); currentBatchIterator != currentBatch.end(); )
         {
-            if ((*batchIterator)(dt))
-                batchIterator = currentBatch.erase(batchIterator);
+            if ((*currentBatchIterator)(dt))
+                currentBatchIterator = currentBatch.erase(currentBatchIterator);
             else
             {
-                ++batchIterator;
+                ++currentBatchIterator;
                 allFinished = false;
             }
         }
