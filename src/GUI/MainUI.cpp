@@ -190,12 +190,20 @@ void GUI::MainUI::CreateButtonList(World::Mode mode, DS* mDataStructure){
             });
 
             GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Delete",ButtonSize);
-            DeleteButton->setCallback([this](){
-                std::cout<<"Delete Linked List"<<std::endl;
+            GUI::DeliverTextBox::Ptr InputBoxDelete = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+            InputBoxDelete->setButtonParent(DeleteButton);
+            DeleteButton->addSubComponent(InputBoxDelete);
+            DeleteButton->setCallback([this,DeleteButton, mDataStructure](){
+                auto mlinkedlist = dynamic_cast<LinkedList*>(mDataStructure);
+                if(DeleteButton->getSubComponentInfo().num != -1){
+                    mlinkedlist->remove(DeleteButton->getSubComponentInfo().num);
+                    DeleteButton->resetSubComponentInfo();
+                    std::cout<<"Delete num"<<std::endl;
+                }
             });
 
             GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
-            GUI::DeliverTextBox::Ptr InputBoxSearch = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f));
+            GUI::DeliverTextBox::Ptr InputBoxSearch = std::make_shared<GUI::DeliverTextBox>(mFont,sf::Vector2f(toolbox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
             InputBoxSearch->setButtonParent(SearchButton);
             SearchButton->addSubComponent(InputBoxSearch);
             SearchButton->setCallback([this,SearchButton,mDataStructure](){

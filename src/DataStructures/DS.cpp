@@ -59,13 +59,18 @@ Edge* DS::findEdge(CircleNode* parent, CircleNode* child) {
 }
 
 void DS::removeEdge(CircleNode* parent, CircleNode* child) {
-    mEdgeList.erase(
-        std::remove_if(mEdgeList.begin(), mEdgeList.end(),
-        [parent, child](const std::unique_ptr<Edge>& edge) {
-            return edge->mFrom == parent && edge->mTo == child;
-        }),
-        mEdgeList.end()
-    );
+    mActionQueue.pushAction([this, parent, child](sf::Time dt) mutable -> bool
+    {
+        mEdgeList.erase(
+            std::remove_if(mEdgeList.begin(), mEdgeList.end(),
+            [parent, child](const std::unique_ptr<Edge>& edge) {
+                return edge->mFrom == parent && edge->mTo == child;
+            }),
+            mEdgeList.end()
+        );
+        std::cout<<"Edge removed\n";
+        return true;
+    });
 }
 
 void DS::createNewActionGroup()
@@ -79,12 +84,37 @@ void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duratio
     mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration));
     mActionQueue.pushUndo(Action::HighlightNode(node, highlightColor, duration));
 }
+void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
+{
+    std::cout<<"start Delete node effect\n";
+    mActionQueue.pushAction(Action::DeleteNode(node, duration));
+    mActionQueue.pushUndo(Action::DeleteNode(node, duration));
+    std::cout<<"end Delete node effect\n";
+}
+
+void DS::deleteNode(CircleNode* node){
+    std::cout<<"start Delete node\n";
+    mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
+    {
+        mNodeList.erase(
+        std::remove_if(mNodeList.begin(), mNodeList.end(),
+        [node](const CircleNode::Ptr& n) {
+            return n.get() == node;
+        }),
+        mNodeList.end()
+    );
+    std::cout<<"end Node removed\n";
+        return true;
+    });
+
+}
 
 void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
 {
     if (!node) return;
     sf::Vector2f prevPos = node->getPosition();
     mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration, appearEffect));
+    std::cout<<"1 here"<<std::endl;
     mActionQueue.pushUndo(Action::MoveNode(node, prevPos, duration, false));
 }
 

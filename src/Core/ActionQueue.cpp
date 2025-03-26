@@ -2,9 +2,9 @@
 
 void ActionQueue::pushAction(ActionFunc action)
 {
+    std::cout<<"start Push action\n";
     if (queue.empty())
         queue.emplace_back();
-
     queue.back().push_back(std::move(action));
 }
 

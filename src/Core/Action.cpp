@@ -79,6 +79,7 @@ namespace Action
 
                 node->setPosition(targetPos);
                 node->setOpacity(1);
+                std::cerr<<"OK here"<<std::endl;
                 return true;
             }
             return false;
@@ -160,6 +161,36 @@ namespace Action
                 return true;
             }
     
+            return false;
+        };
+    }
+
+    ActionFunc DeleteNode(CircleNode* node, float duration)
+    {
+        return[node, duration, 
+            elapsed = 0.0f, isInit = false](sf::Time dt) mutable -> bool
+        {
+            if (!node) return true;
+
+            if (!isInit)
+            {
+                node->setOpacity(1);
+                isInit = true;
+            }
+
+            elapsed += dt.asSeconds();
+            float t = std::sin((elapsed / duration) * 3.14159f / 2);
+
+            float curOpacity = std::max(0.0f, 1-t);
+            node->setOpacity(curOpacity);
+
+            if (elapsed >= duration)
+            {
+                std::cerr << "Node " << node->mValue << " is deleted \n";
+                node->setOpacity(0);
+                return true;
+            }
+
             return false;
         };
     }

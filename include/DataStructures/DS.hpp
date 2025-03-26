@@ -42,6 +42,8 @@ protected:
     void                            removeNode(CircleNode* node);
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
     void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration);
+    void                            deleteNodeEffect(CircleNode* node, float duration);
+    void                            deleteNode(CircleNode* node);
 
     void                            addEdge(CircleNode* parent, CircleNode* child, bool hasArrow = false);
     Edge*                           findEdge(CircleNode* parent, CircleNode* child);
