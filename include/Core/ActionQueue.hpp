@@ -8,21 +8,23 @@ class ActionQueue
 public:
     using ActionFunc = std::function<bool(sf::Time)>;
 
+    void empty();
+
     void pushUndo(ActionFunc action) {
-        undoStack.push(std::move(action));
-        redoStack = std::stack<ActionFunc>(); // Xóa redo khi có hành động mới
+        // undoStack.push(std::move(action));
+        // redoStack = std::stack<ActionFunc>(); // Xóa redo khi có hành động mới
     }
 
     void pushRedo(ActionFunc action) {
-        redoStack.push(std::move(action));
+        // redoStack.push(std::move(action));
     }
 
     void undo() {
-        if (undoStack.empty() || !queue.empty()) return;
-        auto action = std::move(undoStack.top());
-        undoStack.pop();
-        redoStack.push(action);
-        pushAction(action);
+        // if (undoStack.empty() || !queue.empty()) return;
+        // auto action = std::move(undoStack.top());
+        // undoStack.pop();
+        // redoStack.push(action);
+        // pushAction(action);
     }
 
     void redo() {

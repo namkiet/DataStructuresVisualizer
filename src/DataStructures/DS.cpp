@@ -1,12 +1,19 @@
 #include <DataStructures/DS.hpp>
 
-void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+void DS::empty()
 {
-    for (auto &node: mNodeList)
-        if (node) node->draw(target, states);
-    
+    mEdgeList.clear();
+    mNodeList.clear();
+    mActionQueue.empty();
+}
+
+void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+{    
     for (auto &edge: mEdgeList)
         if (edge) edge->draw(target, sf::Transform::Identity);
+
+    for (auto &node: mNodeList)
+        if (node) node->draw(target, states);
 }
 
 void DS::updateCurrent(sf::Time dt)   
@@ -15,11 +22,11 @@ void DS::updateCurrent(sf::Time dt)
 
     mActionQueue.update(dt);
 
-    for (auto &node: mNodeList)
-        if (node) node->update(dt);
-    
     for (auto &edge: mEdgeList)
         if (edge) edge->update(dt);
+
+    for (auto &node: mNodeList)
+        if (node) node->update(dt);
 }
 
 void DS::addNode(CircleNode* node)
@@ -120,4 +127,54 @@ void DS::undo()
     // mActionQueue.undo();
 
     removeNode(mNodeList[1].get());
+}
+
+void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
+{
+    if (!a || !b) return;
+
+    int aVal = a->mValue;
+    int bVal = b->mValue;
+
+    TreeNode* fakeA = new TreeNode(aVal, 16.f, sf::Color::White, sf::Color::Black);
+    TreeNode* fakeB = new TreeNode(bVal, 16.f, sf::Color::White, sf::Color::Black);
+    fakeA->setOpacity(0);
+    fakeB->setOpacity(0);
+    fakeA->setPosition(a->getPosition());
+    fakeB->setPosition(b->getPosition());
+    addNode(fakeA);
+    addNode(fakeB);
+
+    createNewActionGroup();
+    mActionQueue.pushAction([=](sf::Time) mutable -> bool {
+        a->setOpacity(0);
+        b->setOpacity(0);
+        fakeA->setOpacity(1);
+        fakeB->setOpacity(1);
+        return true;
+    });
+
+    createNewActionGroup();
+    moveNode(fakeA, b->getPosition(), 0.5f, false);
+    moveNode(fakeB, a->getPosition(), 0.5f, false);
+
+    createNewActionGroup();
+    removeNode(fakeA);
+    removeNode(fakeB);
+    mActionQueue.pushAction([=](sf::Time) mutable->bool {
+        a->setOpacity(1);
+        a->setValue(bVal);
+        b->setOpacity(1);
+        b->setValue(aVal);
+        return true;
+    });
+}
+
+void DS::loadFromVector(std::vector<int> numList)
+{
+    for (int x: numList)
+    {
+        createNewActionGroup();
+        mActionQueue.pushAction([=](sf::Time) mutable -> bool { insert(x); return true; });
+    }
 }

@@ -18,6 +18,7 @@ public:
 
 public:
     int                     mValue;
+    sf::Vector2f            mTargetPostion;
 
 protected:
     sf::CircleShape         mShape;

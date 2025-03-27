@@ -79,7 +79,7 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	std::unique_ptr<HeapTree> root(new HeapTree());
+	std::unique_ptr<AVLTree> root(new AVLTree());
 	mDataStructure = root.get();
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
 	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
@@ -175,7 +175,7 @@ void World::handleEvent(const sf::Event& event){
         }
 
 		if (event.key.code == sf::Keyboard::U)
-			mDataStructure->undo();
+			mDataStructure->empty();
 
         // if (event.key.code == sf::Keyboard::L)
         //     mDataStructure->leftRotate();
@@ -190,5 +190,10 @@ void World::handleEvent(const sf::Event& event){
             else 
                 std::cerr << "Cannot find \n";
         }
+
+		if (event.key.code == sf::Keyboard::V)
+		{
+			mDataStructure->loadFromVector(v);
+		}
     }
 }

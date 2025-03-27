@@ -6,7 +6,6 @@
 #include <Core/ActionQueue.hpp>
 #include <Core/Action.hpp>
 
-
 #include <SceneNode/TreeNode.hpp>
 #include <iostream>
 
@@ -16,6 +15,8 @@ public:
     virtual void                    insert(int value) = 0;
     virtual void                    remove(int value) = 0;
     virtual bool                    search(int value) = 0;
+    virtual void                    empty();
+    void                            loadFromVector(std::vector<int> numList);
 
 public:
     virtual void                    updateCurrent(sf::Time dt);
@@ -42,6 +43,7 @@ protected:
     void                            removeNode(CircleNode* node);
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
     void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration);
+    void                            swapTwoNodes(CircleNode* a, CircleNode* b);
 
     void                            addEdge(CircleNode* parent, CircleNode* child);
     Edge*                           findEdge(CircleNode* parent, CircleNode* child);

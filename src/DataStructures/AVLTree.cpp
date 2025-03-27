@@ -7,58 +7,25 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 
 void AVLTree::insert(int value)
 {
-    if (updateStepCallback) 
-    {
-        mActionQueue.pushAction([this](sf::Time dt) {
-            this->updateStepCallback(0);
-            return true;
-        });
-    }
-
-    createNewActionGroup();
-
-    mActionQueue.pushAction([=](sf::Time){
-        mRoot = insert(mRoot, nullptr, value);
-        align(mRoot);
-        return true;
-    });
+    mRoot = insert(mRoot, nullptr, value);
+    align(mRoot);
 }
 
 void AVLTree::remove(int value)
 {
     mRoot = remove(mRoot, value);
     align(mRoot);
-
-    mActionQueue.pushAction([this](sf::Time dt) mutable->bool {
-        for (auto& e: mEdgeList)
-        {
-            if (e)
-            std::cerr << e->mFrom->mValue << " - " << (e->mTo ? e->mTo->mValue : -1) << "\n";
-            else  
-            std::cerr << "Invalid Edge here \n";
-        }
-        std::cerr << "\n";
-
-        std::queue<TreeNode*> q;
-        q.push(mRoot);
-
-        while (!q.empty())
-        {
-            TreeNode* cur = q.front();
-            q.pop();
-
-            if (!cur) continue; 
-            std::cerr << cur->mValue << ": " << (cur->mParent ? cur->mParent->mValue : -1) << " " << (cur->mLeft ? cur->mLeft->mValue : -1) << " " << (cur->mRight ? cur->mRight->mValue : -1) << "\n";
-            q.push(cur->mLeft);
-            q.push(cur->mRight);
-        }
-        return true;
-    });
 }
 
 bool AVLTree::search(int value)
 {
     return search(mRoot, value);
+}
+
+void AVLTree::empty()
+{
+    DS::empty();
+    mRoot = nullptr;
 }
 
 TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
@@ -135,6 +102,10 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             if (temp)
                 temp->mParent = node->mParent;
 
+
+            createNewActionGroup();
+            mActionQueue.pushAction(Action::FadeNode(node, mAnimationSpeed));
+
             // All edges lead TO it now lead to NULL
             for (auto& e: mEdgeList)
             {
@@ -161,7 +132,8 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             // cur->setValue(value);
             // mActionQueue.pushAction(Action::ChangeNodeValue(node, cur->mValue, 0.5f));
             // mActionQueue.pushAction(Action::ChangeNodeValue(cur, value, 0.5f));
-            mActionQueue.pushAction(Action::SwapNodeValues(node, cur, mAnimationSpeed));
+            // mActionQueue.pushAction(Action::SwapNodeValues(node, cur, mAnimationSpeed));
+            swapTwoNodes(cur, node);
             createNewActionGroup();
 
             mActionQueue.pushAction([this, node, value](sf::Time dt) mutable -> bool
@@ -312,7 +284,8 @@ TreeNode* AVLTree::balance(TreeNode* root)
 {
     if (!root) return nullptr;
     int bf = getBalanceFactor(root);
-    if (bf > 1) {
+    if (bf > 1) 
+    {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
         {
             if (updateStepCallback) 
@@ -324,7 +297,8 @@ TreeNode* AVLTree::balance(TreeNode* root)
             }
             return rightRotate(root);
         }
-        else {
+        else 
+        {
             if (updateStepCallback) 
             {
                 mActionQueue.pushAction([this](sf::Time dt) {
@@ -336,7 +310,8 @@ TreeNode* AVLTree::balance(TreeNode* root)
             return rightRotate(root);
         }
     }
-    if (bf < -1) {
+    if (bf < -1) 
+    {
         if (getBalanceFactor(root->mRight) <= 0) // RR
         {
             if (updateStepCallback) 
@@ -348,7 +323,8 @@ TreeNode* AVLTree::balance(TreeNode* root)
             }
             return leftRotate(root);
         }
-        else {
+        else 
+        {
             if (updateStepCallback) 
             {
                 mActionQueue.pushAction([this](sf::Time dt) {

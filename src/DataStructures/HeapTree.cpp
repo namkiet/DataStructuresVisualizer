@@ -8,10 +8,14 @@ HeapTree::HeapTree():
 {    
 }
 
+// void HeapTree::rawInsert(int value)
+// {
+//     mNodeList.push_back(new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black));
+// }
+
 void HeapTree::insert(int value)
 {
     TreeNode* newNode = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
-    // newNode->mParent = prev;
 
     createNewActionGroup();
     addNode(newNode);
@@ -25,40 +29,32 @@ void HeapTree::insert(int value)
         {
             CircleNode* par = mNodeList[(n - 1) / 2].get();
             newNode->setPosition(par->getPosition());
+
+            newNode->setOpacity(0);
+            newNode->mLevel = floor(log2(n + 1));
+
             createNewActionGroup();
-            moveEdge(par, nullptr, newNode, 0.5f);
-        }
-        align(0);
-
-        // FIX
-        while (n)
-        {
-            createNewActionGroup();
-            mActionQueue.pushAction(Action::Wait(0.2f));
-            // createNewActionGroup();
-            // mActionQueue.pushAction(Action::HighlightNode(mNodeList[n].get(), sf::Color::Red, 0.5f));
-            // mActionQueue.pushAction(Action::HighlightNode(mNodeList[(n - 1) / 2].get(), sf::Color::Red, 0.5f));
-
-            if (mNodeList[n]->mValue < mNodeList[(n - 1) / 2]->mValue)
-            {
-                int parVal = mNodeList[(n - 1) / 2]->mValue;
-                int curVal = mNodeList[n]->mValue;
-
-                mNodeList[n]->mValue = parVal;
-                mNodeList[(n - 1) / 2]->mValue = curVal;
-    
-                createNewActionGroup();
-                mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[n].get(), mNodeList[(n - 1) / 2].get(), 0.5f));
-                align(0);
-            }
+            if (n % 2 == 1)
+                newNode->mTargetPostion = par->mTargetPostion + sf::Vector2f(-mMaxWidth / (1 << (newNode->mLevel + 1)), mVerticalSpacing);
             else
-                break;
-            
-            n = (n - 1) / 2;
+                newNode->mTargetPostion = par->mTargetPostion + sf::Vector2f(mMaxWidth / (1 << (newNode->mLevel + 1)), mVerticalSpacing);
+
+            moveNode(newNode, newNode->mTargetPostion, mAnimationSpeed, true);
+
+            createNewActionGroup();
+            moveEdge(par, nullptr, newNode, mAnimationSpeed);
+        }
+        else
+        {
+            newNode->mTargetPostion = sf::Vector2f(600, 100);
+            newNode->setPosition(sf::Vector2f(600, 100));
         }
 
+        createNewActionGroup();
+        mActionQueue.pushAction([=](sf::Time) mutable -> bool { heapifyUp(n); return true; });
         return true;
     });
+    
 }
 
 void HeapTree::remove(int value)
@@ -67,7 +63,8 @@ void HeapTree::remove(int value)
 
     int n = mNodeList.size();
     if (n > 1)
-        mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[0].get(), mNodeList[n - 1].get(), mAnimationSpeed));
+        swapTwoNodes(mNodeList[0].get(), mNodeList[n - 1].get());
+        // mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[0].get(), mNodeList[n - 1].get(), mAnimationSpeed));
 
     createNewActionGroup();
     mActionQueue.pushAction(Action::FadeNode(mNodeList[n - 1].get(), mAnimationSpeed));
@@ -78,31 +75,7 @@ void HeapTree::remove(int value)
     removeNode(mNodeList[n - 1].get());
 
     createNewActionGroup();
-    mActionQueue.pushAction([=](sf::Time) mutable -> bool
-    {
-        int i = 0;
-        int n = mNodeList.size();
-        while (i < n)
-        {
-            int largest = i;
-            int left = 2 * i + 1;
-            int right = 2 * i + 2;
-            if (left < n && mNodeList[largest]->mValue > mNodeList[left]->mValue)
-                largest = left;
-            if (right < n && mNodeList[largest]->mValue > mNodeList[right]->mValue)
-                largest = right;
-            if (largest != i)
-            {
-                createNewActionGroup();
-                mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[i].get(), mNodeList[largest].get(), mAnimationSpeed));
-                i = largest;
-            }
-            else
-                break;
-        }
-
-        return true;
-    });
+    mActionQueue.pushAction([=](sf::Time) mutable -> bool { heapifyDown(0); return true; });
 }
 
 bool HeapTree::search(int value)
@@ -128,4 +101,62 @@ void HeapTree::align(int index, sf::Vector2f curPos, float curSpacingX, float cu
 
     align(2 * index + 1, leftChildPos, newSpacingX, newSpacingY);
     align(2 * index + 2, rightChildPos, newSpacingX, newSpacingY);
+}
+
+void HeapTree::heapifyUp(int index)
+{
+    if (index == 0) return;
+    int parent = (index - 1) / 2;
+
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::Wait(0.2f));
+    
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f));
+    mActionQueue.pushAction(Action::HighlightNode(mNodeList[parent].get(), sf::Color::Red, 0.5f));
+
+    int curValue = mNodeList[index]->mValue;
+    int parValue = mNodeList[parent]->mValue;
+
+    if (curValue < parValue)
+    {
+        swapTwoNodes(mNodeList[index].get(), mNodeList[parent].get());
+        createNewActionGroup();
+        mActionQueue.pushAction([=](sf::Time){ heapifyUp(parent); return true; });
+    }
+}
+
+void HeapTree::heapifyDown(int index)
+{
+    if (index >= mNodeList.size()) return;
+
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+    int n = mNodeList.size();
+
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::Wait(0.2f));
+
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f));
+    mActionQueue.pushAction(Action::HighlightNode(mNodeList[smallest].get(), sf::Color::Red, 0.5f));
+
+    if (left < n && mNodeList[smallest]->mValue > mNodeList[left]->mValue)
+        smallest = left;
+    if (right < n && mNodeList[smallest]->mValue > mNodeList[right]->mValue)
+        smallest = right;
+
+    if (smallest != index)
+    {
+        swapTwoNodes(mNodeList[index].get(), mNodeList[smallest].get());
+        createNewActionGroup();
+        mActionQueue.pushAction([=](sf::Time){ heapifyDown(smallest); return true; });
+    }
+}
+
+void HeapTree::empty()
+{
+    DS::empty();
+    mRoot = nullptr;
 }

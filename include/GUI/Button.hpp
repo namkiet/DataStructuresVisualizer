@@ -44,7 +44,7 @@ namespace GUI
         protected:
             Callback				mCallback;
         private:
-
+x
             sf::Text				mText;
             bool                    mIsToggle;
             sf::Color               mNormalColor;
