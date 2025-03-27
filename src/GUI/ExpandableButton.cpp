@@ -8,7 +8,6 @@
     mSubComponents(),
     Info()
     {
-
     }
 
     void ExpandableButton::addSubComponent(Component::Ptr Component){
@@ -21,7 +20,8 @@
         mShape.getGlobalBounds().contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
     {
         std::cout << "Click " << this->getText() << std::endl;
-        activate();
+        if(!isActive())activate();
+        else deactivate();
     }
 
     else if (event.type == sf::Event::MouseMoved)
@@ -29,11 +29,12 @@
         sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
         bool hoverNow = mShape.getGlobalBounds().contains(mousePos);
 
-        if (hoverNow && !isActive())
+        if (hoverNow)
         {
+            std::cout<<"hover"<<std::endl;
             select();
         }
-        else if (!hoverNow && isSelected() && !isActive())
+        else if (!hoverNow && isSelected())
         {
             deselect();
         }

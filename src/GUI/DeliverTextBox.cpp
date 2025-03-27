@@ -59,7 +59,7 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed)
     {   
         // std::cout<<"Key pressed is handled "<<std::endl;
-        if (event.key.code == sf::Keyboard::Enter) 
+        if (event.key.code == sf::Keyboard::Enter && isSelected()) 
         {   
             // std::cout<<"Enter is pressed"<<std::endl;
             if (!mInput.empty())

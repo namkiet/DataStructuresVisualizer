@@ -128,12 +128,15 @@ bool Button::isSelectable() const
     return true;
 }
 
-void Button::select()
+
+// selected and activated are not allowed to appear at the same time
+
+void Button::select() // khong the select 1 component dang active
 {
+    if(isActive()) return;
 	Component::select();
-    std::cout<<"Select"<<std::endl;
     if (mIsToggle){
-        std::cout<<"OK"<<std::endl;
+        std::cout<<"Change to selected color"<<std::endl;
         if(mShapeType == ShapeType::Rectangle)
             mShape.setFillColor(mSelectedColor);
         else if(mShapeType == ShapeType::Circle)
@@ -143,7 +146,7 @@ void Button::select()
         deselect();
 }
 
-void Button::deselect()
+void Button::deselect() // khong the deselect 1 component dang active
 {
 	Component::deselect();
     if(mIsToggle && !isActive())
@@ -157,6 +160,7 @@ void Button::deselect()
 
 void Button::activate()
 {
+    deselect();
 	Component::activate();
 	if (mIsToggle)
 		{
@@ -166,8 +170,8 @@ void Button::activate()
                 mCircle.setFillColor(mActivatedColor);
         }
     if (mCallback) mCallback();
-	// if (!mIsToggle)
-	// 	deactivate();
+	if (!mIsToggle)
+		deactivate();
 }
 
 
