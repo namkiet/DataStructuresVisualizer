@@ -23,6 +23,7 @@ public:
 protected:
     sf::CircleShape         mShape;
     sf::Text                mText;
+    sf::Text                mNote;
     sf::Font                mFont;
     float                   mTextSize;
 
@@ -37,6 +38,7 @@ public:
     void                    setValue(int value);
     float                   getTextSize();
     void                    setTextSize(float textSize);   
+    void                    setNote(std::string note);
 
 protected:
     void                    updateText();

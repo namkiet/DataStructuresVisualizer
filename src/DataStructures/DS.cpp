@@ -1,4 +1,5 @@
 #include <DataStructures/DS.hpp>
+#include <Core/Variables.hpp>
 
 void DS::empty()
 {
@@ -108,7 +109,6 @@ void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool
 
 void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
 {
-    std::cerr << "HELLO\n";
     mActionQueue.pushAction(Action::MoveEdge(mEdgeList, parent, child, targetTail, duration)); 
     mActionQueue.pushUndo(Action::MoveEdge(mEdgeList, parent, targetTail, child, duration));
 }
@@ -119,14 +119,8 @@ void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlight
     mActionQueue.pushUndo(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
 }
 
-#include <iostream>
-
 void DS::undo()
 {
-    std::cerr << "HELLO\n";
-    // mActionQueue.undo();
-
-    removeNode(mNodeList[1].get());
 }
 
 void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
@@ -172,9 +166,19 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
 void DS::loadFromVector(std::vector<int> numList)
 {
+
     for (int x: numList)
     {
-        createNewActionGroup();
-        mActionQueue.pushAction([=](sf::Time) mutable -> bool { insert(x); return true; });
+        mActionQueue.pushInstantAction([=](){
+            // mActionQueue.pushInstantAction([=](){
+                insert(x);
+            // });
+        });
+        // createNewActionGroup();
+        // mActionQueue.pushAction([=](sf::Time) mutable -> bool { insert(x); return true; });
+        // createNewActionGroup();
+        // mActionQueue.pushAction(Action::Wait(0.5f));
     }
+    
+    // ANIMATION::Speed = 0.5f;
 }

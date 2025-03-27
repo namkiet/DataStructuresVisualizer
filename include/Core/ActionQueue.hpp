@@ -45,6 +45,7 @@ private:
 
 public:
     void pushAction(ActionFunc action);
+    void pushInstantAction(std::function<void()> func);
     void update(sf::Time dt);
     void createNewBatch();
     bool empty() const;

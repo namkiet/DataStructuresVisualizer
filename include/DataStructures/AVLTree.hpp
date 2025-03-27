@@ -30,4 +30,8 @@ private:
     TreeNode*                   rightRotate(TreeNode* root);
     TreeNode*                   balance(TreeNode* root);
     void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(600, 100), float curSpacingX = 300, float curSpacingY = 100);        
+
+private:
+    void                        saveState() override;
+    void                        loadState() override;
 };

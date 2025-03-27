@@ -48,13 +48,13 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
 
             createNewActionGroup();
             if (value < prev->mValue) // is left child
-                moveNode(node, prev->getPosition() + sf::Vector2f(-mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), mAnimationSpeed, true);
+                moveNode(node, prev->getPosition() + sf::Vector2f(-mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), 0.5f, true);
             else // is right child
-                moveNode(node, prev->getPosition() + sf::Vector2f(mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), mAnimationSpeed, true);
+                moveNode(node, prev->getPosition() + sf::Vector2f(mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), 0.5f, true);
             
 
             createNewActionGroup();
-            moveEdge(prev, nullptr, node, mAnimationSpeed);
+            moveEdge(prev, nullptr, node, 0.5f);
         }
         else
         {
@@ -65,7 +65,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
     }
     
     createNewActionGroup();
-    highlightNode(node, sf::Color::Red, mAnimationSpeed);
+    highlightNode(node, sf::Color::Red, 0.5f);
 
     if (value < node->mValue) // Left traveral
     {
@@ -104,7 +104,7 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
 
 
             createNewActionGroup();
-            mActionQueue.pushAction(Action::FadeNode(node, mAnimationSpeed));
+            mActionQueue.pushAction(Action::FadeNode(node, 0.5f));
 
             // All edges lead TO it now lead to NULL
             for (auto& e: mEdgeList)
@@ -132,7 +132,7 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             // cur->setValue(value);
             // mActionQueue.pushAction(Action::ChangeNodeValue(node, cur->mValue, 0.5f));
             // mActionQueue.pushAction(Action::ChangeNodeValue(cur, value, 0.5f));
-            // mActionQueue.pushAction(Action::SwapNodeValues(node, cur, mAnimationSpeed));
+            // mActionQueue.pushAction(Action::SwapNodeValues(node, cur, 0.5f));
             swapTwoNodes(cur, node);
             createNewActionGroup();
 
@@ -160,24 +160,24 @@ bool AVLTree::search(TreeNode* node, int value)
         while (blinkTimes--)
         {
             createNewActionGroup();
-            highlightNode(node, sf::Color::Blue, mAnimationSpeed * 0.4f);
+            highlightNode(node, sf::Color::Blue, 0.5f * 0.4f);
         }
         return true;
     }
 
     createNewActionGroup();
-    highlightNode(node, sf::Color::Red, mAnimationSpeed);
+    highlightNode(node, sf::Color::Red, 0.5f);
     
     if (value < node->mValue) 
     {
         createNewActionGroup();
-        traverseEdge(node, node->mLeft, sf::Color::Red, mAnimationSpeed);
+        traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
         return search(node->mLeft, value);
     }
     if (value > node->mValue)
     {
         createNewActionGroup();
-        traverseEdge(node, node->mRight, sf::Color::Red, mAnimationSpeed);
+        traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
         return search(node->mRight, value);
     }
     return true;
@@ -219,7 +219,7 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
 
     if (par)
     {
-        moveEdge(par, root, newRoot, mAnimationSpeed);
+        moveEdge(par, root, newRoot, 0.5f);
         if (par->mLeft == root) 
             par->mLeft = newRoot;
         else 
@@ -229,10 +229,10 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
     if (newRoot->mLeft) 
         newRoot->mLeft->mParent = root;
 
-    moveEdge(root, root->mRight, newRoot->mLeft, mAnimationSpeed);
+    moveEdge(root, root->mRight, newRoot->mLeft, 0.5f);
     root->mRight = newRoot->mLeft;
 
-    moveEdge(newRoot, newRoot->mLeft, root, mAnimationSpeed);
+    moveEdge(newRoot, newRoot->mLeft, root, 0.5f);
     newRoot->mLeft = root;
 
     root->mParent = newRoot;
@@ -255,7 +255,7 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
     newRoot->mParent = par;
     if (par)
     {
-        moveEdge(par, root, newRoot, mAnimationSpeed);
+        moveEdge(par, root, newRoot, 0.5f);
         if (par->mRight == root) 
             par->mRight = newRoot;
         else 
@@ -265,10 +265,10 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
     if (newRoot->mRight) 
         newRoot->mRight->mParent = root;
 
-    moveEdge(root, root->mLeft, newRoot->mRight, mAnimationSpeed);
+    moveEdge(root, root->mLeft, newRoot->mRight, 0.5f);
     root->mLeft = newRoot->mRight;
 
-    moveEdge(newRoot, newRoot->mRight, root, mAnimationSpeed);
+    moveEdge(newRoot, newRoot->mRight, root, 0.5f);
     newRoot->mRight = root;
     
     root->mParent = newRoot;
@@ -284,6 +284,18 @@ TreeNode* AVLTree::balance(TreeNode* root)
 {
     if (!root) return nullptr;
     int bf = getBalanceFactor(root);
+
+
+    mActionQueue.pushInstantAction([=](){
+        root->setNote("bf = " + std::to_string(bf));
+    });
+
+    highlightNode(root, sf::Color::Blue, 1.f);
+
+    mActionQueue.pushInstantAction([=](){
+        root->setNote("");
+    });
+
     if (bf > 1) 
     {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
@@ -365,7 +377,7 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     
     std::cerr << curPos.x << "-" << curPos.y << "\n";
 
-    moveNode(curNode, curPos, mAnimationSpeed, false);
+    moveNode(curNode, curPos, 0.5f, false);
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
@@ -376,4 +388,22 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
 
     align(curNode->mLeft, leftChildPos, newSpacingX, newSpacingY);
     align(curNode->mRight, rightChildPos, newSpacingX, newSpacingY);
+}
+
+void AVLTree::saveState()
+{
+    mHistory.push(History(std::move(mNodeList), std::move(mEdgeList), mRoot));
+}
+
+void AVLTree::loadState()
+{
+    if (mHistory.empty())
+        return;
+
+    History history = mHistory.top();
+    mHistory.pop();
+
+    mNodeList = std::move(history.nodeList);
+    mEdgeList = std::move(history.edgeList);
+    mRoot = static_cast<TreeNode*>(history.baseNode);
 }

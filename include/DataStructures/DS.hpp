@@ -33,8 +33,8 @@ protected:
 protected:
     AnimationQueue                  mAnimationQueue;
     ActionQueue                     mActionQueue;
-    std::vector<CircleNode::Ptr>    mNodeList;
-    std::vector<Edge::Ptr>          mEdgeList;
+    std::vector<CircleNode*>        mNodeList;
+    std::vector<Edge*>              mEdgeList;
 
 protected:
     void                            createNewActionGroup();
@@ -53,4 +53,20 @@ protected:
 
 public:
     void undo();
+
+protected:
+    struct History
+    {
+        std::vector<CircleNode::Ptr> nodeList;
+        std::vector<Edge::Ptr> edgeList;
+        CircleNode* baseNode;
+
+        History(std::vector<CircleNode::Ptr>&& nodeList, std::vector<Edge::Ptr>&& edgeList, CircleNode* baseNode)
+        : nodeList(std::move(nodeList)), edgeList(std::move(edgeList)), baseNode(baseNode) {};
+    };
+
+    std::stack<History>             mHistory;
+    virtual void                    saveState() = 0;
+    virtual void                    loadState() = 0;
 };
+

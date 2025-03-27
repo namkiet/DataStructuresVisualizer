@@ -13,6 +13,7 @@ namespace Action
     ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration);
     ActionFunc SwapNodeValues(CircleNode* nodeA, CircleNode* nodeB, float duration);
     ActionFunc FadeNode(CircleNode* node, float duration);
+    // ActionFunc SetNoteForNode(CircleNode* node, std::string note, float duration);
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
 

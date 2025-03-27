@@ -39,10 +39,10 @@ void HeapTree::insert(int value)
             else
                 newNode->mTargetPostion = par->mTargetPostion + sf::Vector2f(mMaxWidth / (1 << (newNode->mLevel + 1)), mVerticalSpacing);
 
-            moveNode(newNode, newNode->mTargetPostion, mAnimationSpeed, true);
+            moveNode(newNode, newNode->mTargetPostion, 0.5f, true);
 
             createNewActionGroup();
-            moveEdge(par, nullptr, newNode, mAnimationSpeed);
+            moveEdge(par, nullptr, newNode, 0.5f);
         }
         else
         {
@@ -64,12 +64,12 @@ void HeapTree::remove(int value)
     int n = mNodeList.size();
     if (n > 1)
         swapTwoNodes(mNodeList[0].get(), mNodeList[n - 1].get());
-        // mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[0].get(), mNodeList[n - 1].get(), mAnimationSpeed));
+        // mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[0].get(), mNodeList[n - 1].get(), 0.5f));
 
     createNewActionGroup();
-    mActionQueue.pushAction(Action::FadeNode(mNodeList[n - 1].get(), mAnimationSpeed));
+    mActionQueue.pushAction(Action::FadeNode(mNodeList[n - 1].get(), 0.5f));
     if (n > 1)
-        moveEdge(mNodeList[(n - 2) / 2].get(), mNodeList[n - 1].get(), nullptr, mAnimationSpeed);
+        moveEdge(mNodeList[(n - 2) / 2].get(), mNodeList[n - 1].get(), nullptr, 0.5f);
 
     createNewActionGroup();
     removeNode(mNodeList[n - 1].get());
@@ -90,7 +90,7 @@ void HeapTree::align(int index, sf::Vector2f curPos, float curSpacingX, float cu
     if (index == 0) // is root node
         createNewActionGroup();
     
-    moveNode(mNodeList[index].get(), curPos, mAnimationSpeed, false);
+    moveNode(mNodeList[index].get(), curPos, 0.5f, false);
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);

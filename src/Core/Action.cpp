@@ -1,13 +1,16 @@
 #include <Core/Action.hpp>
+#include <Core/Variables.hpp>
 #include <iostream>
 #include <cmath>
+
+
 namespace Action
 {
     ActionFunc Wait(float duration)
     {
         return [duration, elapsed = 0.f](sf::Time dt) mutable -> bool
         {
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             if (elapsed >= duration)
                 return true;
             return false;
@@ -29,7 +32,7 @@ namespace Action
                 isInit = true;
             }
 
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
 
             sf::Color newFillColor(
@@ -49,7 +52,7 @@ namespace Action
 
             if (elapsed >= duration)
             {
-                std::cerr << "Node " << node->mValue << " is highlighted \n";
+                // std::cerr << "Node " << node->mValue << " is highlighted \n";
                 node->setFillColor(startFillColor);
                 node->setOutlineColor(startOutlineColor);
                 return true;
@@ -75,7 +78,7 @@ namespace Action
                 isInit = true;
             }
 
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             sf::Vector2f newPos = startPos + speed * elapsed;
             node->setPosition(newPos);
 
@@ -85,9 +88,9 @@ namespace Action
                 node->setOpacity(opacity);
             }
 
-            if (speed == sf::Vector2f(0, 0)  || elapsed >= duration) {
-                std::cerr << "Node " << node->mValue << " is moved to (" << targetPos.x << " " << targetPos.y << ")\n";
-
+            if (speed == sf::Vector2f(0, 0)  || elapsed >= duration) 
+            {
+                // std::cerr << "Node " << node->mValue << " is moved to (" << targetPos.x << " " << targetPos.y << ")\n";
                 node->setPosition(targetPos);
                 node->setOpacity(1);
                 return true;
@@ -107,7 +110,7 @@ namespace Action
                 isInit = true;
             }
 
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             float t = std::cos((elapsed / duration) * 3.14159f / 2);
             opacity = t;
             node->setOpacity(opacity);
@@ -119,6 +122,24 @@ namespace Action
             return false;
         };
     }
+
+    // ActionFunc SetNoteForNode(CircleNode* node, std::string note, float duration)
+    // {
+    //     return [node, note, duration,
+    //         elapsed = 0.f, isInit = false](sf::Time dt) mutable -> bool
+    //     {
+    //         if (!isInit)
+    //         {
+    //             node->setNote(note);
+    //             isInit = true;
+    //         }
+            
+    //         elapsed += dt.asSeconds() * ANIMATION::Speed;
+    //         if (elapsed >= duration)
+    //             return true;
+    //         return false;
+    //     }
+    // }
 
     ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration)
     {
@@ -133,7 +154,7 @@ namespace Action
                 isInit = true;
             }
 
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             float t = std::sin((elapsed / duration) * 3.14159f);
 
             if (elapsed >= duration / 2)
@@ -188,14 +209,13 @@ namespace Action
                 isInit = true;
             }
 
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             sf::Vector2f newPos = startPos + speed * elapsed;
             edge->setTail(newPos);
 
             if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
             {
-                std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is switched to " << parent->mValue << "-" << (targetTail ? targetTail->mValue : -1) << "\n";
-                
+                // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is switched to " << parent->mValue << "-" << (targetTail ? targetTail->mValue : -1) << "\n";
                 edge->setTail(targetPos);
                 edge->mTo = targetTail;
                 edge->mIsChangingTail = false;
@@ -224,7 +244,7 @@ namespace Action
                 isInit = true;
             }
     
-            elapsed += dt.asSeconds();
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
             float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
     
             sf::Color newColor(
@@ -238,8 +258,7 @@ namespace Action
     
             if (elapsed >= duration)
             {
-                std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is traversed \n";
-            
+                // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is traversed \n";
                 edge->setColor(startColor);
                 return true;
             }

@@ -20,6 +20,12 @@ void ActionQueue::pushAction(ActionFunc action)
     queue.back().push_back(std::move(action));
 }
 
+void ActionQueue::pushInstantAction(std::function<void()> func)
+{
+    createNewBatch();
+    pushAction([func](sf::Time) { func(); return true; });
+}
+
 void ActionQueue::update(sf::Time dt)
 {
     if (!queue.empty())
