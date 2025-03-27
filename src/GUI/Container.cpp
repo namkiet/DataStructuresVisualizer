@@ -89,5 +89,9 @@ void Container::ChangeActivateChild(std::size_t index){
 void Container::makeEmpty(){
     mChildren.clear();
 }
+
+// void Container::setCallback(Callback Callback){
+//     mCallback = Callback;
+// }
 }
 

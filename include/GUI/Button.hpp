@@ -20,7 +20,6 @@ namespace GUI
     {
         public:
             typedef std::shared_ptr<Button>		Ptr;
-            typedef std::function<void()>		Callback;
         enum class ShapeType {
             Rectangle,
             Circle
@@ -33,7 +32,7 @@ namespace GUI
                                     Button(sf::Font& fonts, sf::Vector2f Position, std::string text,sf::Vector2f ButtonSize, ShapeType shapeType = ShapeType::Rectangle, ContentType content = ContentType::Text);
 
             std::string             getText();
-            void					setCallback(Callback callback);
+            // virtual void			setCallback(Callback func) override;
             virtual void			handleEvent(const sf::Event& event);
 
             void			        draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -48,7 +47,7 @@ namespace GUI
             void                    deactivate() override;
             void                    setSprite(sf::Sprite sprite);
         protected:
-            Callback				mCallback;
+            // Callback				mCallback;
         private:
             bool                    mIsToggle;
             sf::Color               mNormalColor;

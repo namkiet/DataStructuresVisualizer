@@ -12,7 +12,7 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
     mShape.setPointCount(10000);
 
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
-    mText.setColor(sf::Color::Black);
+    mText.setColor(outlineColor);
     mText.setCharacterSize(radius * 0.75);
     mText.setFont(mFont);
     mText.setString(std::to_string(value));

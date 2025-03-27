@@ -1,4 +1,4 @@
-#include "GUI/DeliverTextBox.hpp"
+#include "GUI/TextBox.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <functional>
@@ -6,11 +6,10 @@
 #include "GUI/ExpandableButton.hpp"
 namespace GUI {
 
-const std::string DeliverTextBox::mAllowedChars = "0123456789";
+const std::string TextBox::mAllowedChars = "0123456789";
 
-DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)
+TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)
     {
-    mInfoID = 0; // default;
     mSelectOutlineColor = sf::Color(66, 133, 244);
     mDefaultOutlineColor = sf::Color(76, 91, 99);
     InputNum = -1;
@@ -27,32 +26,29 @@ DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::
     mText.setString("");
 }
 
-void DeliverTextBox::setInfoID(int id){
-    mInfoID = id;
-}
 
-// void DeliverTextBox::setCallback(Callback func) {
-//     mCallback = func;
+// void TextBox::setCallback(CallBack callback) {
+//     mCallBack = std::move(callback);
 // }
 
-void DeliverTextBox::select(){
+void TextBox::select(){
     Component::select();
     mBox.setOutlineColor(mSelectOutlineColor);
 }
 
-void DeliverTextBox::deselect(){
+void TextBox::deselect(){
     Component::deselect();
     mBox.setOutlineColor(mDefaultOutlineColor);
 }
 
-void DeliverTextBox::reset(){
+void TextBox::reset(){
     InputNum = 0;
     mInput = "";
     mText.setString(mInput);
 }
 
-void DeliverTextBox::handleEvent(const sf::Event& event) {
-    // std::cout<<"DeliverTextBox is handling event"<<std::endl;
+void TextBox::handleEvent(const sf::Event& event) {
+    // std::cout<<"TextBox is handling event"<<std::endl;
     
 
     // std::cout << "Event detected: " << event.type << std::endl;
@@ -67,7 +63,10 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
                 InputNum = std::stoi(mInput);
                 if (InputNum != 0)
                 {
-                   ButtonParent->setSubComponentInfo(InputNum, mInfoID);
+                //    ButtonParent->setSubComponentInfo(InputNum, mInfoID);
+                if(CallBack()){
+                    CallBack();
+                }
                 }
 
                 reset();
@@ -97,7 +96,7 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
     }
 }
 
-void DeliverTextBox::inputLogic(sf::Uint32 unicode) {
+void TextBox::inputLogic(sf::Uint32 unicode) {
     char ch = static_cast<char>(unicode);
 
     if (unicode == 8) { // Backspace
@@ -114,25 +113,25 @@ void DeliverTextBox::inputLogic(sf::Uint32 unicode) {
 
 }
 
-void DeliverTextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(mBox, states);
     target.draw(mText, states);
 }
 
-void DeliverTextBox::setText(const std::string& text) {
+void TextBox::setText(const std::string& text) {
     mInput = text;
     mText.setString(mInput);
 }
 
-std::string DeliverTextBox::getText() const {
+std::string TextBox::getText() const {
     return mInput;
 }
 
-void DeliverTextBox::setButtonParent(std::shared_ptr<ExpandableButton> Button){
-    ButtonParent = Button;
-}
+// void TextBox::setCallBack(std::function<void()> func){
+//     mCallBack = func;
+// }
 
-void DeliverTextBox::setColor(sf::Color color){
+void TextBox::setColor(sf::Color color){
     mBox.setFillColor(color);
 }
 }

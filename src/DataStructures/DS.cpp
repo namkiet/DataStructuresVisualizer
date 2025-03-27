@@ -44,7 +44,7 @@ void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow)
 {
     mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
     {
-        mEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, parent, child,hasArrow));
+        mEdgeList.push_back(std::make_unique<Edge>(sf::Color::White, parent, child,hasArrow));
         return true;
     });
 }

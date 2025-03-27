@@ -41,7 +41,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
 {
     if (!node)
     {
-        node = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
+        node = new TreeNode(value, 16.f, sf::Color::Transparent, sf::Color::White);
         node->mParent = prev;
 
         createNewActionGroup();

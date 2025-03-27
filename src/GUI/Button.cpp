@@ -2,10 +2,11 @@
 #include <iostream>
 #include "Core/Utility.hpp"
 #include <cmath>
+#include "GUI/Component.hpp"
 namespace GUI
 {
 
-Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf::Vector2f ButtonSize,ShapeType shapeType, ContentType content) : mCallback(), mShapeType(shapeType)
+Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf::Vector2f ButtonSize,ShapeType shapeType, ContentType content) : mShapeType(shapeType)
 {
     mShapeType = shapeType;
     mContentType = content;
@@ -67,9 +68,9 @@ std::string Button::getText(){
     return mText.getString().toAnsiString();
 }
 
-void Button::setCallback(Callback callback){
-    mCallback = std::move(callback);
-}
+// void Button::setCallback(Callback callback){
+//     mCallback = std::move(callback);
+// }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     if(mShapeType == ShapeType::Rectangle)
@@ -164,7 +165,7 @@ void Button::activate()
             else if(mShapeType == ShapeType::Circle)
                 mCircle.setFillColor(mActivatedColor);
         }
-    // mCallback();
+    if (mCallback) mCallback();
 	// if (!mIsToggle)
 	// 	deactivate();
 }

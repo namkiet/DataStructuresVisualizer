@@ -46,8 +46,11 @@
             {
                 subComponent->handleEvent(event);
             }
-        if (mCallback)
-            mCallback();
+        // if (mCallback)
+        //     mCallback();
+        if(mFunc){
+            mFunc();
+        }
     }
 }
 
@@ -76,5 +79,9 @@
         Info.num = -1;
         Info.VecNum.resize(0);
         Info.InfoID = -1;
+    }
+
+    void ExpandableButton::setFunc(std::function<void()> func){
+        mFunc = func;
     }
     }
