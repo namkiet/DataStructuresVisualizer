@@ -5,11 +5,11 @@
 #include <memory>
 
 class CircleNode:
-    public sf::Transformable, public sf::Drawable,
-    private sf::NonCopyable
+    public sf::Transformable, public sf::Drawable
 {
 public:
     typedef std::unique_ptr<CircleNode> Ptr;
+                            CircleNode(const CircleNode &other);
                             CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
 
 public:

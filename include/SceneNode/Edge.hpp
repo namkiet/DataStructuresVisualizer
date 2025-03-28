@@ -3,8 +3,7 @@
 #include <SceneNode/CircleNode.hpp>
 
 class Edge :
-    public sf::Transformable, public sf::Drawable,
-    private sf::NonCopyable
+    public sf::Transformable, public sf::Drawable
 {
 public:
     typedef std::unique_ptr<Edge> Ptr;

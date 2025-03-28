@@ -19,8 +19,6 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 
 void DS::updateCurrent(sf::Time dt)   
 {
-    mAnimationQueue.update(dt);
-
     mActionQueue.update(dt);
 
     for (auto &edge: mEdgeList)
@@ -119,10 +117,6 @@ void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlight
     mActionQueue.pushUndo(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
 }
 
-void DS::undo()
-{
-}
-
 void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 {
     if (!a || !b) return;
@@ -181,4 +175,26 @@ void DS::loadFromVector(std::vector<int> numList)
     }
     
     // ANIMATION::Speed = 0.5f;
+}
+
+bool DS::canUndo()
+{
+    return !mUndoStack.empty();
+}
+
+bool DS::canRedo()
+{
+    return !mRedoStack.empty();
+}
+
+
+void DS::undo()
+{
+    if (!canUndo()) return;
+    
+    empty();
+    History history = std::move(mUndoStack.top());
+    mUndoStack.pop();
+
+    loadState(std::move(history));
 }

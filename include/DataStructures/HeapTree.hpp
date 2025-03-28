@@ -2,7 +2,6 @@
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/TreeNode.hpp>
 #include <DataStructures/DS.hpp>
-#include <Core/Animation.hpp>
 
 class HeapTree: public DS
 {

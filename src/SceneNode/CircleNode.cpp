@@ -1,6 +1,17 @@
 #include <SceneNode/CircleNode.hpp>
 #include <Core/Utility.hpp>
 
+CircleNode::CircleNode(const CircleNode &other)
+    : sf::Transformable(other), sf::Drawable(other),
+      mValue(other.mValue), mTargetPostion(other.mTargetPostion),
+      mShape(other.mShape), mText(other.mText), mNote(other.mNote),
+      mFont(other.mFont), mTextSize(other.mTextSize) 
+{
+    // Cập nhật font cho text
+    mText.setFont(mFont);
+    mNote.setFont(mFont);
+}
+
 CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor):
     mValue(value)
 {

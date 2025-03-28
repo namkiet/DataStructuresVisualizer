@@ -103,13 +103,8 @@ void World::buildScene()
 void World::setMode(World::Mode mode){
 	ModeContainer->ChangeActivateChild(mode); // ensure that the Modecontainer handle the true index of activated child
 	OperationButtonsList->makeEmpty();
-	if(mode == World::Mode::AVL)
+	if (mode == World::Mode::AVL)
 	{
-
-		// std::unique_ptr<AVLTree> root(new AVLTree());
-		// mDataStructure = root.get();
-		// mDataStructure->setPosition(sf::Vector2f(600, 100));
-		// mSceneLayers[DataStructure]->attachChild(std::move(root));
 
 		/* FUNCTIONAL BUTTONS */
 		sf::Vector2f insertButtonPos(20.f, mWindow.getSize().y - GUI::ButtonSize.y - 20.f); 
@@ -195,5 +190,21 @@ void World::handleEvent(const sf::Event& event){
 		{
 			mDataStructure->loadFromVector(v);
 		}
+
+		// if (event.kxey.code == sf::Keyboard::S)
+		// {
+		// 	mDataStructure->saveState();
+		// }
+
+		// if (event.key.code == sf::Keyboard::L)
+		// {
+		// 	mDataStructure->loadState();
+		// }
+
+		if (event.key.code == sf::Keyboard::U)
+		{
+			mDataStructure->undo();
+		}
+
     }
 }

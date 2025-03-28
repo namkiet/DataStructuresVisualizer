@@ -3,7 +3,6 @@
 #include <SceneNode/TreeNode.hpp>
 #include <SceneNode/Edge.hpp>
 #include <DataStructures/DS.hpp>
-#include <Core/Animation.hpp>
 
 class AVLTree: public DS
 {
@@ -13,6 +12,10 @@ public:
     void                        remove(int value) override;
     bool                        search(int value) override;
     void                        empty() override;
+
+// private:
+    // TreeNode*                    rawInsert(int value) override;
+    // TreeNode*                    rawInsertHelper(TreeNode* node, TreeNode* prev, int value);
 
     // Just for debug
     void                        leftRotate();
@@ -31,7 +34,7 @@ private:
     TreeNode*                   balance(TreeNode* root);
     void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(600, 100), float curSpacingX = 300, float curSpacingY = 100);        
 
-private:
+public:
     void                        saveState() override;
-    void                        loadState() override;
+    void                        loadState(History history) override;
 };

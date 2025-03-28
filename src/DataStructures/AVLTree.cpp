@@ -1,18 +1,38 @@
 #include <DataStructures/AVLTree.hpp>
-#include <Core/Animation.hpp>
 #include <queue>
 #include <iostream>
 
 AVLTree::AVLTree(): mRoot(nullptr) {}
 
+// void AVLTree::rawInsert(int value)
+// {
+//     rawInsertHelper(mRoot, nullptr, value);
+// }
+
+// void AVLTree::rawInsertHelper(TreeNode* node, TreeNode* prev, int value)
+// {
+//     if (!node)
+//     {
+//         node = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
+//         node->mParent = prev;
+
+//         if (prev)
+//         {
+
+//         }
+//     }
+// }
+
 void AVLTree::insert(int value)
 {
+    saveState();
     mRoot = insert(mRoot, nullptr, value);
     align(mRoot);
 }
 
 void AVLTree::remove(int value)
 {
+    saveState();
     mRoot = remove(mRoot, value);
     align(mRoot);
 }
@@ -285,7 +305,6 @@ TreeNode* AVLTree::balance(TreeNode* root)
     if (!root) return nullptr;
     int bf = getBalanceFactor(root);
 
-
     mActionQueue.pushInstantAction([=](){
         root->setNote("bf = " + std::to_string(bf));
     });
@@ -390,20 +409,85 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     align(curNode->mRight, rightChildPos, newSpacingX, newSpacingY);
 }
 
-void AVLTree::saveState()
-{
-    mHistory.push(History(std::move(mNodeList), std::move(mEdgeList), mRoot));
+void AVLTree::saveState() {
+    std::vector<CircleNode::Ptr> savedNodeList;
+    std::vector<Edge::Ptr> savedEdgeList;
+
+    if (!mRoot) {
+        mUndoStack.push(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr));
+        std::cerr << mUndoStack.size() << "\n";
+        return;
+    }
+
+    std::unordered_map<TreeNode*, TreeNode*> nodeMap;
+    std::vector<TreeNode::Ptr> tempNodeList;
+    nodeMap[nullptr] = nullptr;  // Map nullptr -> nullptr
+
+    // Clone root node
+    TreeNode* savedRoot = new TreeNode(*mRoot);
+    nodeMap[mRoot] = savedRoot;
+    tempNodeList.push_back(TreeNode::Ptr(savedRoot));
+
+    // BFS clone toàn bộ cây
+    std::queue<std::pair<TreeNode*, TreeNode*>> q;
+    q.push({mRoot, savedRoot});
+
+    while (!q.empty()) {
+        auto [oldNode, newNode] = q.front();
+        q.pop();
+
+        TreeNode* newLeft = oldNode->mLeft ? new TreeNode(*oldNode->mLeft) : nullptr;
+        TreeNode* newRight = oldNode->mRight ? new TreeNode(*oldNode->mRight) : nullptr;
+
+        newNode->mLeft = newLeft;
+        newNode->mRight = newRight;
+        if (newLeft) newLeft->mParent = newNode;
+        if (newRight) newRight->mParent = newNode;
+
+        // nodeMap[oldNode->mLeft] = newLeft;
+        // nodeMap[oldNode->mRight] = newRight;
+
+        savedEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, newNode, newNode->mLeft, false, 1.5f));
+        savedEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, newNode, newNode->mRight, false, 1.5f));
+
+        if (newLeft) {
+            tempNodeList.push_back(TreeNode::Ptr(newLeft));
+            q.push({oldNode->mLeft, newLeft});
+        }
+        if (newRight) {
+            tempNodeList.push_back(TreeNode::Ptr(newRight));
+            q.push({oldNode->mRight, newRight});
+        }
+    }
+
+    // Chuyển tempNodeList từ TreeNode::Ptr sang CircleNode::Ptr
+    for (auto& node : tempNodeList)
+        savedNodeList.push_back(std::move(node));
+
+    TreeNode* savedBaseNode = static_cast<TreeNode*>(savedNodeList.front().get());
+
+
+    while (!mRedoStack.empty())
+        mRedoStack.pop();
+
+    mUndoStack.push(History(std::move(savedNodeList), std::move(savedEdgeList), savedBaseNode));
+
+    std::cerr << mUndoStack.size() << "\n";
 }
 
-void AVLTree::loadState()
-{
-    if (mHistory.empty())
-        return;
 
-    History history = mHistory.top();
-    mHistory.pop();
+void AVLTree::loadState(History history)
+{
+    // if (mUndoStack.empty())
+    //     return;
+
+    // empty();
+    // History history = std::move(mUndoStack.top());
+    // mUndoStack.pop();
 
     mNodeList = std::move(history.nodeList);
     mEdgeList = std::move(history.edgeList);
+
     mRoot = static_cast<TreeNode*>(history.baseNode);
+    std::cerr << mUndoStack.size() << "\n";
 }

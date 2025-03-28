@@ -2,7 +2,6 @@
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/CircleNode.hpp>
 #include <SceneNode/Edge.hpp>
-#include <Core/Animation.hpp>
 #include <Core/ActionQueue.hpp>
 #include <Core/Action.hpp>
 
@@ -11,12 +10,16 @@
 
 class DS: public SceneNode
 {
+// BASIC FUNCTIONS
 public:
     virtual void                    insert(int value) = 0;
     virtual void                    remove(int value) = 0;
     virtual bool                    search(int value) = 0;
     virtual void                    empty();
     void                            loadFromVector(std::vector<int> numList);
+
+// private:
+//     virtual void                    rawInsert(int value) = 0;
 
 public:
     virtual void                    updateCurrent(sf::Time dt);
@@ -31,11 +34,12 @@ protected:
     float                           mVerticalSpacing = 100;
 
 protected:
-    AnimationQueue                  mAnimationQueue;
     ActionQueue                     mActionQueue;
-    std::vector<CircleNode*>        mNodeList;
-    std::vector<Edge*>              mEdgeList;
+    std::vector<CircleNode::Ptr>    mNodeList;
+    std::vector<Edge::Ptr>          mEdgeList;
 
+
+// ACTIONS
 protected:
     void                            createNewActionGroup();
 
@@ -51,9 +55,8 @@ protected:
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
 
-public:
-    void undo();
 
+// UNDO - REDO    
 protected:
     struct History
     {
@@ -65,8 +68,17 @@ protected:
         : nodeList(std::move(nodeList)), edgeList(std::move(edgeList)), baseNode(baseNode) {};
     };
 
-    std::stack<History>             mHistory;
+    std::stack<History>             mUndoStack;
+    std::stack<History>             mRedoStack;
+
+public:
+    bool                            canUndo();
+    bool                            canRedo();
+    void                            undo();
+    // void                            redo();
+
+protected:
     virtual void                    saveState() = 0;
-    virtual void                    loadState() = 0;
+    virtual void                    loadState(History history) = 0;
 };
 
