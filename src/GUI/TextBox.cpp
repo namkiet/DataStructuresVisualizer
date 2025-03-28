@@ -27,10 +27,6 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
 }
 
 
-// void TextBox::setCallback(CallBack callback) {
-//     mCallBack = std::move(callback);
-// }
-
 void TextBox::select(){
     Component::select();
     mBox.setOutlineColor(mSelectOutlineColor);
@@ -48,24 +44,18 @@ void TextBox::reset(){
 }
 
 void TextBox::handleEvent(const sf::Event& event) {
-    // std::cout<<"TextBox is handling event"<<std::endl;
-    
-
-    // std::cout << "Event detected: " << event.type << std::endl;
     if (event.type == sf::Event::KeyPressed)
     {   
-        // std::cout<<"Key pressed is handled "<<std::endl;
+
         if (event.key.code == sf::Keyboard::Enter) 
         {   
-            // std::cout<<"Enter is pressed"<<std::endl;
             if (!mInput.empty())
             {
                 InputNum = std::stoi(mInput);
                 if (InputNum != 0)
                 {
-                //    ButtonParent->setSubComponentInfo(InputNum, mInfoID);
-                if(CallBack()){
-                    CallBack();
+                if(mCallback){
+                    mCallback();
                 }
                 }
 
@@ -78,7 +68,6 @@ void TextBox::handleEvent(const sf::Event& event) {
     }
     else if (isSelected() && event.type == sf::Event::TextEntered) 
     {
-        // std::cout<<"text entered"<<std::endl;
         if (event.text.unicode < 128) {
             inputLogic(event.text.unicode);
         }
@@ -109,7 +98,6 @@ void TextBox::inputLogic(sf::Uint32 unicode) {
     }
     mText.setString(mInput); 
 
-    // std::cout<<mInput<<std::endl;
 
 }
 
@@ -127,11 +115,11 @@ std::string TextBox::getText() const {
     return mInput;
 }
 
-// void TextBox::setCallBack(std::function<void()> func){
-//     mCallBack = func;
-// }
-
 void TextBox::setColor(sf::Color color){
     mBox.setFillColor(color);
+}
+
+int TextBox::getInputNum(){
+    return InputNum;
 }
 }

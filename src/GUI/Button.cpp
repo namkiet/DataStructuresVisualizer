@@ -134,9 +134,9 @@ bool Button::isSelectable() const
 void Button::select() // khong the select 1 component dang active
 {
     if(isActive()) return;
+    std::cout<<"Pass the first check"<<std::endl;
 	Component::select();
     if (mIsToggle){
-        std::cout<<"Change to selected color"<<std::endl;
         if(mShapeType == ShapeType::Rectangle)
             mShape.setFillColor(mSelectedColor);
         else if(mShapeType == ShapeType::Circle)
@@ -164,6 +164,7 @@ void Button::activate()
 	Component::activate();
 	if (mIsToggle)
 		{
+            std::cout<<"Come here"<<std::endl;
             if(mShapeType == ShapeType::Rectangle)
                 mShape.setFillColor(mActivatedColor);
             else if(mShapeType == ShapeType::Circle)
@@ -181,9 +182,9 @@ void Button::deactivate()
 	if (mIsToggle)
 	{
         if(mShapeType == ShapeType::Rectangle)
-            mShape.setFillColor(mSelectedColor);
+            mShape.setFillColor(mNormalColor);
         else if(mShapeType == ShapeType::Circle)
-            mCircle.setFillColor(mSelectedColor);
+            mCircle.setFillColor(mNormalColor);
     }
 }
 

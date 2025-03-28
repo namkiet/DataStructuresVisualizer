@@ -70,7 +70,7 @@ void Container::ChangeActivateChild(std::size_t index){
         mChildren[index]->activate();
     }
 
-    deselectAll(); // moi lan thay doi activatedChild thi deselect
+    // deselectAll(); // moi lan thay doi activatedChild thi deselect
 
 
 }
@@ -88,7 +88,7 @@ void Container::ChangeActivateChild(std::size_t index){
                 ChangeActivateChild(-1);
             }
             else if(mChildren[i]->isSelectable() && mChildren[i]->isSelected()){
-                select(i);
+                select(i); // to deselect other
             }
         
         }
@@ -109,8 +109,5 @@ void Container::deselectAll(){
     }
 }
 
-// void Container::setCallback(Callback Callback){
-//     mCallback = Callback;
-// }
 }
 

@@ -26,6 +26,7 @@ public:
 
     void addSubComponent(Component::Ptr component);
     subComponentInfo getSubComponentInfo();
+    void setSubComponentInfo(int infoID); 
     void setSubComponentInfo(int number, int InfoID);
     void setSubComponentInfo(std::vector<int> vec, int InfoID);
     void resetSubComponentInfo();

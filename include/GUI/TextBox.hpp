@@ -14,16 +14,9 @@ namespace GUI
         typedef std::shared_ptr<TextBox>            Ptr;
 
     public:
-        typedef std::function<void()>        CallBack;
-
-    private:
-        CallBack                                    mCallBack;
-
-    public:
                                                     TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize = 24);
         void                                        handleEvent(const sf::Event& event) override;
         void                                        draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-        // void                                        setCallBack(std::function<void()> func);
     public:
         void                                        setColor(sf::Color color);
         void                                        setText(const std::string& text);
@@ -33,6 +26,7 @@ namespace GUI
         void                                        reset();
         virtual void                                select() override;
         virtual void                                deselect() override;
+        int                                        getInputNum();
     private:
         sf::RectangleShape mBox;
         sf::Text mText;

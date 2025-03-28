@@ -20,6 +20,7 @@
         mShape.getGlobalBounds().contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
     {
         std::cout << "Click " << this->getText() << std::endl;
+
         if(!isActive())activate();
         else deactivate();
     }
@@ -47,10 +48,9 @@
             {
                 subComponent->handleEvent(event);
             }
-        // if (mCallback)
-        //     mCallback();
-        if(mFunc){
+        if(mFunc && Info.InfoID != -1){ // if there was a change in subcomponent info, execute the callback
             mFunc();
+            deactivate();
         }
     }
 }
@@ -66,6 +66,9 @@
 
     void ExpandableButton::setSubComponentInfo(int number, int InfoID){
         Info.num = number;
+        Info.InfoID = InfoID;
+    }
+    void ExpandableButton::setSubComponentInfo(int InfoID){
         Info.InfoID = InfoID;
     }
     void ExpandableButton::setSubComponentInfo(std::vector<int> vec, int InfoID){
