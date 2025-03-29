@@ -67,6 +67,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
         });
 
         node = new TreeNode(value, LAYOUT::DS::NodeRadius, COLOR::DS::NodeFillColor, COLOR::DS::NodeOutlineColor);
+
         node->mParent = prev;
 
         createNewActionGroup();

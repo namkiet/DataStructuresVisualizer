@@ -19,6 +19,7 @@ namespace Textures
 		TitleScreen,
 		AppBackground,
 		Button,
+		HomeIcon,
 	};
 }
 

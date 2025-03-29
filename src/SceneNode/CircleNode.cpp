@@ -25,6 +25,7 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
 
     mTextSize = radius * 0.75;
+    
     mText.setFont(mFont);
     mText.setColor(sf::Color::Black);
     mText.setPosition(mShape.getPosition());

@@ -40,7 +40,7 @@ void Container::pack(Component::Ptr component)
 
 
 
-  void Container::select(std::size_t index)
+  void Container::select(std::size_t index) // select duy nhat index
  {
     if (mChildren[index]->isSelectable())
     {
@@ -52,19 +52,27 @@ void Container::pack(Component::Ptr component)
         mSelectedChild = index;
     }
  }
- bool Container::hasMode(){
+ bool Container::hasActivation(){
     return mActivateChild >= 0;
  }
 
 void Container::ChangeActivateChild(std::size_t index){
-    if(hasMode() && mActivateChild == index) return;
 
-    if(hasMode()) 
+    if(hasActivation() && mActivateChild == index) return;
+
+    if(hasActivation()) 
     {
         mChildren[mActivateChild]->deactivate();
+        std::cout<<"deselect all"<<std::endl;
     }
     mActivateChild = index;
-    mChildren[index]->activate();
+    if(index != -1){
+        mChildren[index]->activate();
+    }
+
+    // deselectAll(); // moi lan thay doi activatedChild thi deselect
+
+
 }
 
 
@@ -73,11 +81,14 @@ void Container::ChangeActivateChild(std::size_t index){
         for(int i = 0; i < mChildren.size();i++)
         {
             mChildren[i]->handleEvent(event);
-            if(mChildren[i]->isActive()){
+            if(mChildren[i]->isActive() && i != mActivateChild){ 
                 ChangeActivateChild(i);
             }
-            if(mChildren[i]->isSelectable() && mChildren[i]->isSelected()){
-                select(i);
+            else if( i == mActivateChild && !mChildren[i]->isActive()){
+                ChangeActivateChild(-1);
+            }
+            else if(mChildren[i]->isSelectable() && mChildren[i]->isSelected()){
+                select(i); // to deselect other
             }
         
         }
@@ -89,5 +100,14 @@ void Container::ChangeActivateChild(std::size_t index){
 void Container::makeEmpty(){
     mChildren.clear();
 }
+
+void Container::deselectAll(){
+    for(auto& child: mChildren){
+        if(child->isSelectable()){
+            child->deselect();
+        }
+    }
+}
+
 }
 
