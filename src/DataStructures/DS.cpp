@@ -95,6 +95,31 @@ void DS::removeEdge(CircleNode* parent, CircleNode* child) {
     });
 }
 
+void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
+{
+    std::cout<<"start Delete node effect\n";
+    mActionQueue.pushAction(Action::DeleteNode(node, duration));
+    mActionQueue.pushUndo(Action::DeleteNode(node, duration));
+    std::cout<<"end Delete node effect\n";
+}
+
+void DS::deleteNode(CircleNode* node){
+    std::cout<<"start Delete node\n";
+    mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
+    {
+        mNodeList.erase(
+        std::remove_if(mNodeList.begin(), mNodeList.end(),
+        [node](const CircleNode::Ptr& n) {
+            return n.get() == node;
+        }),
+        mNodeList.end()
+    );
+    std::cout<<"end Node removed\n";
+        return true;
+    });
+
+}
+
 void DS::createNewActionGroup()
 {
     mActionQueue.createNewBatch();
