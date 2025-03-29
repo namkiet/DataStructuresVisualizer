@@ -94,6 +94,6 @@ private:
     bool                                BackRequest;
 
 
-    GUI::InfoPanel*                 mInfoPanel;
+    GUI::InfoPanel*                     mInfoPanel;
 
 };

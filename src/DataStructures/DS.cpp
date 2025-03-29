@@ -104,13 +104,11 @@ void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duratio
 {
 
     mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration));
-    mActionQueue.pushUndo(Action::HighlightNode(node, highlightColor, duration));
 }
 void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
 {
     std::cout<<"start Delete node effect\n";
     mActionQueue.pushAction(Action::DeleteNode(node, duration));
-    mActionQueue.pushUndo(Action::DeleteNode(node, duration));
     std::cout<<"end Delete node effect\n";
 }
 
@@ -137,19 +135,16 @@ void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool
     sf::Vector2f prevPos = node->getPosition();
     mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration, appearEffect));
     std::cout<<"1 here"<<std::endl;
-    mActionQueue.pushUndo(Action::MoveNode(node, prevPos, duration, false));
 }
 
 void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
 {
     mActionQueue.pushAction(Action::MoveEdge(mEdgeList, parent, child, targetTail, duration)); 
-    mActionQueue.pushUndo(Action::MoveEdge(mEdgeList, parent, targetTail, child, duration));
 }
 
 void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
 {
     mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
-    mActionQueue.pushUndo(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
 }
 
 void DS::swapTwoNodes(CircleNode* a, CircleNode* b)

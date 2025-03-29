@@ -4,12 +4,6 @@ void ActionQueue::empty()
 {
     while (!queue.empty())
         queue.pop_back();
-
-    while (!undoStack.empty())
-        undoStack.pop();
-    
-    while (!redoStack.empty())
-        redoStack.pop();
 }
 
 void ActionQueue::pushAction(ActionFunc action)

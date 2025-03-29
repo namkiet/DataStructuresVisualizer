@@ -65,11 +65,17 @@ void World::draw()
 	// mWindow.draw(*ModeContainer);
 	// mWindow.draw(*OperationButtonsList);
 
+	// mMainUI->draw(mWindow, sf::RenderStates::Default);
+	// mWindow.draw(mSceneGraph);
+	// mWindow.draw(*ModeContainer);
+	// mWindow.draw(*OperationButtonsList);
+	// mWindow.draw(*mInfoPanel);
+
+
 	mMainUI->draw(mWindow, sf::RenderStates::Default);
 	mWindow.draw(mSceneGraph);
-	mWindow.draw(*ModeContainer);
-	mWindow.draw(*OperationButtonsList);
-	mWindow.draw(*mInfoPanel);
+	if (mPseudoCode) mPseudoCode->draw(mWindow);
+	
 	// if (mPseudoCode) mPseudoCode->draw(mWindow);
 }
 
@@ -102,8 +108,8 @@ void World::buildScene()
 
 // 	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 700, 520);
 
-// 	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
-// 	mInfoPanel->setCharacterSize(30);
+	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
+	mInfoPanel->setCharacterSize(30);
 
 // 	mDataStructure->updateStepCallback = [this](int step) {
 // 		this->mPseudoCode->setStep(step);

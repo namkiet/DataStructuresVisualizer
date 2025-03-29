@@ -3,7 +3,6 @@
 #include <SceneNode/TreeNode.hpp>
 #include <SceneNode/Edge.hpp>
 #include <DataStructures/DS.hpp>
-#include <Core/Animation.hpp>
 #include <SceneNode/LinkedListNode.hpp>
 class LinkedList: public DS
 {
@@ -21,6 +20,9 @@ private:
     LinkedListNode*             mHead;
     // LinkedList                       CreateNode(int value);
 
-    void                        align(LinkedListNode* curNode, sf::Vector2f curPos, float curSpacingX, float curSpacingY);        
+    
+    public:
+    void                        saveState() override;
+    void                        loadState(History history) override;
 };
 
