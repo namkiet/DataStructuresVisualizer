@@ -10,11 +10,16 @@ void DS::empty()
 
 void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {    
+    states.transform *= getTransform();  
+    
     for (auto &edge: mEdgeList)
-        if (edge) edge->draw(target, sf::Transform::Identity);
+        if (edge) edge->draw(target, states);
 
     for (auto &node: mNodeList)
         if (node) node->draw(target, states);
+
+    // mBounds.draw(target, states);
+    target.draw(mBounds, states);
 }
 
 void DS::updateCurrent(sf::Time dt)   

@@ -6,6 +6,7 @@
 #include "GUI/Container.hpp"
 #include "DataStructures/AVLTree.hpp"
 #include "GUI/ExpandableButton.hpp"
+#include <Core/Variables.hpp>
 
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
@@ -85,7 +86,8 @@ void World::buildScene()
 	std::unique_ptr<AVLTree> root(new AVLTree());
 	mDataStructure = root.get();
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
-	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(10000, 100));
+
+	mSceneLayers[DataStructure]->setPosition(LAYOUT::DS::Position);
 
 	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 700, 520);
 

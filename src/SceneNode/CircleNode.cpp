@@ -43,7 +43,7 @@ void CircleNode::update(sf::Time dt)
 
 void CircleNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform = getTransform();
+    states.transform *= getTransform();
     target.draw(mShape, states);
     target.draw(mText, states);
     target.draw(mNote, states);

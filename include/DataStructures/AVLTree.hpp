@@ -3,6 +3,7 @@
 #include <SceneNode/TreeNode.hpp>
 #include <SceneNode/Edge.hpp>
 #include <DataStructures/DS.hpp>
+#include <Core/Variables.hpp>
 
 class AVLTree: public DS
 {
@@ -32,7 +33,7 @@ private:
     TreeNode*                   leftRotate(TreeNode* root);
     TreeNode*                   rightRotate(TreeNode* root);
     TreeNode*                   balance(TreeNode* root);
-    void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(600, 100), float curSpacingX = 300, float curSpacingY = 100);        
+    void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(LAYOUT::DS::Width / 2, LAYOUT::DS::RowSpacing), float curSpacingX = LAYOUT::DS::Width / 4, float curSpacingY = LAYOUT::DS::RowSpacing);        
 
 public:
     void                        saveState() override;

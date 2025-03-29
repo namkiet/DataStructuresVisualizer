@@ -9,6 +9,8 @@
 #include <iostream>
 #include <string>
 
+#include <Core/Variables.hpp>
+
 class DS: public SceneNode
 {
 // BASIC FUNCTIONS
@@ -21,6 +23,9 @@ public:
 
 // private:
 //     virtual void                    rawInsert(int value) = 0;
+
+public:
+    sf::RectangleShape              mBounds = sf::RectangleShape(sf::Vector2f(LAYOUT::DS::Width - 3, LAYOUT::DS::Height - 3));
 
 public:
     virtual void                    updateCurrent(sf::Time dt);

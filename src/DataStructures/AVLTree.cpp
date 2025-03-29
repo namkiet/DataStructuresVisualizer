@@ -2,7 +2,13 @@
 #include <queue>
 #include <iostream>
 
-AVLTree::AVLTree(): mRoot(nullptr) {}
+
+
+AVLTree::AVLTree(): mRoot(nullptr) {
+    mBounds.setFillColor(sf::Color::Transparent);
+    mBounds.setOutlineColor(sf::Color::Black);
+    mBounds.setOutlineThickness(3.f);
+}
 
 // void AVLTree::rawInsert(int value)
 // {
@@ -60,7 +66,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
             // std::cerr << "Location found, inserting " << value << "\n";
         });
 
-        node = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
+        node = new TreeNode(value, LAYOUT::DS::NodeRadius, COLOR::DS::NodeFillColor, COLOR::DS::NodeOutlineColor);
         node->mParent = prev;
 
         createNewActionGroup();
@@ -74,12 +80,15 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
             node->setOpacity(0);
             node->mLevel = prev->mLevel + 1;
 
-            createNewActionGroup();
+            // Calculate current position
+            sf::Vector2f curPos = prev->getPosition();
             if (value < prev->mValue) // is left child
-                moveNode(node, prev->getPosition() + sf::Vector2f(-mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), 0.5f, true);
+                curPos += sf::Vector2f(-LAYOUT::DS::Width / (1 << (node->mLevel + 1)), LAYOUT::DS::RowSpacing);
             else // is right child
-                moveNode(node, prev->getPosition() + sf::Vector2f(mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), 0.5f, true);
+                curPos += sf::Vector2f(LAYOUT::DS::Width / (1 << (node->mLevel + 1)), LAYOUT::DS::RowSpacing);
             
+            createNewActionGroup();
+            moveNode(node, curPos, 0.5f, true);
 
             createNewActionGroup();
             moveEdge(prev, nullptr, node, 0.5f);
@@ -87,7 +96,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
         else
         {
             node->mLevel = 0;
-            node->setPosition(sf::Vector2f(mMaxWidth / 2, mVerticalSpacing));
+            node->setPosition(sf::Vector2f(LAYOUT::DS::Width / 2, LAYOUT::DS::RowSpacing));
         }
         return node;
     }
