@@ -5,6 +5,7 @@
 #include <SceneNode/SceneNode.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <DataStructures/HeapTree.hpp>
+#include <DataStructures/LinkedList.hpp>
 #include <SceneNode/SpriteNode.hpp>
 #include <Core/CommandQueue.hpp>
 #include <Core/Command.hpp>
@@ -15,10 +16,13 @@
 #include <GUI/Container.hpp>
 #include <GUI/ExpandableButton.hpp>
 #include <GUI/DeliverTextBox.hpp>
-
 #include <GUI/InfoPanel.hpp>
-
 #include <SceneNode/PseudoCode.hpp>
+
+namespace GUI
+{
+    class MainUI;
+}
 
 class World : private sf::NonCopyable
 {
@@ -36,19 +40,21 @@ private:
     TextureHolder						mTextures;
 
 public:
-    enum Mode{
-        AVL,
-        LinkedList,
-        Heap,
-        Graph,
-        None
-    };
+    enum Mode {
+    AVLMode,
+    LinkedListMode,
+    HeapMode,
+    GraphMode,
+    NoneMode
+};
 
 private:
     void								loadTextures();
     void								buildScene();
     // void                                initPseudoCode();
     void                                CreateModeContainer();
+    void                                updateBackRequest();
+
 
 private:
     enum Layer
@@ -71,6 +77,7 @@ public:
     CommandQueue&						getCommandQueue();
     void                                handleEvent(const sf::Event& event);
     void                                setMode(World::Mode mode);
+    bool                                getBackRequest();
     
 private:
     CommandQueue						mCommandQueue;
@@ -81,6 +88,9 @@ private:
     GUI::Container::Ptr                 OperationButtonsList;
     Mode                                mMode;
     GUI::Container::Ptr                 ModeContainer;
+    std::shared_ptr<GUI::MainUI>        mMainUI;
+    bool                                BackRequest;
+
 
     GUI::InfoPanel*                 mInfoPanel;
 
