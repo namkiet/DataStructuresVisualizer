@@ -1,14 +1,14 @@
 #include <Core/App.hpp>
 #include <State/TitleState.hpp>
 #include <State/MenuState.hpp>
+#include <State/InApp.hpp>
+#include <Core/Variables.hpp>
 #include <iostream>
-#include "State/InApp.hpp"
-
 
 App::App(): 
     
     mContextSettings(0, 0, 16),
-    mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
+    mWindow(sf::VideoMode(SCREEN::Width, SCREEN::Height), "My App", sf::Style::Default, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
     mView(mWindow.getDefaultView()),
     mIsPaused(false)

@@ -198,3 +198,8 @@ void DS::undo()
 
     loadState(std::move(history));
 }
+
+std::string DS::getInfo()
+{
+    return mInfo;
+}

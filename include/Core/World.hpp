@@ -16,6 +16,8 @@
 #include <GUI/ExpandableButton.hpp>
 #include <GUI/DeliverTextBox.hpp>
 
+#include <GUI/InfoPanel.hpp>
+
 #include <SceneNode/PseudoCode.hpp>
 
 class World : private sf::NonCopyable
@@ -79,5 +81,7 @@ private:
     GUI::Container::Ptr                 OperationButtonsList;
     Mode                                mMode;
     GUI::Container::Ptr                 ModeContainer;
+
+    GUI::InfoPanel*                 mInfoPanel;
 
 };

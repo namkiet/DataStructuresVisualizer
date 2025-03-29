@@ -7,6 +7,7 @@
 
 #include <SceneNode/TreeNode.hpp>
 #include <iostream>
+#include <string>
 
 class DS: public SceneNode
 {
@@ -80,5 +81,11 @@ public:
 protected:
     virtual void                    saveState() = 0;
     virtual void                    loadState(History history) = 0;
+
+protected:
+    std::string                     mInfo = "";
+
+public:
+    std::string                     getInfo();
 };
 

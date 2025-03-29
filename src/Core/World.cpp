@@ -49,6 +49,8 @@ void World::update(sf::Time dt)
 	while (!mCommandQueue.isEmpty())
 		mSceneGraph.executeCommand(mCommandQueue.pop(), dt);
 	mSceneGraph.update(dt);
+
+	mInfoPanel->setText(mDataStructure->getInfo());
 }
 
 void World::draw()
@@ -56,6 +58,7 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 	mWindow.draw(*ModeContainer);
 	mWindow.draw(*OperationButtonsList);
+	mWindow.draw(*mInfoPanel);
 	// if (mPseudoCode) mPseudoCode->draw(mWindow);
 }
 
@@ -82,9 +85,12 @@ void World::buildScene()
 	std::unique_ptr<AVLTree> root(new AVLTree());
 	mDataStructure = root.get();
 	mSceneLayers[DataStructure]->attachChild(std::move(root));
-	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(1000, 100));
+	mSceneLayers[DataStructure]->setPosition(sf::Vector2f(10000, 100));
 
 	mPseudoCode = new PseudoCode(mFont.get(Fonts::ID::Main), 700, 520);
+
+	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
+	mInfoPanel->setCharacterSize(30);
 
 	mDataStructure->updateStepCallback = [this](int step) {
 		this->mPseudoCode->setStep(step);
@@ -116,7 +122,7 @@ void World::setMode(World::Mode mode){
 			if(InsertButton->getSubComponentInfo().num != -1) {
 				this->mDataStructure->insert(InsertButton->getSubComponentInfo().num);
 				InsertButton->setSubComponentInfo(-1);
-				std::cout<<"Insert ok";
+				// std::cout<<"Insert ok";
 			}
 			else if(InsertButton->getSubComponentInfo().VecNum.size() != 0){
 				for(auto& element: InsertButton->getSubComponentInfo().VecNum){
@@ -134,12 +140,12 @@ void World::setMode(World::Mode mode){
 			if(DeleteButton->getSubComponentInfo().num != -1){
 				this->mDataStructure->remove(DeleteButton->getSubComponentInfo().num);
 				DeleteButton->setSubComponentInfo(-1);
-				std::cout<<"Delete num"<<std::endl;
+				// std::cout<<"Delete num"<<std::endl;
 			}
 			else if(DeleteButton->getSubComponentInfo().VecNum.size() != 0){
 				for(auto& element: DeleteButton->getSubComponentInfo().VecNum){
 					this->mDataStructure->remove(element);
-					std::cout<<"Delete list of num"<<std::endl;
+					// std::cout<<"Delete list of num"<<std::endl;
 				}
 			}
 		});
