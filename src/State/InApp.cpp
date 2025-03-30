@@ -9,7 +9,7 @@ InApp::InApp(StateStack& stack, Context context, World::Mode mode):
     State(stack, context),
     mWorld(*context.window, *context.textures,*context.fonts),
     mUser()
-{   
+{
     mWorld.setMode(mode);
 }
 
@@ -28,12 +28,6 @@ bool InApp::update(sf::Time dt)
 bool InApp::handleEvent(const sf::Event& event)
 {
     mWorld.handleEvent(event);
-
-    if(mWorld.getBackRequest())
-    {
-        requestStackPop();
-        requestStackPush(States::Menu);
-    }
     // if (event.type == sf::Event::KeyPressed)
     // {
     //     if (event.key.code == sf::Keyboard::Escape)

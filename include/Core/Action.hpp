@@ -15,8 +15,7 @@ namespace Action
     ActionFunc FadeNode(CircleNode* node, float duration);
     // ActionFunc SetNoteForNode(CircleNode* node, std::string note, float duration);
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
-    ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration); // Hightlight edge
-    ActionFunc DeleteNode(CircleNode* node, float duration);
+    ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
 
     namespace Helper
     {

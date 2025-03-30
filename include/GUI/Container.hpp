@@ -22,8 +22,6 @@ class Container : public Component
         int                             getSize();
         void                            makeEmpty();
         void                            ChangeActivateChild(std::size_t index);
-        // virtual void                    setCallback(Callback Callback);
-        void                            deselectAll();
 
     private:
         virtual void		            draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -32,8 +30,7 @@ class Container : public Component
         void				            select(std::size_t index);
 
 
-        bool                            hasActivation();
-        
+        bool                            hasMode();
 
 
     private:

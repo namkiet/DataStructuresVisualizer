@@ -9,40 +9,24 @@ namespace GUI {
 const std::string DeliverTextBox::mAllowedChars = "0123456789";
 
 DeliverTextBox::DeliverTextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize)
-    {
-    mInfoID = 0; // default;
-    mSelectOutlineColor = sf::Color(66, 133, 244);
-    mDefaultOutlineColor = sf::Color(76, 91, 99);
+     {
     InputNum = -1;
     mBox.setSize(size);
     mBox.setPosition(position);
-    mBox.setFillColor(sf::Color(31, 42, 47));
-    mBox.setOutlineColor(mDefaultOutlineColor);
+    mBox.setFillColor(sf::Color::White);
+    mBox.setOutlineColor(sf::Color::Black);
     mBox.setOutlineThickness(2.f);
 
     mText.setFont(font);
     mText.setCharacterSize(charSize);
-    mText.setFillColor(sf::Color::White);
+    mText.setFillColor(sf::Color::Black);
     mText.setPosition(position.x + 5.f, position.y + (size.y - charSize) / 2.f);
     mText.setString("");
 }
 
-void DeliverTextBox::setInfoID(int id){
-    mInfoID = id;
-}
 
-// void DeliverTextBox::setCallback(Callback func) {
-//     mCallback = func;
-// }
-
-void DeliverTextBox::select(){
-    Component::select();
-    mBox.setOutlineColor(mSelectOutlineColor);
-}
-
-void DeliverTextBox::deselect(){
-    Component::deselect();
-    mBox.setOutlineColor(mDefaultOutlineColor);
+void DeliverTextBox::setCallback(CallBack callback) {
+    mCallBack = std::move(callback);
 }
 
 void DeliverTextBox::reset(){
@@ -59,7 +43,7 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed)
     {   
         // std::cout<<"Key pressed is handled "<<std::endl;
-        if (event.key.code == sf::Keyboard::Enter && isSelected()) 
+        if (event.key.code == sf::Keyboard::Enter) 
         {   
             // std::cout<<"Enter is pressed"<<std::endl;
             if (!mInput.empty())
@@ -67,13 +51,11 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
                 InputNum = std::stoi(mInput);
                 if (InputNum != 0)
                 {
-                   ButtonParent->setSubComponentInfo(InputNum, mInfoID);
+                   ButtonParent->setSubComponentInfo(InputNum);
                 }
 
                 reset();
-
                 deselect();
-
             }
         }
     }
@@ -90,6 +72,7 @@ void DeliverTextBox::handleEvent(const sf::Event& event) {
         if (mBox.getGlobalBounds().contains(mousePos))
         {
             select();
+
         } 
         else {
             deselect();
@@ -132,7 +115,7 @@ void DeliverTextBox::setButtonParent(std::shared_ptr<ExpandableButton> Button){
     ButtonParent = Button;
 }
 
-void DeliverTextBox::setColor(sf::Color color){
-    mBox.setFillColor(color);
+void DeliverTextBox::setCallBack(std::function<void()> func){
+    mCallBack = func;
 }
 }

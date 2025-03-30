@@ -5,7 +5,7 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Window.hpp>
 #include <memory>
-#include<functional>
+
 namespace GUI
 {
 
@@ -14,7 +14,6 @@ class Component : public sf::Drawable, public sf::Transformable, private sf::Non
     public:
         typedef std::shared_ptr<Component> Ptr;
 
-        typedef std::function<void()>		Callback;
 
 	public:
 							Component();
@@ -30,10 +29,8 @@ class Component : public sf::Drawable, public sf::Transformable, private sf::Non
         virtual void		deactivate();
 
         virtual void		handleEvent(const sf::Event& event) = 0;
-        void                setCallback(Callback func);
 
-    public:
-        Callback            mCallback;
+
     private:
         bool				mIsSelected;
         bool				mIsActive;
