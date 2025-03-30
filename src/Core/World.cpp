@@ -40,7 +40,7 @@ void World::draw()
 {
 	// mMainUI->draw(mWindow, sf::RenderStates::Default);
 	mWindow.draw(mSceneGraph);
-	if (mPseudoCode) mPseudoCode->draw(mWindow);
+	// if (mPseudoCode) mPseudoCode->draw(mWindow);
 
 }
 
@@ -96,7 +96,7 @@ void World::setMode(World::Mode mode)
 		// mDataStructure = new Graph();
 	}
 
-	mSceneLayers[DataStructure]->setPosition(LAYOUT::DS::Position);
+	mSceneLayers[DataStructure]->setPosition(VIZ::DS::Position);
 	mMainUI->CreateButtonList(mode, mDataStructure);
 }
 

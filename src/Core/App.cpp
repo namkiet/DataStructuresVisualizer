@@ -40,7 +40,6 @@ void App::registerStates()
     mStateStack.registerState<InApp>(States::InAppHeap);
     mStateStack.registerState<InApp>(States::InAppGraph);
     mStateStack.registerState<InApp>(States::InAppLinkedList);
-
 }
 
 void App::run()
@@ -91,7 +90,7 @@ void App::update(sf::Time dt)
 void App::draw()
 {
     mWindow.setView(mView);
-    mWindow.clear(sf::Color(173, 216, 230));
+    mWindow.clear(SCREEN::BackgroundColor);
     mStateStack.draw();
     mWindow.display();
 }

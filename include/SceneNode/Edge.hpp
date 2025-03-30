@@ -9,7 +9,7 @@ public:
     typedef std::unique_ptr<Edge> Ptr;
 
 public:
-                                Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness = 1.5f);
+                                Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness);
     virtual void                draw(sf::RenderTarget &target, sf::RenderStates states) const;
     virtual void                update(sf::Time dt);
 

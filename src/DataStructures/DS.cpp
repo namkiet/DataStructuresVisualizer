@@ -18,7 +18,7 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
     for (auto &node: mNodeList)
         if (node) node->draw(target, states);
 
-    target.draw(mBounds, states);
+    // target.draw(mBounds, states);
 }
 
 void DS::updateCurrent(sf::Time dt)   
@@ -65,18 +65,9 @@ void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow)
 {
     mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
     {
-        mEdgeList.push_back(std::make_unique<Edge>(sf::Color::White, parent, child,hasArrow));
+        mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
         return true;
     });
-}
-
-Edge* DS::findEdge(CircleNode* parent, CircleNode* child) {
-    for (auto& edge : mEdgeList) {
-        if (edge->mFrom == parent && edge->mTo == child) {
-            return edge.get();
-        }
-    }
-    return nullptr;
 }
 
 void DS::removeEdge(CircleNode* parent, CircleNode* child) {

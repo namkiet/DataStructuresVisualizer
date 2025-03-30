@@ -1,46 +1,50 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
 namespace ANIMATION
 {
-    inline float                Speed                   = 1.0f;
-} // namespace ANIMATION
+    extern float Speed;
+}
 
 namespace SCREEN
 {
-    inline float                Width                   = 1200;
-    inline float                Height                  = 720;
+    extern sf::Color BackgroundColor;
+    extern float Width;
+    extern float Height;
 }
 
-namespace LAYOUT
+namespace UI
 {
-    inline float                ScreenWidth             = 1200;
-    inline float                ScreenHeight            = 720;
-
-    namespace UI
+    namespace TOOLBOX
     {
-        inline float            Width                   = 100;
-        inline float            Height                  = 100;
+        extern sf::Color Color;
+        extern sf::Vector2f Size;
+        extern sf::Vector2f Position;
+    }
+    extern sf::Color OperationBoxColor;
+}
+
+namespace VIZ
+{
+    namespace DS
+    {
+        extern sf::Vector2f Size;
+        extern sf::Vector2f Position;
+        extern float RowSpacing;
+    }
+
+    namespace NODE
+    {
+        extern float Radius;
+        extern sf::Color FillColor;
+        extern sf::Color OutlineColor;
+    }
+
+    namespace EDGE
+    {
+        extern float Thickness;
+        extern sf::Color Color;
     }
     
-
-    namespace DS
-    {
-        inline float            Width                   = 1000;
-        inline float            Height                  = 700;
-        inline sf::Vector2f     Position                = sf::Vector2f(ScreenWidth - Width, (ScreenHeight - Height) / 2);
-        inline float            RowSpacing              = Height / 8; // Max of 6 rows
-
-        inline float            NodeRadius              = 16.f;
-        inline float            EdgeThickness           = 2.f;
-    }
-}
-
-namespace COLOR
-{
-    namespace DS
-    {
-        inline sf::Color        NodeFillColor           = sf::Color::White;
-        inline sf::Color        NodeOutlineColor        = sf::Color::Black;
-        inline sf::Color        NodeTextColor           = sf::Color::Black;
-    }
+    extern sf::Color TextColor;
 }

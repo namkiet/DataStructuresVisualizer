@@ -2,8 +2,6 @@
 #include <queue>
 #include <iostream>
 
-
-
 AVLTree::AVLTree(): mRoot(nullptr) {
     mBounds.setFillColor(sf::Color::Transparent);
     mBounds.setOutlineColor(sf::Color::Black);
@@ -66,7 +64,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
             // std::cerr << "Location found, inserting " << value << "\n";
         });
 
-        node = new TreeNode(value, LAYOUT::DS::NodeRadius, COLOR::DS::NodeFillColor, COLOR::DS::NodeOutlineColor);
+        node = new TreeNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
 
         node->mParent = prev;
 
@@ -84,9 +82,9 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
             // Calculate current position
             sf::Vector2f curPos = prev->getPosition();
             if (value < prev->mValue) // is left child
-                curPos += sf::Vector2f(-LAYOUT::DS::Width / (1 << (node->mLevel + 1)), LAYOUT::DS::RowSpacing);
+                curPos += sf::Vector2f(-VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             else // is right child
-                curPos += sf::Vector2f(LAYOUT::DS::Width / (1 << (node->mLevel + 1)), LAYOUT::DS::RowSpacing);
+                curPos += sf::Vector2f(VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             
             createNewActionGroup();
             moveNode(node, curPos, 0.5f, true);
@@ -97,7 +95,7 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
         else
         {
             node->mLevel = 0;
-            node->setPosition(sf::Vector2f(LAYOUT::DS::Width / 2, LAYOUT::DS::RowSpacing));
+            node->setPosition(sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing));
         }
         return node;
     }

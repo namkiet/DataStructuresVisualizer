@@ -25,7 +25,7 @@ public:
 //     virtual void                    rawInsert(int value) = 0;
 
 public:
-    sf::RectangleShape              mBounds = sf::RectangleShape(sf::Vector2f(LAYOUT::DS::Width - 3, LAYOUT::DS::Height - 3));
+    sf::RectangleShape              mBounds = sf::RectangleShape(sf::Vector2f(VIZ::DS::Size.x - 3, VIZ::DS::Size.y - 3));
 
 public:
     virtual void                    updateCurrent(sf::Time dt);
@@ -58,7 +58,6 @@ protected:
     void                            deleteNode(CircleNode* node);
 
     void                            addEdge(CircleNode* parent, CircleNode* child, bool hasArrow = false);
-    Edge*                           findEdge(CircleNode* parent, CircleNode* child);
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);

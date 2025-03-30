@@ -15,9 +15,9 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     // Background.setFillColor(sf::Color(37, 50, 56));
     // Background.setPosition(0.f,0.f);
 
-    toolbox.setSize(sf::Vector2f(300.f,540.f));
-    toolbox.setFillColor(sf::Color(31, 42, 47));
-    toolbox.setPosition(0.f, (LAYOUT::ScreenHeight - toolbox.getSize().y)/2);
+    toolbox.setSize(UI::TOOLBOX::Size);
+    toolbox.setFillColor(UI::TOOLBOX::Color);
+    toolbox.setPosition(UI::TOOLBOX::Position);
 
     sf::Vector2f ToolboxPosition = toolbox.getPosition();
     sf::Vector2f ToolBoxSize = toolbox.getSize();
@@ -36,7 +36,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     mSeperateToolBoxLine[2][1].position = sf::Vector2f(ToolBoxSize.x + ToolboxPosition.x , ToolboxPosition.y + 0.85 * ToolBoxSize.y);
 
     OperationBox.setSize(sf::Vector2f(ToolBoxSize.x * 0.4, 0.35 * ToolBoxSize.y));
-    OperationBox.setFillColor(sf::Color(56, 71, 79));
+    OperationBox.setFillColor(UI::OperationBoxColor);
     OperationBox.setPosition(mSeperateToolBoxLine[1][0].position);
 
     OperationButtonPosition.resize(5);
@@ -54,7 +54,6 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 
 void MainUI::updateCurrent(sf::Time dt)
 {
-
 }
 
 void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
