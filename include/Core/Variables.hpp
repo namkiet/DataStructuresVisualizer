@@ -2,7 +2,7 @@
 
 namespace ANIMATION
 {
-    inline float                Speed                   = 10.0f;
+    inline float                Speed                   = 1.0f;
 } // namespace ANIMATION
 
 namespace SCREEN

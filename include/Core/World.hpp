@@ -21,10 +21,7 @@
 
 #include <SceneNode/PseudoCode.hpp>
 
-namespace GUI
-{
-    class MainUI;
-}
+class MainUI;
 
 class World : private sf::NonCopyable
 {
@@ -39,16 +36,17 @@ public:
 
 private:
     sf::RenderWindow&					mWindow;
-    TextureHolder						mTextures;
+    TextureHolder&					    mTextures;
+    FontHolder&                         mFonts;
 
 public:
     enum Mode {
-    AVLMode,
-    LinkedListMode,
-    HeapMode,
-    GraphMode,
-    NoneMode
-};
+        AVLMode,
+        LinkedListMode,
+        HeapMode,
+        GraphMode,
+        NoneMode
+    };
 
 private:
     void								loadTextures();
@@ -61,11 +59,9 @@ private:
 private:
     enum Layer
     {
-        DataStructure,
         Background,
-        CodeBox,
-        Controller,
-        OperationButtons,
+        DataStructure,
+        SidePanel,
         LayerCount
     };
 
@@ -74,6 +70,8 @@ private:
 
     DS*                                 mDataStructure;
     PseudoCode*                         mPseudoCode;
+    MainUI*                             mMainUI;
+    GUI::InfoPanel*                     mInfoPanel;
 
 public:
     CommandQueue&						getCommandQueue();
@@ -83,17 +81,12 @@ public:
     
 private:
     CommandQueue						mCommandQueue;
-    FontHolder&                         mFont;
 
 private:
     sf::View							mWorldView;
-    GUI::Container::Ptr                 OperationButtonsList;
     Mode                                mMode;
-    GUI::Container::Ptr                 ModeContainer;
-    std::shared_ptr<GUI::MainUI>        mMainUI;
     bool                                BackRequest;
 
 
-    GUI::InfoPanel*                     mInfoPanel;
 
 };

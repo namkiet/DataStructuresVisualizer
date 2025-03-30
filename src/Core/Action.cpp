@@ -233,7 +233,7 @@ namespace Action
             edge = static_cast<Edge*>(nullptr), 
             startColor = sf::Color()](sf::Time dt) mutable -> bool 
         {    
-            // if (!child) return true;
+            if (!child) return true;
 
             if (!isInit)
             {   

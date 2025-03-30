@@ -18,7 +18,6 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
     for (auto &node: mNodeList)
         if (node) node->draw(target, states);
 
-    // mBounds.draw(target, states);
     target.draw(mBounds, states);
 }
 
