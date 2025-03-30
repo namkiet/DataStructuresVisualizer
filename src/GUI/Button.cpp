@@ -246,7 +246,8 @@ void GUI::Button::activate()
             mCircle.setFillColor(mActivatedColor);
     }
 
-    mCallback();
+    if (mCallback) 
+        mCallback();
 	// if (!mIsToggle)
 	// 	deactivate();
 }

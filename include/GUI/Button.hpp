@@ -52,7 +52,7 @@ class Button: public Component
     
         void                    setSprite(sf::Sprite sprite);
     protected:
-        Callback				mCallback;
+        Callback				mCallback = nullptr;
     public:
         void					setCallback(Callback callback);
 
