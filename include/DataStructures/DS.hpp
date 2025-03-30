@@ -54,15 +54,13 @@ protected:
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
     void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration);
     void                            swapTwoNodes(CircleNode* a, CircleNode* b);
-    void deleteNodeEffect(CircleNode* node, float duration);
-    
-    void deleteNode(CircleNode* node){
 
-    void                            addEdge(CircleNode* parent, CircleNode* child, bool hasArrow = false);
+    void                            addEdge(CircleNode* parent, CircleNode* child);
     Edge*                           findEdge(CircleNode* parent, CircleNode* child);
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+
 
 // UNDO - REDO    
 protected:
