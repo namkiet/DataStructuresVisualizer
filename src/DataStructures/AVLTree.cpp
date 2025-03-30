@@ -31,14 +31,14 @@ AVLTree::AVLTree(): mRoot(nullptr) {
 
 void AVLTree::insert(int value)
 {
-    saveState();
+    // saveState();
     mRoot = insert(mRoot, nullptr, value);
     align(mRoot);
 }
 
 void AVLTree::remove(int value)
 {
-    saveState();
+    // saveState();
     mRoot = remove(mRoot, value);
     // align(mRoot);
     mActionQueue.pushInstantAction([&](){
@@ -201,10 +201,9 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             return node;
         }
     }
-    mActionQueue.pushInstantAction([&](){
-        node = updateHeight(node);
-        node = balance(node);
-    });
+    
+    node = updateHeight(node);
+    node = balance(node);
     return node;
 }
 
@@ -241,21 +240,19 @@ bool AVLTree::search(TreeNode* node, int value)
 }
 
 int AVLTree::getHeight(TreeNode* root) {
-    if (root)
-        return root->mHeight;
-    return 0;
+    if (!root) return 0;
+    return root->mHeight;
 }
 
 int AVLTree::getBalanceFactor(TreeNode* root) 
 {
-    if (root)
-        return getHeight(root->mLeft) - getHeight(root->mRight);
-    return 0;
+    if (!root) return 0;
+    return getHeight(root->mLeft) - getHeight(root->mRight);
 }
 
 TreeNode* AVLTree::updateHeight(TreeNode* root)
 {
-    if (updateStepCallback) updateStepCallback(1);
+    // if (updateStepCallback) updateStepCallback(1);
 
     if (!root) 
         return nullptr;
