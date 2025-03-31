@@ -2,56 +2,46 @@
 #include <queue>
 #include <iostream>
 
-HeapTree::HeapTree():
-    mRoot(nullptr)
-{    
-}
-
-// void HeapTree::rawInsert(int value)
-// {
-//     mNodeList.push_back(new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black));
-// }
+HeapTree::HeapTree(): mRoot(nullptr) {}
 
 void HeapTree::insert(int value)
 {
-    TreeNode* newNode = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
+    TreeNode* newNode = new TreeNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+    newNode->setOpacity(0);
 
     createNewActionGroup();
     addNode(newNode);
     addEdge(newNode, nullptr);
     addEdge(newNode, nullptr);
     
-    createNewActionGroup();
-    mActionQueue.pushAction([=](sf::Time) mutable->bool {
+    mActionQueue.pushInstantAction([=]()
+    {
         int n = mNodeList.size() - 1;
         if (n >= 1)
         {
             CircleNode* par = mNodeList[(n - 1) / 2].get();
-            newNode->setPosition(par->getPosition());
-
-            newNode->setOpacity(0);
             newNode->mLevel = floor(log2(n + 1));
+            newNode->setPosition(par->getPosition());
 
             createNewActionGroup();
             if (n % 2 == 1)
-                newNode->mTargetPostion = par->mTargetPostion + sf::Vector2f(-mMaxWidth / (1 << (newNode->mLevel + 1)), mVerticalSpacing);
+                newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(-VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
             else
-                newNode->mTargetPostion = par->mTargetPostion + sf::Vector2f(mMaxWidth / (1 << (newNode->mLevel + 1)), mVerticalSpacing);
+                newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
 
-            moveNode(newNode, newNode->mTargetPostion, 0.5f, true);
+            moveNode(newNode, newNode->mTargetPosition, 0.5f, true);
 
             createNewActionGroup();
             moveEdge(par, nullptr, newNode, 0.5f);
         }
         else
         {
-            newNode->mTargetPostion = sf::Vector2f(600, 100);
-            newNode->setPosition(sf::Vector2f(600, 100));
+            newNode->mTargetPosition = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing);
+            createNewActionGroup();
+            moveNode(newNode, newNode->mTargetPosition, 0.5f, true);
         }
 
-        createNewActionGroup();
-        mActionQueue.pushAction([=](sf::Time) mutable -> bool { heapifyUp(n); return true; });
-        return true;
+        mActionQueue.pushInstantAction([=]() { heapifyUp(n); });
     });
     
 }
@@ -63,7 +53,6 @@ void HeapTree::remove(int value)
     int n = mNodeList.size();
     if (n > 1)
         swapTwoNodes(mNodeList[0].get(), mNodeList[n - 1].get());
-        // mActionQueue.pushAction(Action::SwapNodeValues(mNodeList[0].get(), mNodeList[n - 1].get(), 0.5f));
 
     createNewActionGroup();
     mActionQueue.pushAction(Action::FadeNode(mNodeList[n - 1].get(), 0.5f));
@@ -73,8 +62,7 @@ void HeapTree::remove(int value)
     createNewActionGroup();
     removeNode(mNodeList[n - 1].get());
 
-    createNewActionGroup();
-    mActionQueue.pushAction([=](sf::Time) mutable -> bool { heapifyDown(0); return true; });
+    mActionQueue.pushInstantAction([=]() { heapifyDown(0); });
 }
 
 bool HeapTree::search(int value)
@@ -120,8 +108,7 @@ void HeapTree::heapifyUp(int index)
     if (curValue < parValue)
     {
         swapTwoNodes(mNodeList[index].get(), mNodeList[parent].get());
-        createNewActionGroup();
-        mActionQueue.pushAction([=](sf::Time){ heapifyUp(parent); return true; });
+        mActionQueue.pushInstantAction([=]() { heapifyUp(parent); });
     }
 }
 
@@ -150,7 +137,7 @@ void HeapTree::heapifyDown(int index)
     {
         swapTwoNodes(mNodeList[index].get(), mNodeList[smallest].get());
         createNewActionGroup();
-        mActionQueue.pushAction([=](sf::Time){ heapifyDown(smallest); return true; });
+        mActionQueue.pushInstantAction([=]() { heapifyDown(smallest); });
     }
 }
 
@@ -158,4 +145,14 @@ void HeapTree::empty()
 {
     DS::empty();
     mRoot = nullptr;
+}
+
+void HeapTree::saveState()
+{
+
+}
+
+void HeapTree::loadState(History history)
+{
+
 }

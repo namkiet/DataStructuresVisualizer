@@ -3,7 +3,7 @@
 
 CircleNode::CircleNode(const CircleNode &other)
     : sf::Transformable(other), sf::Drawable(other),
-      mValue(other.mValue), mTargetPostion(other.mTargetPostion),
+      mValue(other.mValue), mTargetPosition(other.mTargetPosition),
       mShape(other.mShape), mText(other.mText), mNote(other.mNote),
       mFont(other.mFont), mTextSize(other.mTextSize) 
 {

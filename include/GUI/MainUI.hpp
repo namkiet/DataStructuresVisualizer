@@ -16,7 +16,7 @@ class MainUI: public SceneNode
     private:
         sf::Font                            mFont;
 
-        sf::RectangleShape                  toolbox;
+        sf::RectangleShape                  ToolBox;
         sf::RectangleShape                  Background;
         std::vector<sf::VertexArray>        mSeperateToolBoxLine;
         sf::RectangleShape                  OperationBox;
@@ -33,7 +33,10 @@ class MainUI: public SceneNode
                                             MainUI(TextureHolder& textures, FontHolder& fonts);
         virtual void                        updateCurrent(sf::Time dt);
         virtual void                        drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-        void                                CreateButtonList(World::Mode mode, DS* mDataStructure);
         void                                handleEvent(const sf::Event& event);
+
+    public:
+        void                                createButtonList(World::Mode mode, DS* mDataStructure);
+        void                                initAVLButtons(AVLTree* avl);
         bool                                getBackRequest();
 };

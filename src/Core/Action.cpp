@@ -10,7 +10,7 @@ namespace Action
         return [duration, elapsed = 0.f](sf::Time dt) mutable -> bool
         {
             elapsed += dt.asSeconds() * ANIMATION::Speed;
-            if (elapsed >= duration)
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
                 return true;
             return false;
         };
@@ -49,7 +49,7 @@ namespace Action
             node->setFillColor(newFillColor);
             node->setOutlineColor(newOutlineColor);
 
-            if (elapsed >= duration)
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
                 // std::cerr << "Node " << node->mValue << " is highlighted \n";
                 node->setFillColor(startFillColor);
@@ -87,7 +87,7 @@ namespace Action
                 node->setOpacity(opacity);
             }
 
-            if (speed == sf::Vector2f(0, 0)  || elapsed >= duration) 
+            if (speed == sf::Vector2f(0, 0)  || elapsed >= duration || ANIMATION::Speed >= 1000) 
             {
                 // std::cerr << "Node " << node->mValue << " is moved to (" << targetPos.x << " " << targetPos.y << ")\n";
                 node->setPosition(targetPos);
@@ -114,7 +114,7 @@ namespace Action
             float t = std::cos((elapsed / duration) * 3.14159f / 2);
             opacity = t;
             node->setOpacity(opacity);
-            if (elapsed >= duration)
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
                 node->setOpacity(0);
                 return true;
@@ -135,7 +135,7 @@ namespace Action
     //         }
             
     //         elapsed += dt.asSeconds() * ANIMATION::Speed;
-    //         if (elapsed >= duration)
+    //         if (elapsed >= duration || ANIMATION::Speed >= 1000)
     //             return true;
     //         return false;
     //     }
@@ -162,7 +162,7 @@ namespace Action
                 
             node->setTextSize(startTextSize * (1 - t));
 
-            if (elapsed >= duration)
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
                 node->setTextSize(startTextSize);
                 return true;
@@ -213,7 +213,7 @@ namespace Action
             sf::Vector2f newPos = startPos + speed * elapsed;
             edge->setTail(newPos);
 
-            if (speed == sf::Vector2f(0, 0) || elapsed >= duration)
+            if (speed == sf::Vector2f(0, 0) || elapsed >= duration || ANIMATION::Speed >= 1000)
             {
                 // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is switched to " << parent->mValue << "-" << (targetTail ? targetTail->mValue : -1) << "\n";
                 edge->setTail(targetPos);
@@ -256,7 +256,7 @@ namespace Action
     
             edge->setColor(newColor);
     
-            if (elapsed >= duration)
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
                 // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is traversed \n";
                 edge->setColor(startColor);
@@ -286,7 +286,7 @@ namespace Action
             float curOpacity = std::max(0.0f, 1-t);
             node->setOpacity(curOpacity);
 
-            if (elapsed >= duration)
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
                 std::cerr << "Node " << node->mValue << " is deleted \n";
                 node->setOpacity(0);

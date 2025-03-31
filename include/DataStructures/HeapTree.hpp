@@ -6,17 +6,21 @@
 class HeapTree: public DS
 {
 public:
-                            HeapTree();
-    void                    insert(int value) override;
-    void                    remove(int value) override;
-    bool                    search(int value) override;
-    void                    empty() override;
+                                HeapTree();
+    void                        insert(int value) override;
+    void                        remove(int value) override;
+    bool                        search(int value) override;
+    void                        empty() override;
 
 private:
-    TreeNode*               mRoot;
+    TreeNode*                   mRoot;
 
 private:
-    void                    align(int index, sf::Vector2f curPos = sf::Vector2f(600, 100), float curSpacingX = 300, float curSpacingY = 100); 
-    void                    heapifyUp(int index); 
-    void                    heapifyDown(int index); 
+    void                        align(int index, sf::Vector2f curPos = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing), float curSpacingX = VIZ::DS::Size.x / 4, float curSpacingY = VIZ::DS::RowSpacing); 
+    void                        heapifyUp(int index); 
+    void                        heapifyDown(int index);
+    
+public:
+    void                        saveState() override;
+    void                        loadState(History history) override;
 };

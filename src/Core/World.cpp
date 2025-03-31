@@ -77,19 +77,21 @@ void World::setMode(World::Mode mode)
 {
 	if (mode == World::Mode::AVLMode)
 	{
-		std::unique_ptr<AVLTree> root(new AVLTree());
-		mDataStructure = root.get();
-		mSceneLayers[DataStructure]->attachChild(std::move(root));
+		std::unique_ptr<AVLTree> avl(new AVLTree());
+		mDataStructure = avl.get();
+		mSceneLayers[DataStructure]->attachChild(std::move(avl));
 	}
 	else if (mode == World::Mode::LinkedListMode)
 	{
-		std::unique_ptr<LinkedList> root(new LinkedList());
-		mDataStructure = root.get();
-		mSceneLayers[DataStructure]->attachChild(std::move(root));
+		std::unique_ptr<LinkedList> ll(new LinkedList());
+		mDataStructure = ll.get();
+		mSceneLayers[DataStructure]->attachChild(std::move(ll));
 	}
 	else if (mode == World::Mode::HeapMode)
 	{
-		// mDataStructure = new Heap();
+		std::unique_ptr<HeapTree> heap(new HeapTree());
+		mDataStructure = heap.get();
+		mSceneLayers[DataStructure]->attachChild(std::move(heap));
 	}
 	else if (mode == World::Mode::GraphMode)
 	{
@@ -97,7 +99,7 @@ void World::setMode(World::Mode mode)
 	}
 
 	mSceneLayers[DataStructure]->setPosition(VIZ::DS::Position);
-	mMainUI->CreateButtonList(mode, mDataStructure);
+	mMainUI->createButtonList(mode, mDataStructure);
 }
 
 void World::handleEvent(const sf::Event& event)

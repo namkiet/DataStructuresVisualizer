@@ -180,22 +180,12 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
 void DS::loadFromVector(std::vector<int> numList)
 {
-
-    for (int x: numList)
-    {
-        mActionQueue.pushInstantAction([=](){
-            // mActionQueue.pushInstantAction([=](){
-                insert(x);
-            // });
-        });
-        // createNewActionGroup();
-        // mActionQueue.pushAction([=](sf::Time) mutable -> bool { insert(x); return true; });
-        // createNewActionGroup();
-        // mActionQueue.pushAction(Action::Wait(0.5f));
-    }
-    
-    // ANIMATION::Speed = 0.5f;
-}
+    empty();
+    auto curSpeed = ANIMATION::Speed;
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = 1000; });
+    for (int x: numList) insert(x);
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
+}    
 
 bool DS::canUndo()
 {

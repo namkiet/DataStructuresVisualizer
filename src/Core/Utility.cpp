@@ -26,12 +26,18 @@ void spriteResize(sf::Sprite& sprite, float width, float height)
 	sprite.setScale(sf::Vector2f(width / curWidth, height / curHeight));
 }
 
-sf::Vector2f operator*(float a, const sf::Vector2f& v) {
+sf::Vector2f operator *(float a, const sf::Vector2f& v) {
     return sf::Vector2f(a * v.x, a * v.y);
 }
 
-sf::Vector2f operator*(const sf::Vector2f& v, float a) {
+sf::Vector2f operator *(const sf::Vector2f& v, float a) {
     return sf::Vector2f(v.x * a, v.y * a);
+}
+
+sf::Vector2f& operator+=(sf::Vector2f& lhs, const sf::Vector2f& rhs) {
+    lhs.x += rhs.x;
+    lhs.y += rhs.y;
+    return lhs;
 }
 
 float norm(sf::Vector2f a)

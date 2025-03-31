@@ -29,7 +29,7 @@ AVLTree::AVLTree(): mRoot(nullptr) {
 
 void AVLTree::insert(int value)
 {
-    saveState();
+    if (ANIMATION::Speed < 1000) saveState();
     mRoot = insert(mRoot, nullptr, value);
     align(mRoot);
 }
@@ -200,10 +200,9 @@ TreeNode* AVLTree::remove(TreeNode* node, int value)
             return node;
         }
     }
-    mActionQueue.pushInstantAction([&](){
-        node = updateHeight(node);
-        node = balance(node);
-    });
+    
+    node = updateHeight(node);
+    node = balance(node);
     return node;
 }
 
@@ -216,7 +215,7 @@ bool AVLTree::search(TreeNode* node, int value)
         while (blinkTimes--)
         {
             createNewActionGroup();
-            highlightNode(node, sf::Color::Blue, 0.5f * 0.4f);
+            highlightNode(node, sf::Color::Blue, 0.5f);
         }
         return true;
     }
@@ -345,7 +344,7 @@ TreeNode* AVLTree::balance(TreeNode* root)
         root->setNote("bf = " + std::to_string(bf));
     });
 
-    highlightNode(root, sf::Color::Blue, 1.f);
+    highlightNode(root, sf::Color::Blue, 0.5f);
 
     mActionQueue.pushInstantAction([=](){
         root->setNote("");

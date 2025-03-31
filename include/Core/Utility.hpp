@@ -10,6 +10,7 @@ void spriteResize(sf::Sprite& sprite, float width, float height);
 
 sf::Vector2f operator*(float a, const sf::Vector2f& v);
 sf::Vector2f operator*(const sf::Vector2f& v, float a);
+sf::Vector2f& operator+=(sf::Vector2f& lhs, const sf::Vector2f& rhs);
 
 float norm(sf::Vector2f a);
 float dist(sf::Vector2f a, sf::Vector2f b);
