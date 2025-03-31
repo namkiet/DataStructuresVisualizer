@@ -144,8 +144,9 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
     int aVal = a->mValue;
     int bVal = b->mValue;
 
-    TreeNode* fakeA = new TreeNode(aVal, 16.f, sf::Color::White, sf::Color::Black);
-    TreeNode* fakeB = new TreeNode(bVal, 16.f, sf::Color::White, sf::Color::Black);
+    // Create 2 fake nodes
+    TreeNode* fakeA = new TreeNode(aVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+    TreeNode* fakeB = new TreeNode(bVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     fakeA->setOpacity(0);
     fakeB->setOpacity(0);
     fakeA->setPosition(a->getPosition());
@@ -153,28 +154,30 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
     addNode(fakeA);
     addNode(fakeB);
 
-    createNewActionGroup();
-    mActionQueue.pushAction([=](sf::Time) mutable -> bool {
+    // Make the real nodes transparent and make the two fake nodes appear
+    mActionQueue.pushInstantAction([=]() {
         a->setOpacity(0);
         b->setOpacity(0);
         fakeA->setOpacity(1);
         fakeB->setOpacity(1);
-        return true;
     });
 
+    // Swap the 2 fake nodes
     createNewActionGroup();
     moveNode(fakeA, b->getPosition(), 0.5f, false);
     moveNode(fakeB, a->getPosition(), 0.5f, false);
 
+    // Remove the 2 fake nodes
     createNewActionGroup();
     removeNode(fakeA);
     removeNode(fakeB);
-    mActionQueue.pushAction([=](sf::Time) mutable->bool {
+
+    // Make the real nodes appear again
+    mActionQueue.pushInstantAction([=]() {
         a->setOpacity(1);
         a->setValue(bVal);
         b->setOpacity(1);
         b->setValue(aVal);
-        return true;
     });
 }
 

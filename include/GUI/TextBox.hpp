@@ -14,7 +14,7 @@ namespace GUI
         typedef std::shared_ptr<TextBox>            Ptr;
 
     public:
-                                                    TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize = 24);
+                                                    TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize = 24, std::string placeholder = "");
         void                                        handleEvent(const sf::Event& event) override;
         void                                        draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     public:
@@ -26,14 +26,18 @@ namespace GUI
         void                                        reset();
         virtual void                                select() override;
         virtual void                                deselect() override;
-        int                                        getInputNum();
+        int                                         getInputNum();
+        void                                        setPlaceholder(const std::string& text);
     private:
-        sf::RectangleShape mBox;
-        sf::Text mText;
-        std::string mInput;
-        int InputNum;
+        sf::RectangleShape                          mBox;
+        sf::Text                                    mText;
+        sf::Text                                    mPlaceholder;
+        std::string                                 mInput;
+        int                                         InputNum;
 
-        sf::Color                                  mSelectOutlineColor;
-        sf::Color                                  mDefaultOutlineColor;
+        sf::Color                                   mSelectOutlineColor;
+        sf::Color                                   mDefaultOutlineColor;
+        bool                                        showCursor;
+        sf::Clock                                   cursorTimer;
     };
 }

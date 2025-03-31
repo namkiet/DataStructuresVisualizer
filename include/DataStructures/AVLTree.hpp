@@ -25,7 +25,7 @@ public:
 private:
     TreeNode*                   mRoot;
     TreeNode*                   insert(TreeNode* node, TreeNode* prev, int value);
-    TreeNode*                   remove(TreeNode* node, int value);
+    void                        remove(TreeNode* &node, int value);
     bool                        search(TreeNode* node, int value);
     int                         getHeight(TreeNode* root);
     int                         getBalanceFactor(TreeNode* root);

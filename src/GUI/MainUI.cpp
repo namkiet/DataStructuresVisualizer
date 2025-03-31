@@ -130,6 +130,8 @@ void MainUI::initAVLButtons(AVLTree* avl)
         if (ActionType == -1) return;
         else if (ActionType == 0)
             avl->remove(num);
+
+        DeleteButton->resetSubComponentInfo();
     });
 
     // Add Search button
@@ -196,13 +198,10 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
             }   
         });
 
-
-
-
         GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
 
         // initialize the textbox
-        GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont,sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f));
+        GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont,sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f), 24.f, "Insert at Head");
         // attach it to its parent
         InsertButton->addSubComponent(InputBoxInsertAtHead);
         // set callback for the textbox
@@ -211,7 +210,7 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
             InsertButton->setSubComponentInfo(InputBoxInsertAtHead->getInputNum(),0);
         });
 
-        GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont,sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f));
+        GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont,sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f), 24.f, "Insert at Tail");
 
         InsertButton->addSubComponent(InputBoxInsertAtLast);
 
