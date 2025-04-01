@@ -4,86 +4,141 @@
 #include <DataStructures/DS.hpp>
 
 
-LinkedList::LinkedList(): mHead(nullptr) {}
+LinkedList::LinkedList(): mHead(nullptr) {
+    maxRowNode = 5;
+}
 
 
 void LinkedList::InsertAtHead(int value)
 {
     
     LinkedListNode* newHead = new LinkedListNode(value, 16.f, sf::Color::White, sf::Color::Black);
-    newHead->mTargetPosition = sf::Vector2f(400, 550);
-    newHead->setPosition(newHead->mTargetPosition);
+    // newHead->mTargetPosition = sf::Vector2f(400, 550);
+    newHead->setPosition(sf::Vector2f(0, 100));
     newHead->setNext(mHead);
     newHead->setOpacity(1);
     newHead->setPrev(nullptr);
 
     if (mHead)
-    {
         mHead->setPrev(newHead);
-    }
-    mHead = newHead;
-    createNewActionGroup();
-    addNode(mHead);
-    highlightNode(mHead, sf::Color::Red, mAnimationSpeed);
+    
+    // mHead = newHead;
+    // createNewActionGroup();
+    // addNode(mHead);
+    // highlightNode(mHead, sf::Color::Red, mAnimationSpeed);
+
+    // createNewActionGroup();
+    // LinkedListNode* temp = mHead->mNext;
+    // while(temp != NULL)
+    // {
+    //     temp->mTargetPosition += sf::Vector2f(100, 0);
+    //     moveNode(temp, temp->mTargetPosition, mAnimationSpeed, true);
+    //     temp = temp->mNext;
+    // }
+    // createNewActionGroup();
+    // moveNode(mHead, sf::Vector2f(450,400), mAnimationSpeed, true);
+    // addEdge(mHead, mHead->mNext, true);
 
     createNewActionGroup();
-    LinkedListNode* temp = mHead->getNext();
-    while(temp != NULL)
-    {
-        temp->mTargetPosition += sf::Vector2f(100, 0);
-        moveNode(temp, temp->mTargetPosition, mAnimationSpeed, true);
-        temp = temp->getNext();
-    }
-    createNewActionGroup();
-    moveNode(mHead, sf::Vector2f(450,400), mAnimationSpeed, true);
-    addEdge(mHead, mHead->getNext(), true);
-    
+    addNode(newHead);
+    addEdge(newHead, mHead, true);
+
+    align(newHead);
+
+    mHead = newHead;
 }
 
 void LinkedList::InsertAtLast(int value)
 {
-    if (!mHead)
+    insertAtIndex(value, 3);
+    // if (!mHead)
+    // {
+    //     InsertAtHead(value);
+    //     return;
+    // }
+
+    // LinkedListNode* newLast = new LinkedListNode(value, 16.f, sf::Color::White, sf::Color::Black);
+    // newLast->mTargetPosition = sf::Vector2f(0, 0);
+    // newLast->setPosition(newLast->mTargetPosition);
+    // newLast->setNext(nullptr);
+
+    // createNewActionGroup();
+    // addNode(newLast);
+    // // highlightNode(newLast, sf::Color::Red, mAnimationSpeed);
+
+    // LinkedListNode* temp = mHead;
+    // while (temp->mNext)
+    // {
+    //     createNewActionGroup();
+    //     highlightNode(temp, sf::Color::Red, mAnimationSpeed);
+    //     createNewActionGroup();
+    //     traverseEdge(temp, temp->mNext, sf::Color::Red, mAnimationSpeed);
+    //     temp = temp->mNext;
+    // }
+
+    // // createNewActionGroup();
+    // // highlightNode(temp1, sf::Color::Red, mAnimationSpeed);
+
+    // temp->setNext(newLast);
+    // newLast->setPrev(temp);
+
+    // createNewActionGroup();
+
+    // addEdge(temp, newLast, true);
+
+    // align(mHead);
+
+    // newLast->mTargetPosition = temp1->mTargetPosition + sf::Vector2f(100, 0);
+    // moveNode(newLast, newLast->mTargetPosition, mAnimationSpeed, true);
+}
+
+void LinkedList::insertAtIndex(int value, int index)
+{
+    LinkedListNode* cur = mHead;
+
+    while (index--)
     {
-        InsertAtHead(value);
-        return;
+        // if (!cur)
+        // {
+            // if (index != 0) break;
+        if (index == 0)
+        {
+            LinkedListNode* newNode = new LinkedListNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+            newNode->setPosition(sf::Vector2f(0, 0));
+
+            createNewActionGroup();
+            addNode(newNode);
+            addEdge(newNode, nullptr, true);
+            // exit(0);
+
+            createNewActionGroup();
+
+            newNode->mPrev = cur;
+
+            newNode->mNext = cur->mNext;
+            moveEdge(newNode, nullptr, cur->mNext, 0.5f);
+
+            if (cur->mNext) cur->mNext->mPrev = newNode;
+
+            moveEdge(cur, cur->mNext, newNode, 0.5f);
+            cur->mNext = newNode;
+
+        }
+
+        createNewActionGroup();
+        highlightNode(cur, sf::Color::Red, 0.5f);
+
+        cur = cur->mNext;
     }
 
-    LinkedListNode* newLast = new LinkedListNode(value, 16.f, sf::Color::White, sf::Color::Black);
-    newLast->mTargetPosition = sf::Vector2f(400, 550);
-    newLast->setPosition(newLast->mTargetPosition);
-    newLast->setNext(nullptr);
-
-    createNewActionGroup();
-    addNode(newLast);
-    highlightNode(newLast, sf::Color::Red, mAnimationSpeed);
-
-    LinkedListNode* temp1 = mHead;
-    while(temp1->getNext())
-    {
-        createNewActionGroup();
-        highlightNode(temp1, sf::Color::Red, mAnimationSpeed);
-        createNewActionGroup();
-        traverseEdge(temp1, temp1->getNext(), sf::Color::Red, mAnimationSpeed);
-        temp1 = temp1->getNext();
-    }
-    createNewActionGroup();
-    highlightNode(temp1, sf::Color::Red, mAnimationSpeed);
-
-    temp1->setNext(newLast);
-    newLast->setPrev(temp1);
-
-    createNewActionGroup();
-    addEdge(temp1,newLast, true);
-
-    newLast->mTargetPosition = temp1->mTargetPosition + sf::Vector2f(100, 0);
-    moveNode(newLast, newLast->mTargetPosition, mAnimationSpeed, true);
+    align(mHead);
 }
 
 void LinkedList::insert(int value)
 {
-    // std::cout<<"insert nothing here"<<std::endl;
     InsertAtLast(value);
 }
+
 bool LinkedList::search(int value)
 {
     if (!mHead)
@@ -106,8 +161,8 @@ bool LinkedList::search(int value)
             return true;
         }
         createNewActionGroup();
-        traverseEdge(temp, temp->getNext(), sf::Color::Red, mAnimationSpeed);
-        temp = temp->getNext();
+        traverseEdge(temp, temp->mNext, sf::Color::Red, mAnimationSpeed);
+        temp = temp->mNext;
     }
     std::cout<<"Not found "<<value<<std::endl;
     return true;
@@ -125,7 +180,7 @@ void LinkedList::remove(int value)
     if (temp->mValue == value)
     {
         std::cout<<"Head"<<std::endl;
-        mHead = temp->getNext();
+        mHead = temp->mNext;
         if (mHead)
         {
             mHead->setPrev(nullptr);
@@ -134,10 +189,10 @@ void LinkedList::remove(int value)
         createNewActionGroup();
         moveNode(temp, temp->mTargetPosition, mAnimationSpeed, true);
         highlightNode(temp, sf::Color::Red, mAnimationSpeed);
-        traverseEdge(temp, temp->getNext(), sf::Color::Red, mAnimationSpeed);
+        traverseEdge(temp, temp->mNext, sf::Color::Red, mAnimationSpeed);
 
         createNewActionGroup();
-        removeEdge(temp, temp->getNext());
+        removeEdge(temp, temp->mNext);
 
         createNewActionGroup();
         deleteNodeEffect(temp, mAnimationSpeed);
@@ -148,7 +203,7 @@ void LinkedList::remove(int value)
             std::cout<<"Start loop"<<std::endl;
             temp1->mTargetPosition += sf::Vector2f(-100, 0);
             moveNode(temp1, temp1->mTargetPosition, mAnimationSpeed, true);
-            temp1 = temp1->getNext();
+            temp1 = temp1->mNext;
             std::cout<<"end loop"<<std::endl;
         }
 
@@ -156,43 +211,43 @@ void LinkedList::remove(int value)
         deleteNode(temp);
     }
     else {
-        while(temp->getNext())
+        while(temp->mNext)
         {
-            if (temp->getNext()->mValue == value)
+            if (temp->mNext->mValue == value)
             {
                     std::cout<<"Not head"<<std::endl;
                 createNewActionGroup();
-                highlightNode(temp->getNext(), sf::Color::Red, mAnimationSpeed);
-                traverseEdge(temp, temp->getNext(), sf::Color::Red, mAnimationSpeed);
-                traverseEdge(temp->getNext(), temp->getNext()->getNext(), sf::Color::Red, mAnimationSpeed);
+                highlightNode(temp->mNext, sf::Color::Red, mAnimationSpeed);
+                traverseEdge(temp, temp->mNext, sf::Color::Red, mAnimationSpeed);
+                traverseEdge(temp->mNext, temp->mNext->mNext, sf::Color::Red, mAnimationSpeed);
                     std::cout<<"OK here"<<std::endl;
                 createNewActionGroup();
-                removeEdge(temp, temp->getNext());
-                removeEdge(temp->getNext(), temp->getNext()->getNext());
+                removeEdge(temp, temp->mNext);
+                removeEdge(temp->mNext, temp->mNext->mNext);
                 createNewActionGroup();
-                temp->getNext()->mTargetPosition += temp->getNext()->mTargetPosition + sf::Vector2f(0.f, 100.f);
-                moveNode(temp->getNext(), temp->getNext()->mTargetPosition, mAnimationSpeed, true);
+                temp->mNext->mTargetPosition += temp->mNext->mTargetPosition + sf::Vector2f(0.f, 100.f);
+                moveNode(temp->mNext, temp->mNext->mTargetPosition, mAnimationSpeed, true);
                     std::cout<<"OK1 here"<<std::endl;
                 createNewActionGroup();
-                deleteNodeEffect(temp->getNext(), mAnimationSpeed);
+                deleteNodeEffect(temp->mNext, mAnimationSpeed);
 
-                LinkedListNode* toDel = temp->getNext();
+                LinkedListNode* toDel = temp->mNext;
 
             
-                temp->setNext(temp->getNext()->getNext());
+                temp->setNext(temp->mNext->mNext);
                     std::cout<<"OK2 here"<<std::endl;
 
-                if (temp->getNext())
+                if (temp->mNext)
                 {
-                    temp->getNext()->setPrev(temp);
+                    temp->mNext->setPrev(temp);
                 }
                 createNewActionGroup();
-                addEdge(temp, temp->getNext(), true);
-                while(temp->getNext())
+                addEdge(temp, temp->mNext, true);
+                while(temp->mNext)
                 {
-                    temp->getNext()->mTargetPosition += sf::Vector2f(-100, 0);
-                    moveNode(temp->getNext(), temp->getNext()->mTargetPosition, mAnimationSpeed, true);
-                    temp = temp->getNext();
+                    temp->mNext->mTargetPosition += sf::Vector2f(-100, 0);
+                    moveNode(temp->mNext, temp->mNext->mTargetPosition, mAnimationSpeed, true);
+                    temp = temp->mNext;
                 }
 
                 createNewActionGroup();
@@ -201,10 +256,46 @@ void LinkedList::remove(int value)
                 break;
 
             }
-            else temp = temp->getNext();
+            else temp = temp->mNext;
         } 
     }
 }
+
+void LinkedList::align(LinkedListNode* curNode, sf::Vector2f curPos)
+{
+    if (!curNode) return;
+
+    if (!curNode->mPrev) // if current node is head
+    {
+        curNode->mIndex = 0;
+        createNewActionGroup();
+    }
+    else
+        curNode->mIndex = curNode->mPrev->mIndex + 1;
+
+    curNode->setNote(std::to_string(curNode->mIndex));
+
+    moveNode(curNode, curPos, 0.5f, false);
+    
+    int rowIndex = curNode->mIndex / maxRowNode;
+    sf::Vector2f nextPos;
+
+    if ((curNode->mIndex + 1) % maxRowNode == 0) // last node in a row
+    {
+        nextPos = curPos + sf::Vector2f(0, 100);
+    }
+    else
+    {
+        if (rowIndex % 2 == 0) // even row
+            nextPos = curPos + sf::Vector2f(100, 0);
+        else // odd row
+            nextPos = curPos + sf::Vector2f(-100, 0);
+    }
+
+    // sf::Vector2f nextPos = curPos + sf::Vector2f(100, 0);
+    align(curNode->mNext, nextPos);
+}
+
 
 
 void LinkedList::saveState() {

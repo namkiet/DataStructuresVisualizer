@@ -13,16 +13,20 @@ public:
     bool                        search(int value) override;
     void                        InsertAtHead(int value);   
     void                        InsertAtLast(int value);
+
+    void                        insertAtIndex(int value, int index = 2);
 public:
     // virtual void                updateCurrent(sf::Time dt) override;
     // virtual void                drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 private:
     LinkedListNode*             mHead;
-    // LinkedList                       CreateNode(int value);
-
+    void                        align(LinkedListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));
     
-    public:
+public:
     void                        saveState() override;
     void                        loadState(History history) override;
+
+private:
+    int                         maxRowNode;
 };
 

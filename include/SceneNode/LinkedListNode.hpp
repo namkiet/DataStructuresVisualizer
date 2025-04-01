@@ -14,8 +14,10 @@ public:
     void                    setPrev(LinkedListNode* prev);
     LinkedListNode*         getNext() const;
     LinkedListNode*         getPrev() const;
-private:
+
+public:
     LinkedListNode*         mNext;
     LinkedListNode*         mPrev;
+    int                     mIndex;
 };
 
