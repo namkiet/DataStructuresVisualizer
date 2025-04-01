@@ -1,5 +1,6 @@
 #include "GUI/MainUI.hpp"
 #include "Core/World.hpp"
+#include "GUI/FileReader.hpp"
 #include <memory>
 #include <DataStructures/LinkedList.hpp>
 #include "GUI/ChildComponent.hpp"
@@ -7,6 +8,7 @@
 #include <Core/Variables.hpp>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 {
@@ -85,14 +87,32 @@ void MainUI::initAVLButtons(AVLTree* avl)
         if (CreateButton->getSubComponentInfo().InfoID == -1) 
             return;
 
-        if (CreateButton->getSubComponentInfo().InfoID == 0) // RANDOM
+        if (CreateButton->getSubComponentInfo().InfoID == 0) // LOAD FROM FILE
         {
-            std::srand(std::time(nullptr)); 
-            std::vector<int> randomList(10);
-            for (int &num : randomList)
-                num = std::rand() % 100; // Random numbers from 0 to 99
-            
-            avl->loadFromVector(randomList);
+            std::wstring filename = OpenFileDialog();
+            if (!filename.empty()) {
+                std::wcout << L"Selected file: " << filename << std::endl;
+                std::wifstream fin;
+                fin.open(filename);
+                if (!fin.is_open())
+                {
+                    std::cout << "Can't open file!";
+                }
+                else
+                {
+                    std::vector <int> numsFromFile;
+                    int temp;
+                    while (fin >> temp)
+                        numsFromFile.push_back(temp);
+                    for (int i = 0; i < numsFromFile.size(); i++)
+                        std::cout << numsFromFile[i] << " ";
+                    avl->loadFromVector(numsFromFile);
+                }
+                fin.close();
+            } 
+            else {
+                std::cerr << "No file selected or an error occurred." << std::endl;
+            }
         }   
 
         CreateButton->resetSubComponentInfo();
