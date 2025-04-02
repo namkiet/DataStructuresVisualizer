@@ -16,11 +16,11 @@ namespace UI
 {
     namespace TOOLBOX
     {
-        sf::Color Color = sf::Color(198, 203, 214);
+        sf::Color Color = sf::Color::Transparent;
         sf::Vector2f Size = sf::Vector2f(300, 540);
         sf::Vector2f Position = sf::Vector2f(0, (SCREEN::Height - Size.y) / 2);
     }
-    sf::Color OperationBoxColor = sf::Color(176, 183, 198); // #B0B7C6
+    sf::Color OperationBoxColor = sf::Color::Transparent; // #B0B7C6
 }
 
 namespace VIZ
@@ -42,7 +42,7 @@ namespace VIZ
     namespace EDGE
     {
         float Thickness         = 3.f;   
-        sf::Color Color         = sf::Color(119, 136, 153);   
+        sf::Color Color         = sf::Color::White;   
     }
 
     sf::Color TextColor         = sf::Color::White;         

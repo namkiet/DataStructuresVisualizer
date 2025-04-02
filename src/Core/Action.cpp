@@ -37,13 +37,15 @@ namespace Action
             sf::Color newFillColor(
                 int(startFillColor.r + t * (highlightColor.r - startFillColor.r)),
                 int(startFillColor.g + t * (highlightColor.g - startFillColor.g)),
-                int(startFillColor.b + t * (highlightColor.b - startFillColor.b))
+                int(startFillColor.b + t * (highlightColor.b - startFillColor.b)),
+                int(startFillColor.a + t * (highlightColor.a - startFillColor.a))
             );
 
             sf::Color newOutlineColor(
                 int(startOutlineColor.r + t * (highlightColor.r - startOutlineColor.r)),
                 int(startOutlineColor.g + t * (highlightColor.g - startOutlineColor.g)),
-                int(startOutlineColor.b + t * (highlightColor.b - startOutlineColor.b))
+                int(startOutlineColor.b + t * (highlightColor.b - startOutlineColor.b)),
+                int(startOutlineColor.a + t * (highlightColor.a - startOutlineColor.a))
             );
 
             node->setFillColor(newFillColor);
@@ -250,7 +252,8 @@ namespace Action
             sf::Color newColor(
                 int(startColor.r + t * (highlightColor.r - startColor.r)),
                 int(startColor.g + t * (highlightColor.g - startColor.g)),
-                int(startColor.b + t * (highlightColor.b - startColor.b))
+                int(startColor.b + t * (highlightColor.b - startColor.b)),
+                int(startColor.a + t * (highlightColor.r - startColor.a))
             );
     
     

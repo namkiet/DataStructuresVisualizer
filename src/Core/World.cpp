@@ -53,7 +53,7 @@ CommandQueue& World::getCommandQueue()
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::AppBackground, "assets/images/bg.jpg");
+	mTextures.load(Textures::AppBackground, "assets/images/bg5.jpg");
 }
 
 void World::buildScene()
