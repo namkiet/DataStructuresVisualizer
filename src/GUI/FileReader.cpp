@@ -1,26 +1,21 @@
 #include "GUI/FileReader.hpp"
 #include <iostream>
 #include <string>
-#include <codecvt>
 #include <locale>
+#include <cstdlib> // For mbstowcs
 #include "GUI/tinyfiledialogs.h"
 
 std::wstring OpenFileDialog() {
-    // Use tinyfiledialogs for all platforms
     const char* filePath = tinyfd_openFileDialog(
-        "Open File",           // Title
-        "",                    // Default path
-        0,                     // Number of filter patterns
-        nullptr,               // Filter patterns (nullptr for all files)
-        nullptr,               // Single filter description
-        0                      // Allow multiple selects (0 = no)
+        "Open File", "", 0, nullptr, nullptr, 0
     );
 
     if (filePath) {
-        // Convert UTF-8 char* to wstring
         std::string utf8Path(filePath);
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-        return converter.from_bytes(utf8Path);
+        size_t size = std::mbstowcs(nullptr, utf8Path.c_str(), 0) + 1;
+        std::wstring wstr(size, L'\0');
+        std::mbstowcs(&wstr[0], utf8Path.c_str(), size);
+        return wstr;
     }
     return L"";
 }
