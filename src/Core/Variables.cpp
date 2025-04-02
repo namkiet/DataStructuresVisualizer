@@ -7,7 +7,7 @@ namespace ANIMATION
 
 namespace SCREEN
 {
-    sf::Color BackgroundColor = sf::Color(227, 230, 236); // #E3E6EC
+    sf::Color BackgroundColor = sf::Color::Black; // #E3E6EC
     float Width = 1200;
     float Height = 720;
 }
@@ -35,8 +35,8 @@ namespace VIZ
     namespace NODE
     {
         float Radius = 16.f;
-        sf::Color FillColor     = sf::Color(189, 199, 216);
-        sf::Color OutlineColor  = sf::Color(78, 93, 108);
+        sf::Color FillColor     = sf::Color(255, 255, 255, 0);
+        sf::Color OutlineColor  = sf::Color::White;
     }
 
     namespace EDGE
@@ -45,6 +45,6 @@ namespace VIZ
         sf::Color Color         = sf::Color(119, 136, 153);   
     }
 
-    sf::Color TextColor         = sf::Color(44, 62, 80);         
+    sf::Color TextColor         = sf::Color::White;         
 }
     

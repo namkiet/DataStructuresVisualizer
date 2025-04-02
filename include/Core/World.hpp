@@ -26,6 +26,9 @@ class MainUI;
 class World : private sf::NonCopyable
 {
 private:
+    sf::Sprite background;
+    
+private:
     std::vector<int> v;
     int id;
 

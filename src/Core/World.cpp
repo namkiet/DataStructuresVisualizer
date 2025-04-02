@@ -38,6 +38,8 @@ void World::update(sf::Time dt)
 
 void World::draw()
 {
+	mWindow.draw(background);
+
 	// mMainUI->draw(mWindow, sf::RenderStates::Default);
 	mWindow.draw(mSceneGraph);
 	// if (mPseudoCode) mPseudoCode->draw(mWindow);
@@ -51,7 +53,7 @@ CommandQueue& World::getCommandQueue()
 
 void World::loadTextures()
 {
-	// mTextures.load(Textures::AppBackground, "assets/images/background.jpg");
+	mTextures.load(Textures::AppBackground, "assets/images/bg.jpg");
 }
 
 void World::buildScene()
@@ -71,6 +73,12 @@ void World::buildScene()
 	MainUI::Ptr mainUI(new MainUI(mTextures, mFonts));
 	mMainUI = mainUI.get();
 	mSceneLayers[SidePanel]->attachChild(std::move(mainUI));
+
+	sf::Texture &bg = mTextures.get(Textures::AppBackground);
+	background.setTexture(bg);
+	sf::Color bgcolor = background.getColor();
+	bgcolor.a = 240;
+	background.setColor(bgcolor);
 }
 
 void World::setMode(World::Mode mode)
