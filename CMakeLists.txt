@@ -16,7 +16,6 @@ FetchContent_MakeAvailable(SFML)
 file(GLOB SRC_FILES 
     src/*.cpp
     src/GUI/*.cpp
-    src/GUI/*.c
     src/Core/*.cpp
     src/State/*.cpp
     src/SceneNode/*.cpp
