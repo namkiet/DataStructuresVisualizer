@@ -1,0 +1,11 @@
+Search:
+
+Pseudo-code:
+
+if this == null
+  return null
+else if this key == search value
+  return this
+else if this key < search value
+  search right
+else search left

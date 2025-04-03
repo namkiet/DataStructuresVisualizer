@@ -1,0 +1,11 @@
+Insert at tail:
+
+Text:
+
+Create new vertex to store value <num>.
+
+Current tail.next points to vtx.
+
+tail points to vtx.
+
+The whole operation is O(1) if we maintain the tail pointer.

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 project(CMakeSFMLProject LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
 
 include(FetchContent)
 FetchContent_Declare(SFML

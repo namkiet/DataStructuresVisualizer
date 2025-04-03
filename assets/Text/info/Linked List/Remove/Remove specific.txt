@@ -1,0 +1,28 @@
+Remove specific:
+
+Text:
+
+Please enter a valid index between [1..<N - 2>].		//cerr for i
+
+This operation only works for N bigger than 2.			//cerr for N
+
+
+Set prev to head.
+Pointer prev will stop at one vertex before the deleted vertex.
+
+Index specified has not been reached.
+k = {i}.							//for loop
+
+Pointer prev advances to the next vertex.
+
+k is 0, prev now points to one vertex behind the vertex to-be-deleted.
+We stop searching and continue with the removal.
+
+We store reference to the vertex to-be-deleted.
+We also store reference to the vertex after the to-be-deleted vertex.
+
+We connect the vertex behind the vertex to-be-deleted (pointer prev) with the next vertex after the vertex to-be-deleted (pointer after).
+
+Now we delete this vertex.
+
+The whole process is O(N).

@@ -1,0 +1,11 @@
+Remove tail:
+
+Pseudo-code:
+
+if empty, do nothing
+Vertex pre = head
+tmp = head.next
+while (tmp.next != null)
+  pre = pre.next; tmp = tmp.next;
+pre.next = null
+delete tmp, tail = pre

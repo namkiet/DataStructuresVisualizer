@@ -1,0 +1,12 @@
+Insert at head:
+
+Pseudo-code:
+
+Vertex vtx = new Vertex(v)
+vtx.next = head
+head = vtx				//not empty
+
+
+Vertex vtx = new Vertex(v)
+vtx.next = head
+head = vtx, tail = head			//empty

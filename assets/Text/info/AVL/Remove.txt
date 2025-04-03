@@ -1,0 +1,51 @@
+Remove:
+
+Text:
+
+The current BST rooted at null.			//empty
+
+Searching for vertex <num> to remove.
+
+Vertex <num> is not in the BST.			//not found
+
+Vertex <num> has no children (a leaf).		//leaf
+
+Remove leaf <num>.				//leaf
+
+Vertex <num> only has a right child.		//one right child
+
+Remove vertex <num> and connect its parent to its right child.		//one right child
+
+Vertex <num> only has a left child.		//one left child
+
+Remove vertex <num> and connect its parent to its left child.		//one left child
+
+Finding successor of <num>.			//two child
+
+Replace vertex <num> with its successor.	//two child
+
+Removal of <num> is complete.
+
+Balance factor of <cur> is <leftHeight - rightHeight>.
+It is ok.					//l - r == 1 || -1 || 0
+
+Balance factor of <cur> is <leftHeight - rightHeight>.
+It is not ok.					//l - r == -2 || 2
+
+And balance factor of <child> is <balance factor of child>.
+
+Rotate left <cur>.				//balance factor of cur == -2 and of child == -1
+
+Rotate right <cur>.				//balance factor of cur == 2 and of child == 1
+
+Rotate left <child>.				
+Rotate right <cur>.				//balance factor of cur == 2 and of child == -1
+
+Rotate right <child>.				
+Rotate left <cur>.				//balance factor of cur == -2 and of child == 1
+
+Relayout the BST and recompute its height.
+
+Check the parent vertex.
+
+The tree is balanced.
