@@ -1,9 +1,14 @@
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <Core/World.hpp>
-#include <Core/Variables.hpp>
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include "GUI/Container.hpp"
+#include "DataStructures/AVLTree.hpp"
+#include "GUI/ExpandableButton.hpp"
+#include <Core/Variables.hpp>
+#include "GUI/MainUI.hpp"
+#include "DataStructures/LinkedList.hpp"
 
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
@@ -24,6 +29,8 @@ void World::CreateModeContainer()
 
 void World::update(sf::Time dt)
 {
+	while (!mCommandQueue.isEmpty())
+		mSceneGraph.executeCommand(mCommandQueue.pop(), dt);
 	mSceneGraph.update(dt);
 
 	mInfoPanel->setText(mDataStructure->getInfo());
@@ -35,6 +42,11 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 	// if (mPseudoCode) mPseudoCode->draw(mWindow);
 
+}
+
+CommandQueue& World::getCommandQueue()
+{
+	return mCommandQueue;
 }
 
 void World::loadTextures()
@@ -52,10 +64,7 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	std::unique_ptr<AVLTree> pseudo(new PseudoCode(mFonts.get(Fonts::ID::Main))); 
-	mPseudoCode = pseudo.get();
-	mSceneLayers[CodeBox]->attachChild(std::move(pseudo));
-	
+	mPseudoCode = new PseudoCode(mFonts.get(Fonts::ID::Main), 700, 520);
 	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
 	mInfoPanel->setCharacterSize(30);
 	

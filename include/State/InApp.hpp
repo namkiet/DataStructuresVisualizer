@@ -5,12 +5,15 @@
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/SpriteNode.hpp>
 #include <SceneNode/TreeNode.hpp>
+#include <Core/Command.hpp>
+#include <Core/CommandQueue.hpp>
 #include <Core/ResourceHolder.hpp>
+#include <Core/User.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <memory>
 #include <array>
 #include <queue>
-#include <Core/World.hpp>
+#include "Core/World.hpp"
 
 class InApp : public State
 {
@@ -23,4 +26,5 @@ public:
 	virtual bool						handleEvent(const sf::Event& event);
 private:
 	World 								mWorld;
+	User								mUser;
 };

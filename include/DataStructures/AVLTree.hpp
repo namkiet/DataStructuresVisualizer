@@ -14,10 +14,18 @@ public:
     bool                        search(int value) override;
     void                        empty() override;
 
+// private:
+    // TreeNode*                    rawInsert(int value) override;
+    // TreeNode*                    rawInsertHelper(TreeNode* node, TreeNode* prev, int value);
+
+    // Just for debug
+    void                        leftRotate();
+    void                        rightRotate();
+
 private:
     TreeNode*                   mRoot;
-    void                        insertHelper(TreeNode* &node, TreeNode* prev, int value);
-    void                        removeHelper(TreeNode* &node, int value);
+    TreeNode*                   insert(TreeNode* node, TreeNode* prev, int value);
+    void                        remove(TreeNode* &node, int value);
     bool                        search(TreeNode* node, int value);
     int                         getHeight(TreeNode* root);
     int                         getBalanceFactor(TreeNode* root);

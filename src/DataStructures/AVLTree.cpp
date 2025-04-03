@@ -7,14 +7,14 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 void AVLTree::insert(int value)
 {
     saveState();
-    insertHelper(mRoot, nullptr, value);
+    mRoot = insert(mRoot, nullptr, value);
     align(mRoot);
 }
 
 void AVLTree::remove(int value)
 {
     saveState();
-    removeHelper(mRoot, value);
+    remove(mRoot, value);
     // align(mRoot);
     mActionQueue.pushInstantAction([&]() { align(mRoot); });
 }
@@ -30,7 +30,7 @@ void AVLTree::empty()
     mRoot = nullptr;
 }
 
-void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
+TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
 {
     if (!node)
     {
@@ -70,9 +70,7 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
             node->mLevel = 0;
             node->setPosition(sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing));
         }
-        // return node;
-
-        return;
+        return node;
     }
     
     mActionQueue.pushInstantAction([=]() {
@@ -89,7 +87,7 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         });
         createNewActionGroup();
         traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
-        insertHelper(node->mLeft, node, value);
+        node->mLeft = insert(node->mLeft, node, value);
     }
 
     if (value > node->mValue) // Right traversal
@@ -99,15 +97,15 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         });
         createNewActionGroup();
         traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
-        insertHelper(node->mRight, node, value);
+        node->mRight = insert(node->mRight, node, value);
     }
 
     node = updateHeight(node);
     node = balance(node);
-    // return node;
+    return node;
 }
 
-void AVLTree::removeHelper(TreeNode* &node, int value)
+void AVLTree::remove(TreeNode* &node, int value)
 {
     if (!node) return;
 
@@ -118,14 +116,14 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
     {
         createNewActionGroup();
         traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
-        removeHelper(node->mLeft, value);
+        remove(node->mLeft, value);
     }
 
     else if (value > node->mValue) // Right traversal
     {
         createNewActionGroup();
         traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
-        removeHelper(node->mRight, value);
+        remove(node->mRight, value);
     }
     else 
     {
@@ -159,22 +157,18 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
         {
             TreeNode* cur = node->mRight;
             while (cur->mLeft)
-            {
-                createNewActionGroup();
-                highlightNode(cur, sf::Color::Yellow, 0.5f);
-                createNewActionGroup();
-                traverseEdge(cur, cur->mLeft, sf::Color::Yellow, 0.5f);
                 cur = cur->mLeft;
-            }
         
             createNewActionGroup();
             swapTwoNodes(cur, node);
 
             mActionQueue.pushInstantAction([=]() {
-                removeHelper(node->mRight, value);
+                remove(node->mRight, value);
             });
 
-            align(mRoot);
+            // align(value == mRoot->mValue ? node : mRoot);
+
+            // return node;
         }
     }
     
@@ -233,6 +227,8 @@ int AVLTree::getBalanceFactor(TreeNode* root)
 
 TreeNode* AVLTree::updateHeight(TreeNode* root)
 {
+    if (updateStepCallback) updateStepCallback(1);
+
     if (!root) 
         return nullptr;
 
@@ -353,6 +349,18 @@ TreeNode* AVLTree::balance(TreeNode* root)
         }
     }   
     return root;
+}
+
+void AVLTree::leftRotate()
+{
+    mRoot = leftRotate(mRoot);
+    align(mRoot);
+}
+
+void AVLTree::rightRotate()
+{
+    mRoot = rightRotate(mRoot);
+    align(mRoot);
 }
 
 void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, float curSpacingY) // DFS

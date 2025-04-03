@@ -2,19 +2,24 @@
 #include <SFML/Graphics.hpp>
 #include <Core/ResourceHolder.hpp>
 #include <Core/ResourceIdentifiers.hpp>
-
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/PseudoCode.hpp>
-#include <DataStructures/DS.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <DataStructures/HeapTree.hpp>
-#include <DataStructures/LinkedList.hpp>
-#include <GUI/InfoPanel.hpp>
-#include <GUI/MainUI.hpp>
-
+#include <SceneNode/SpriteNode.hpp>
+#include <Core/CommandQueue.hpp>
+#include <Core/Command.hpp>
 #include <array>
 #include <vector>
 #include <queue>
+#include <GUI/Button.hpp>
+#include <GUI/Container.hpp>
+#include <GUI/ExpandableButton.hpp>
+#include <GUI/DeliverTextBox.hpp>
+
+#include <GUI/InfoPanel.hpp>
+#include <DataStructures/LinkedList.hpp>
+
+#include <SceneNode/PseudoCode.hpp>
 
 class MainUI;
 
@@ -46,6 +51,7 @@ public:
 private:
     void								loadTextures();
     void								buildScene();
+    // void                                initPseudoCode();
     void                                CreateModeContainer();
     void                                updateBackRequest();
 
@@ -55,7 +61,6 @@ private:
     {
         Background,
         DataStructure,
-        CodeBox,
         SidePanel,
         LayerCount
     };
@@ -69,12 +74,19 @@ private:
     GUI::InfoPanel*                     mInfoPanel;
 
 public:
+    CommandQueue&						getCommandQueue();
     void                                handleEvent(const sf::Event& event);
     void                                setMode(World::Mode mode);
     bool                                getBackRequest();
+    
+private:
+    CommandQueue						mCommandQueue;
 
 private:
     sf::View							mWorldView;
     Mode                                mMode;
     bool                                BackRequest;
+
+
+
 };

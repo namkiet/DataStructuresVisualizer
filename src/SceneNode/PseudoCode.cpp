@@ -1,7 +1,6 @@
 #include <SceneNode/PseudoCode.hpp>
 
-PseudoCode::PseudoCode(sf::Font& font, float x, float y) : currentStep(-1), mFont(font)
-{
+PseudoCode::PseudoCode(sf::Font& font, float x, float y) : currentStep(-1) {
     lines = {
         "insert node normally",
         "update height",
@@ -19,8 +18,7 @@ PseudoCode::PseudoCode(sf::Font& font, float x, float y) : currentStep(-1), mFon
     background.setOutlineThickness(2);
 
     float offsetY = 10;
-    for (const auto& line : lines) 
-    {
+    for (const auto& line : lines) {
         sf::Text text(line, font, 14);
         text.setFillColor(sf::Color::White);
         text.setPosition(x + 10, y + offsetY);
@@ -29,26 +27,16 @@ PseudoCode::PseudoCode(sf::Font& font, float x, float y) : currentStep(-1), mFon
     }
 }
 
-void PseudoCode::setStep(int step) 
-{
+void PseudoCode::setStep(int step) {
     currentStep = step;
-    for (size_t i = 0; i < textObjects.size(); ++i)
-    {
+    for (size_t i = 0; i < textObjects.size(); ++i) {
         textObjects[i].setFillColor(i == step ? sf::Color::Yellow : sf::Color::White);
     }
 }
 
-void PseudoCode::updateCurrent(sf::Time dt)
-{
-}
-
-void PseudoCode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const 
-{
-    target.draw(background, states);
-    // window.draw(background);
-    for (const auto& text : textObjects) 
-    {
-        // window.draw(text);
-        target.draw(text, states);
+void PseudoCode::draw(sf::RenderWindow& window) {
+    window.draw(background);
+    for (const auto& text : textObjects) {
+        window.draw(text);
     }
 }
