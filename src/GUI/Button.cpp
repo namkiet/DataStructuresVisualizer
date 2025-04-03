@@ -10,7 +10,7 @@ GUI::Button::Button(sf::Vector2f position, sf::Vector2f buttonSize)
     mContentType = ContentType::Image;
 
     mIsToggle = true;
-    mNormalColor = UI::OperationBoxColor;
+    mNormalColor = UI::BUTTON::FillColor;
     mSelectedColor = sf::Color(76, 91, 99);
     mActivatedColor = sf::Color(96, 121, 129);
 
@@ -24,7 +24,7 @@ GUI::Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf:
     mShapeType = shapeType;
     mContentType = content;
     mIsToggle = true;
-    mNormalColor = UI::OperationBoxColor;   
+    mNormalColor = UI::BUTTON::FillColor;
     mSelectedColor = sf::Color(76, 91, 99);
     mActivatedColor = sf::Color(96, 121, 129);
 
@@ -38,6 +38,9 @@ GUI::Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf:
         mShape.setSize(ButtonSize);
         mShape.setPosition(Position);
         mShape.setFillColor(mNormalColor);
+        mShape.setOutlineColor(UI::BUTTON::OutlineColor);
+        mShape.setOutlineThickness(2.f);
+
         if(content == ContentType::Text)
         {
             centerOrigin(mText);

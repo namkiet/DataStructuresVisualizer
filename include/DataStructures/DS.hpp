@@ -28,8 +28,10 @@ public:
     sf::RectangleShape              mBounds = sf::RectangleShape(sf::Vector2f(VIZ::DS::Size.x - 3, VIZ::DS::Size.y - 3));
 
 public:
-    virtual void                    updateCurrent(sf::Time dt);
-    virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+    virtual void                    updateCurrent(sf::Time dt) override;
+
+private:
+    virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 public:
     std::function<void(int)>        updateStepCallback; 

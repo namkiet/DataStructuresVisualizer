@@ -55,3 +55,25 @@ float angle(sf::Vector2f a, sf::Vector2f b)
 	sf::Vector2f vec = b - a;
     return std::atan2(vec.y, vec.x);
 }
+
+std::string wrapText(const std::string& text, const sf::Font& font, unsigned int charSize, float maxWidth)
+{
+    std::istringstream words(text);
+    std::string word, line, wrappedText;
+    sf::Text testText("", font, charSize);
+
+    while (words >> word) {
+        std::string tempLine = line.empty() ? word : line + " " + word;
+        testText.setString(tempLine);
+
+        if (testText.getLocalBounds().width > maxWidth) {
+            wrappedText += line + "\n";
+            line = word;
+        } else {
+            line = tempLine;
+        }
+    }
+
+    wrappedText += line; 
+    return wrappedText;
+}

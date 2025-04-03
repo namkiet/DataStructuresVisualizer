@@ -28,6 +28,9 @@ namespace Fonts
 	enum ID
 	{
 		Main,
+		UI,
+		Node
+		
 	};
 }
 

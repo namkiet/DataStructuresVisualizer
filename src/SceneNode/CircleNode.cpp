@@ -1,5 +1,6 @@
 #include <SceneNode/CircleNode.hpp>
 #include <Core/Utility.hpp>
+#include <Core/Variables.hpp>
 
 CircleNode::CircleNode(const CircleNode &other)
     : sf::Transformable(other), sf::Drawable(other),
@@ -17,24 +18,24 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
 {
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
-    mShape.setFillColor(fillColor);
-    mShape.setOutlineColor(outlineColor);
-    mShape.setOutlineThickness(2);
+    mShape.setFillColor(VIZ::NODE::FillColor);
+    mShape.setOutlineColor(VIZ::NODE::OutlineColor);
+    mShape.setOutlineThickness(VIZ::NODE::Thickness);
     mShape.setPointCount(10000);
 
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
 
-    mTextSize = radius * 0.75;
+    mTextSize = radius * 0.9;
     
     mText.setFont(mFont);
-    mText.setColor(sf::Color::Black);
+    mText.setColor(VIZ::TextColor);
     mText.setPosition(mShape.getPosition());
     updateText();
 
     mNote.setFont(mFont);
-    mNote.setColor(sf::Color::Black);
+    mNote.setColor(VIZ::TextColor);
     mNote.setPosition(mShape.getPosition() + sf::Vector2f(0, radius + 10));
-    mNote.setCharacterSize(mTextSize * 0.8f);
+    mNote.setCharacterSize(mTextSize);
     setNote("");
 }
 
@@ -76,14 +77,18 @@ void CircleNode::setOpacity(float opacity)
     if (opacity > 1) return;
     int alpha = int(255 * opacity);
     sf::Color newFillColor = mShape.getFillColor();
-    newFillColor.a = alpha;
+    if (VIZ::NODE::FillColor != sf::Color::Transparent)
+    {
+        newFillColor.a = alpha;
+        mShape.setFillColor(newFillColor);
+    }
+
     sf::Color newOutlineColor = mShape.getOutlineColor();
     newOutlineColor.a = alpha;
+    mShape.setOutlineColor(newOutlineColor);
+
     sf::Color newTextColor = mText.getFillColor();
     newTextColor.a = alpha;
-    
-    mShape.setFillColor(newFillColor);
-    mShape.setOutlineColor(newOutlineColor);
     mText.setFillColor(newTextColor);
 }
 

@@ -53,7 +53,6 @@ CommandQueue& World::getCommandQueue()
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::AppBackground, "assets/images/bg5.jpg");
 }
 
 void World::buildScene()
@@ -66,7 +65,11 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer));
 	}
 
-	mPseudoCode = new PseudoCode(mFonts.get(Fonts::ID::Main), 700, 520);
+	PseudoCode::Ptr pseudo(new PseudoCode(mFonts.get(Fonts::ID::Main)));
+	mPseudoCode = pseudo.get();
+	mSceneLayers[CodeBox]->attachChild(std::move(pseudo));
+	mSceneLayers[CodeBox]->setPosition(UI::TOOLBOX::Position);
+
 	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
 	mInfoPanel->setCharacterSize(30);
 	

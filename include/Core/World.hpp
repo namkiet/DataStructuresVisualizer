@@ -63,8 +63,9 @@ private:
     enum Layer
     {
         Background,
-        DataStructure,
         SidePanel,
+        CodeBox,
+        DataStructure,
         LayerCount
     };
 
