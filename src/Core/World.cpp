@@ -29,8 +29,6 @@ void World::CreateModeContainer()
 
 void World::update(sf::Time dt)
 {
-	while (!mCommandQueue.isEmpty())
-		mSceneGraph.executeCommand(mCommandQueue.pop(), dt);
 	mSceneGraph.update(dt);
 
 	mInfoPanel->setText(mDataStructure->getInfo());
@@ -42,11 +40,6 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 	// if (mPseudoCode) mPseudoCode->draw(mWindow);
 
-}
-
-CommandQueue& World::getCommandQueue()
-{
-	return mCommandQueue;
 }
 
 void World::loadTextures()

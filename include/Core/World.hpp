@@ -5,9 +5,6 @@
 #include <SceneNode/SceneNode.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <DataStructures/HeapTree.hpp>
-#include <SceneNode/SpriteNode.hpp>
-#include <Core/CommandQueue.hpp>
-#include <Core/Command.hpp>
 #include <array>
 #include <vector>
 #include <queue>
@@ -74,14 +71,10 @@ private:
     GUI::InfoPanel*                     mInfoPanel;
 
 public:
-    CommandQueue&						getCommandQueue();
     void                                handleEvent(const sf::Event& event);
     void                                setMode(World::Mode mode);
     bool                                getBackRequest();
     
-private:
-    CommandQueue						mCommandQueue;
-
 private:
     sf::View							mWorldView;
     Mode                                mMode;

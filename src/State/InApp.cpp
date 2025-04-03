@@ -7,8 +7,7 @@
 
 InApp::InApp(StateStack& stack, Context context, World::Mode mode): 
     State(stack, context),
-    mWorld(*context.window, *context.textures,*context.fonts),
-    mUser()
+    mWorld(*context.window, *context.textures,*context.fonts)
 {   
     mWorld.setMode(mode);
 }

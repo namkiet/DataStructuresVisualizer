@@ -3,12 +3,8 @@
 #include <State/StateStack.hpp>
 #include <Core/ResourceIdentifiers.hpp>
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/SpriteNode.hpp>
 #include <SceneNode/TreeNode.hpp>
-#include <Core/Command.hpp>
-#include <Core/CommandQueue.hpp>
 #include <Core/ResourceHolder.hpp>
-#include <Core/User.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <memory>
 #include <array>
@@ -26,5 +22,4 @@ public:
 	virtual bool						handleEvent(const sf::Event& event);
 private:
 	World 								mWorld;
-	User								mUser;
 };

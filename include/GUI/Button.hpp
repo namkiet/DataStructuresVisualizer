@@ -6,7 +6,6 @@
 #include <memory>
 #include <functional>
 #include "Core/ResourceIdentifiers.hpp"
-#include "Core/User.hpp"
 #include<vector>
 
 #include "GUI/Component.hpp"
