@@ -21,23 +21,9 @@ public:
     virtual void                    empty();
     void                            loadFromVector(std::vector<int> numList);
 
-// private:
-//     virtual void                    rawInsert(int value) = 0;
-
-public:
-    sf::RectangleShape              mBounds = sf::RectangleShape(sf::Vector2f(VIZ::DS::Size.x - 3, VIZ::DS::Size.y - 3));
-
-public:
+private:
     virtual void                    updateCurrent(sf::Time dt);
     virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-
-public:
-    std::function<void(int)>        updateStepCallback; 
-
-protected:
-    float                           mAnimationSpeed = 0.5f;
-    float                           mMaxWidth = 1200;
-    float                           mVerticalSpacing = 100;
 
 protected:
     ActionQueue                     mActionQueue;
@@ -88,6 +74,9 @@ protected:
     virtual void                    saveState() = 0;
     virtual void                    loadState(History history) = 0;
 
+// CODE STEP
+
+// INFO
 protected:
     std::string                     mInfo = "";
 

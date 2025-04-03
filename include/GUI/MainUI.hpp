@@ -38,5 +38,8 @@ class MainUI: public SceneNode
     public:
         void                                createButtonList(World::Mode mode, DS* mDataStructure);
         void                                initAVLButtons(AVLTree* avl);
+        void                                initHeapButtons(HeapTree* avl);
+        void                                initLinkedListButtons(LinkedList* ll);
+        // void                                initGraphButtons(Graph* graph);
         bool                                getBackRequest();
 };
