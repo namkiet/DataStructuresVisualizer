@@ -45,4 +45,7 @@ void Component::deactivate()
 	mIsActive = false;
 }
 
+void Component::setCallback(Callback func){
+	mCallback = func;
+}
 }

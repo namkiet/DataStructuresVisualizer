@@ -10,6 +10,7 @@ public:
     typedef std::unique_ptr<TreeNode> Ptr;
 
 public:
+                            TreeNode(const TreeNode &other);
                             TreeNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
 
     TreeNode*               mLeft;

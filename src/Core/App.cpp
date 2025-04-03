@@ -1,14 +1,14 @@
 #include <Core/App.hpp>
 #include <State/TitleState.hpp>
 #include <State/MenuState.hpp>
+#include <State/InApp.hpp>
+#include <Core/Variables.hpp>
 #include <iostream>
-#include "State/InApp.hpp"
-
 
 App::App(): 
     
     mContextSettings(0, 0, 16),
-    mWindow(sf::VideoMode(1200, 720), "My App", sf::Style::Default, mContextSettings),
+    mWindow(sf::VideoMode(SCREEN::Width, SCREEN::Height), "My App", sf::Style::Default, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
     mView(mWindow.getDefaultView()),
     mIsPaused(false)
@@ -23,11 +23,14 @@ void App::loadTextures()
 {
     mTextures.load(Textures::TitleScreen, "assets/images/TitleScreen.png");
     mTextures.load(Textures::Button, "assets/images/button.jpg");
+    mTextures.load(Textures::HomeIcon, "assets/images/home.png");
+	mTextures.load(Textures::AppBackground, "assets/images/bg5.jpg");
 }
 
 void App::loadFonts()
 {
     mFonts.load(Fonts::Main, "assets/fonts/jetbrains.ttf");
+    mFonts.load(Fonts::UI, "assets/fonts/Poppins-Regular.ttf");
 }
 
 
@@ -39,7 +42,6 @@ void App::registerStates()
     mStateStack.registerState<InApp>(States::InAppHeap);
     mStateStack.registerState<InApp>(States::InAppGraph);
     mStateStack.registerState<InApp>(States::InAppLinkedList);
-
 }
 
 void App::run()
@@ -90,7 +92,7 @@ void App::update(sf::Time dt)
 void App::draw()
 {
     mWindow.setView(mView);
-    mWindow.clear(sf::Color(173, 216, 230));
+    mWindow.clear(SCREEN::BackgroundColor);
     mStateStack.draw();
     mWindow.display();
 }

@@ -1,17 +1,27 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SceneNode/SceneNode.hpp>
 #include <vector>
 #include <string>
 
-class PseudoCode {
+class PseudoCode: public SceneNode 
+{
 public:
-                                PseudoCode(sf::Font& font, float x, float y);
-    void                        setStep(int step);
-    void                        draw(sf::RenderWindow& window);
+    typedef std::unique_ptr<PseudoCode> Ptr;
+                                        PseudoCode(sf::Font& font);
+    void                                setStep(int step);
+    void                                setCode(std::string lines);
+
+public:
+    virtual void                        updateCurrent(sf::Time dt) override;
 
 private:
-    std::vector<std::string>    lines;
-    std::vector<sf::Text>       textObjects;
-    sf::RectangleShape          background;
-    int                         currentStep;
+    virtual void                        drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+
+private:
+    sf::Font                            mFont;
+    std::vector<std::string>            mLines;
+    std::vector<sf::Text>               mTextObjects;
+    int                                 mCurrentStep;
 };

@@ -5,11 +5,11 @@
 #include <memory>
 
 class CircleNode:
-    public sf::Transformable, public sf::Drawable,
-    private sf::NonCopyable
+    public sf::Transformable, public sf::Drawable
 {
 public:
     typedef std::unique_ptr<CircleNode> Ptr;
+                            CircleNode(const CircleNode &other);
                             CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
 
 public:
@@ -18,11 +18,14 @@ public:
 
 public:
     int                     mValue;
+    sf::Vector2f            mTargetPosition;
 
 protected:
     sf::CircleShape         mShape;
     sf::Text                mText;
+    sf::Text                mNote;
     sf::Font                mFont;
+    float                   mTextSize;
 
 public:
     sf::Color               getFillColor();
@@ -30,5 +33,13 @@ public:
     sf::Color               getOutlineColor();
     void                    setOutlineColor(sf::Color color);
     void                    setOpacity(float opacity);
+    float                   getOpacity();
     float                   getRadius();
+    void                    setValue(int value);
+    float                   getTextSize();
+    void                    setTextSize(float textSize);   
+    void                    setNote(std::string note);
+
+protected:
+    void                    updateText();
 };

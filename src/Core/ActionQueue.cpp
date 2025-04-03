@@ -1,11 +1,23 @@
 #include <Core/ActionQueue.hpp>
 
+void ActionQueue::empty()
+{
+    while (!queue.empty())
+        queue.pop_back();
+}
+
 void ActionQueue::pushAction(ActionFunc action)
 {
+    std::cout<<"start Push action\n";
     if (queue.empty())
         queue.emplace_back();
-
     queue.back().push_back(std::move(action));
+}
+
+void ActionQueue::pushInstantAction(std::function<void()> func)
+{
+    createNewBatch();
+    pushAction([func](sf::Time) { func(); return true; });
 }
 
 void ActionQueue::update(sf::Time dt)
@@ -15,13 +27,13 @@ void ActionQueue::update(sf::Time dt)
         auto &currentBatch = queue.front();
         bool allFinished = true;
 
-        for (auto batchIterator = currentBatch.begin(); batchIterator != currentBatch.end(); )
+        for (auto currentBatchIterator = currentBatch.begin(); currentBatchIterator != currentBatch.end(); )
         {
-            if ((*batchIterator)(dt))
-                batchIterator = currentBatch.erase(batchIterator);
+            if ((*currentBatchIterator)(dt))
+                currentBatchIterator = currentBatch.erase(currentBatchIterator);
             else
             {
-                ++batchIterator;
+                ++currentBatchIterator;
                 allFinished = false;
             }
         }

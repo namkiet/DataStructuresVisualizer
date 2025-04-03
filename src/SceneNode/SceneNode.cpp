@@ -1,5 +1,4 @@
 #include <SceneNode/SceneNode.hpp>
-#include <Core/Command.hpp>
 #include <iostream>
 
 SceneNode::SceneNode()
@@ -58,19 +57,4 @@ void SceneNode::drawChildren(sf::RenderTarget& target, sf::RenderStates states) 
 {
     for (auto it = mChildren.begin(); it != mChildren.end(); it++)
         (*it)->draw(target, states);
-}
-
-
-unsigned int SceneNode::getCategory() const
-{
-    return Category::Scene;
-}
-
-void SceneNode::executeCommand(const Command& command, sf::Time dt)
-{
-    if (command.category & getCategory())
-        command.action(*this, dt);
-    
-    for (auto &child: mChildren)
-        child->executeCommand(command, dt);
 }

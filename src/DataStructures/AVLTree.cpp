@@ -1,5 +1,4 @@
 #include <DataStructures/AVLTree.hpp>
-#include <Core/Animation.hpp>
 #include <queue>
 #include <iostream>
 
@@ -7,30 +6,16 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 
 void AVLTree::insert(int value)
 {
-    if (updateStepCallback) 
-    {
-        mActionQueue.pushAction([this](sf::Time dt) {
-            this->updateStepCallback(0);
-            return true;
-        });
-    }
-
-    mRoot = insert(mRoot, nullptr, value);
-    align(mRoot);
-
-    if (updateStepCallback) 
-    {
-        mActionQueue.pushAction([this](sf::Time dt) {
-            this->updateStepCallback(-1);
-            return true;
-        });
-    }
+    saveState();
+    insertHelper(mRoot, nullptr, value);
+    mActionQueue.pushInstantAction([&]() { align(mRoot); });
 }
 
 void AVLTree::remove(int value)
 {
-    mRoot = remove(mRoot, value);
-    align(mRoot);
+    saveState();
+    removeHelper(mRoot, value);
+    mActionQueue.pushInstantAction([&]() { align(mRoot); });
 }
 
 bool AVLTree::search(int value)
@@ -38,11 +23,21 @@ bool AVLTree::search(int value)
     return search(mRoot, value);
 }
 
-TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
+void AVLTree::empty()
+{
+    DS::empty();
+    mRoot = nullptr;
+}
+
+void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
 {
     if (!node)
     {
-        node = new TreeNode(value, 16.f, sf::Color::White, sf::Color::Black);
+        mActionQueue.pushInstantAction([=]() {
+            mInfo = "Location found, inserting " + std::to_string(value) + ".\n";
+        });
+
+        node = new TreeNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
         node->mParent = prev;
 
         createNewActionGroup();
@@ -56,159 +51,130 @@ TreeNode* AVLTree::insert(TreeNode* node, TreeNode* prev, int value)
             node->setOpacity(0);
             node->mLevel = prev->mLevel + 1;
 
-            createNewActionGroup();
+            // Calculate current position
+            sf::Vector2f curPos = prev->getPosition();
             if (value < prev->mValue) // is left child
-                moveNode(node, prev->getPosition() + sf::Vector2f(-mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), mAnimationSpeed, true);
+                curPos += sf::Vector2f(-VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             else // is right child
-                moveNode(node, prev->getPosition() + sf::Vector2f(mMaxWidth / (1 << (node->mLevel + 1)), mVerticalSpacing), mAnimationSpeed, true);
+                curPos += sf::Vector2f(VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             
+            createNewActionGroup();
+            moveNode(node, curPos, 0.5f, true);
 
             createNewActionGroup();
-            moveEdge(prev, nullptr, node, mAnimationSpeed);
+            moveEdge(prev, nullptr, node, 0.5f);
         }
         else
         {
             node->mLevel = 0;
-            node->setPosition(sf::Vector2f(mMaxWidth / 2, mVerticalSpacing));
+            node->setPosition(sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing));
         }
-        return node;
+        return;
     }
     
-    createNewActionGroup();
-    highlightNode(node, sf::Color::Red, mAnimationSpeed);
+    mActionQueue.pushInstantAction([=]() {
+        mInfo = "Comparing " + std::to_string(value) + " with " + std::to_string(node->mValue) + ".\n";
+    });
 
-    if (value < node->mValue) 
+    createNewActionGroup();
+    highlightNode(node, sf::Color::Red, 0.5f);
+
+    if (value < node->mValue) // Left traveral
     {
+        mActionQueue.pushInstantAction([=]() {
+            mInfo = std::to_string(value) + " is less than " + std::to_string(node->mValue) + ", go left.\n";
+        });
         createNewActionGroup();
         traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
-        node->mLeft = insert(node->mLeft, node, value);
+        insertHelper(node->mLeft, node, value);
     }
-    if (value > node->mValue) 
+
+    if (value > node->mValue) // Right traversal
     {
+        mActionQueue.pushInstantAction([=]() {
+            mInfo = std::to_string(value) + " is greater than " + std::to_string(node->mValue) + ", go right.\n";
+        });
         createNewActionGroup();
         traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
-        node->mRight = insert(node->mRight, node, value);
+        insertHelper(node->mRight, node, value);
     }
 
     node = updateHeight(node);
     node = balance(node);
-    return node;
 }
 
-TreeNode* AVLTree::remove(TreeNode* node, int value)
+void AVLTree::removeHelper(TreeNode* &node, int value)
 {
-    if (!node) return nullptr;
+    if (!node) return;
 
-    if (value < node->mValue) node->mLeft = remove(node->mLeft, value);
-    else if (value > node->mValue) node->mRight = remove(node->mRight, value);
+    createNewActionGroup();
+    highlightNode(node, sf::Color::Red, 0.5f);
+
+    if (value < node->mValue) // Left traveral
+    {
+        createNewActionGroup();
+        traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
+        removeHelper(node->mLeft, value);
+    }
+
+    else if (value > node->mValue) // Right traversal
+    {
+        createNewActionGroup();
+        traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
+        removeHelper(node->mRight, value);
+    }
     else 
     {
+        if (!node->mLeft || !node->mRight) {
+            TreeNode* temp = node->mLeft ? node->mLeft : node->mRight;
 
-        if (!node->mLeft)
-        {
-            if (node->mParent)
+            if (temp)
+                temp->mParent = node->mParent;
+
+
+            createNewActionGroup();
+            mActionQueue.pushAction(Action::FadeNode(node, 0.5f));
+
+            // All edges lead TO it now lead to NULL
+            for (auto& e: mEdgeList)
             {
-                moveEdge(node->mParent, node, nullptr, 3.f);
-                // mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(mEdgeList, node->mParent, node, nullptr, 3.f));
-                if (node == node->mParent->mLeft)
+                if (e->mTo == node)
                 {
-                    node->mParent->mLeft = nullptr;
-                }
-                if (node == node->mParent->mRight)
-                {
-                    node->mParent->mRight = nullptr;
+                    moveEdge(e->mFrom, node, temp, 0.5f);
+                    align(mRoot);
+                    break;
                 }
             }
 
-            TreeNode* tmp = node->mRight;
-            removeEdge(node, node->mLeft);
-            removeEdge(node, node->mRight);
-            // delete node;
-            return tmp;
-        } 
-        else if (!node->mRight)
-        {
-            if (node->mParent)
-            {
-                moveEdge(node->mParent, node, nullptr, 3.f);
-                // mAnimationQueue.addAnimation(std::make_unique<EdgeMove>(mEdgeList, node->mParent, node, nullptr, 3.f));
-                if (node == node->mParent->mLeft)
-                {
-                    node->mParent->mLeft = nullptr;
-                }
-                if (node == node->mParent->mRight)
-                {
-                    node->mParent->mRight = nullptr;
-                }
-            }
+            createNewActionGroup();
+            removeNode(node); // Remove a node and all edges FROM it
 
-            TreeNode* tmp = node->mLeft;
-            removeEdge(node, node->mLeft);
-            removeEdge(node, node->mRight);
-            // delete node;
-            return tmp;
+            node = temp;
         }
         else
         {
-            TreeNode* prev = node;
             TreeNode* cur = node->mRight;
-
-            TreeNode* l = node->mLeft;
-            TreeNode* r = node->mRight;
-            TreeNode* p = node->mParent;
-
-            while (cur && cur->mLeft) 
-            {
-                prev = cur;
+            while (cur->mLeft)
                 cur = cur->mLeft;
-            }
+        
+            createNewActionGroup();
+            swapTwoNodes(cur, node);
 
-            std::vector<std::unique_ptr<Animation>> deleteAnimations;
+            mActionQueue.pushInstantAction([=]() {
+                removeHelper(node->mRight, value);
+            });
 
-            if (cur == prev->mLeft)
-            {
-                deleteAnimations.push_back(std::make_unique<EdgeMove>(mEdgeList, prev, prev->mLeft, nullptr, mAnimationSpeed));
-                prev->mLeft = nullptr;
-            }
-            if (cur == prev->mRight)
-            {
-                deleteAnimations.push_back(std::make_unique<EdgeMove>(mEdgeList, prev, prev->mRight, nullptr, mAnimationSpeed));
-                prev->mRight = nullptr;
-            }            
+            // align(value == mRoot->mValue ? node : mRoot);
 
-            if (p)
-            {
-                if (node == p->mLeft)
-                {
-                    deleteAnimations.push_back(std::make_unique<EdgeMove>(mEdgeList, p, p->mLeft, cur , mAnimationSpeed));
-                    p->mLeft = cur;
-                }
-                if (node == p->mRight)
-                {
-                    deleteAnimations.push_back(std::make_unique<EdgeMove>(mEdgeList, p, p->mRight, cur, mAnimationSpeed));
-                    p->mRight = cur;
-                }
-            }
-
-            cur->mParent = node->mParent;
-            cur->mLeft = node->mLeft;
-            cur->mRight = node->mRight;
-
-            if (node->mLeft) node->mLeft->mParent = cur;
-            if (node->mRight) node->mRight->mParent = cur;
-
-            mAnimationQueue.addAnimationGroup(deleteAnimations);
-
-            removeEdge(node, node->mLeft);
-            removeEdge(node, node->mRight);
-
-            return cur;
+            // return node;
         }
     }
-
-    // node = updateHeight(node);
-    // node = balance(node);
-    return node;
+    
+    mActionQueue.pushInstantAction([&]() {
+        node = updateHeight(node);
+        node = balance(node);
+    });
+    // return node;
 }
 
 bool AVLTree::search(TreeNode* node, int value)
@@ -220,30 +186,31 @@ bool AVLTree::search(TreeNode* node, int value)
         while (blinkTimes--)
         {
             createNewActionGroup();
-            highlightNode(node, sf::Color::Blue, mAnimationSpeed * 0.4f);
+            highlightNode(node, sf::Color::Blue, 0.5f);
         }
         return true;
     }
 
     createNewActionGroup();
-    highlightNode(node, sf::Color::Red, mAnimationSpeed);
+    highlightNode(node, sf::Color::Red, 0.5f);
     
     if (value < node->mValue) 
     {
         createNewActionGroup();
-        traverseEdge(node, node->mLeft, sf::Color::Red, mAnimationSpeed);
+        traverseEdge(node, node->mLeft, sf::Color::Red, 0.5f);
         return search(node->mLeft, value);
     }
     if (value > node->mValue)
     {
         createNewActionGroup();
-        traverseEdge(node, node->mRight, sf::Color::Red, mAnimationSpeed);
+        traverseEdge(node, node->mRight, sf::Color::Red, 0.5f);
         return search(node->mRight, value);
     }
     return true;
 }
 
-int AVLTree::getHeight(TreeNode* root) {
+int AVLTree::getHeight(TreeNode* root) 
+{
     if (root)
         return root->mHeight;
     return 0;
@@ -279,7 +246,7 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
 
     if (par)
     {
-        moveEdge(par, root, newRoot, mAnimationSpeed);
+        moveEdge(par, root, newRoot, 0.5f);
         if (par->mLeft == root) 
             par->mLeft = newRoot;
         else 
@@ -289,10 +256,10 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
     if (newRoot->mLeft) 
         newRoot->mLeft->mParent = root;
 
-    moveEdge(root, root->mRight, newRoot->mLeft, mAnimationSpeed);
+    moveEdge(root, root->mRight, newRoot->mLeft, 0.5f);
     root->mRight = newRoot->mLeft;
 
-    moveEdge(newRoot, newRoot->mLeft, root, mAnimationSpeed);
+    moveEdge(newRoot, newRoot->mLeft, root, 0.5f);
     newRoot->mLeft = root;
 
     root->mParent = newRoot;
@@ -315,7 +282,7 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
     newRoot->mParent = par;
     if (par)
     {
-        moveEdge(par, root, newRoot, mAnimationSpeed);
+        moveEdge(par, root, newRoot, 0.5f);
         if (par->mRight == root) 
             par->mRight = newRoot;
         else 
@@ -325,10 +292,10 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
     if (newRoot->mRight) 
         newRoot->mRight->mParent = root;
 
-    moveEdge(root, root->mLeft, newRoot->mRight, mAnimationSpeed);
+    moveEdge(root, root->mLeft, newRoot->mRight, 0.5f);
     root->mLeft = newRoot->mRight;
 
-    moveEdge(newRoot, newRoot->mRight, root, mAnimationSpeed);
+    moveEdge(newRoot, newRoot->mRight, root, 0.5f);
     newRoot->mRight = root;
     
     root->mParent = newRoot;
@@ -344,68 +311,42 @@ TreeNode* AVLTree::balance(TreeNode* root)
 {
     if (!root) return nullptr;
     int bf = getBalanceFactor(root);
-    if (bf > 1) {
+
+    mActionQueue.pushInstantAction([=]() {
+        root->setNote("bf = " + std::to_string(bf));
+    });
+
+    highlightNode(root, sf::Color::Blue, 0.5f);
+
+    mActionQueue.pushInstantAction([=]() {
+        root->setNote("");
+    });
+
+    if (bf > 1) 
+    {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
         {
-            if (updateStepCallback) 
-            {
-                mActionQueue.pushAction([this](sf::Time dt) {
-                    this->updateStepCallback(3);
-                    return true;
-                });
-            }
             return rightRotate(root);
         }
-        else {
-            if (updateStepCallback) 
-            {
-                mActionQueue.pushAction([this](sf::Time dt) {
-                    this->updateStepCallback(5);
-                    return true;
-                });
-            }
+        else 
+        {
             root->mLeft = leftRotate(root->mLeft); // LR
             return rightRotate(root);
         }
     }
-    if (bf < -1) {
+    if (bf < -1) 
+    {
         if (getBalanceFactor(root->mRight) <= 0) // RR
         {
-            if (updateStepCallback) 
-            {
-                mActionQueue.pushAction([this](sf::Time dt) {
-                    this->updateStepCallback(4);
-                    return true;
-                });
-            }
             return leftRotate(root);
         }
-        else {
-            if (updateStepCallback) 
-            {
-                mActionQueue.pushAction([this](sf::Time dt) {
-                    this->updateStepCallback(6);
-                    return true;
-                });
-            }
+        else 
+        {
             root->mRight = rightRotate(root->mRight); // RL
             return leftRotate(root);
         }
     }   
     return root;
-}
-
-
-void AVLTree::leftRotate()
-{
-    mRoot = leftRotate(mRoot);
-    align(mRoot);
-}
-
-void AVLTree::rightRotate()
-{
-    mRoot = rightRotate(mRoot);
-    align(mRoot);
 }
 
 void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, float curSpacingY) // DFS
@@ -420,7 +361,9 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     else
         curNode->mLevel = curNode->mParent->mLevel + 1;
     
-    moveNode(curNode, curPos, mAnimationSpeed, false);
+    // std::cerr << curNode->mValue << ": " << curPos.x << "-" << curPos.y << "\n";
+
+    moveNode(curNode, curPos, 0.5f, false);
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
@@ -431,4 +374,80 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
 
     align(curNode->mLeft, leftChildPos, newSpacingX, newSpacingY);
     align(curNode->mRight, rightChildPos, newSpacingX, newSpacingY);
+}
+
+void AVLTree::saveState() {
+    if (ANIMATION::Speed < 1000) return;
+
+    std::vector<CircleNode::Ptr> savedNodeList;
+    std::vector<Edge::Ptr> savedEdgeList;
+
+    if (!mRoot) {
+        mUndoStack.push(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr));
+        std::cerr << mUndoStack.size() << "\n";
+        return;
+    }
+
+    std::unordered_map<TreeNode*, TreeNode*> nodeMap;
+    std::vector<TreeNode::Ptr> tempNodeList;
+    nodeMap[nullptr] = nullptr;  // Map nullptr -> nullptr
+
+    // Clone root node
+    TreeNode* savedRoot = new TreeNode(*mRoot);
+    nodeMap[mRoot] = savedRoot;
+    tempNodeList.push_back(TreeNode::Ptr(savedRoot));
+
+    // BFS clone toàn bộ cây
+    std::queue<std::pair<TreeNode*, TreeNode*>> q;
+    q.push({mRoot, savedRoot});
+
+    while (!q.empty()) {
+        auto [oldNode, newNode] = q.front();
+        q.pop();
+
+        TreeNode* newLeft = oldNode->mLeft ? new TreeNode(*oldNode->mLeft) : nullptr;
+        TreeNode* newRight = oldNode->mRight ? new TreeNode(*oldNode->mRight) : nullptr;
+
+        newNode->mLeft = newLeft;
+        newNode->mRight = newRight;
+        if (newLeft) newLeft->mParent = newNode;
+        if (newRight) newRight->mParent = newNode;
+
+        // nodeMap[oldNode->mLeft] = newLeft;
+        // nodeMap[oldNode->mRight] = newRight;
+
+        savedEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, newNode, newNode->mLeft, false, 1.5f));
+        savedEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, newNode, newNode->mRight, false, 1.5f));
+
+        if (newLeft) {
+            tempNodeList.push_back(TreeNode::Ptr(newLeft));
+            q.push({oldNode->mLeft, newLeft});
+        }
+        if (newRight) {
+            tempNodeList.push_back(TreeNode::Ptr(newRight));
+            q.push({oldNode->mRight, newRight});
+        }
+    }
+
+    // Chuyển tempNodeList từ TreeNode::Ptr sang CircleNode::Ptr
+    for (auto& node : tempNodeList)
+        savedNodeList.push_back(std::move(node));
+
+    TreeNode* savedBaseNode = static_cast<TreeNode*>(savedNodeList.front().get());
+
+
+    while (!mRedoStack.empty())
+        mRedoStack.pop();
+
+    mUndoStack.push(History(std::move(savedNodeList), std::move(savedEdgeList), savedBaseNode));
+
+    std::cerr << mUndoStack.size() << "\n";
+}
+
+void AVLTree::loadState(History history)
+{
+    mNodeList = std::move(history.nodeList);
+    mEdgeList = std::move(history.edgeList);
+    mRoot = static_cast<TreeNode*>(history.baseNode);
+    std::cerr << mUndoStack.size() << "\n";
 }

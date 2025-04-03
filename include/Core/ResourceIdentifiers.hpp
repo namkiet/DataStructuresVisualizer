@@ -19,6 +19,7 @@ namespace Textures
 		TitleScreen,
 		AppBackground,
 		Button,
+		HomeIcon,
 	};
 }
 
@@ -27,6 +28,9 @@ namespace Fonts
 	enum ID
 	{
 		Main,
+		UI,
+		Node
+		
 	};
 }
 

@@ -1,23 +1,42 @@
 #include <SceneNode/CircleNode.hpp>
 #include <Core/Utility.hpp>
+#include <Core/Variables.hpp>
+
+CircleNode::CircleNode(const CircleNode &other)
+    : sf::Transformable(other), sf::Drawable(other),
+      mValue(other.mValue), mTargetPosition(other.mTargetPosition),
+      mShape(other.mShape), mText(other.mText), mNote(other.mNote),
+      mFont(other.mFont), mTextSize(other.mTextSize) 
+{
+    // Cập nhật font cho text
+    mText.setFont(mFont);
+    mNote.setFont(mFont);
+}
 
 CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor):
     mValue(value)
 {
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
-    mShape.setFillColor(fillColor);
-    mShape.setOutlineColor(outlineColor);
-    mShape.setOutlineThickness(2);
+    mShape.setFillColor(VIZ::NODE::FillColor);
+    mShape.setOutlineColor(VIZ::NODE::OutlineColor);
+    mShape.setOutlineThickness(VIZ::NODE::Thickness);
     mShape.setPointCount(10000);
 
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
-    mText.setColor(sf::Color::Black);
-    mText.setCharacterSize(radius * 0.75);
+
+    mTextSize = radius * 0.9;
+    
     mText.setFont(mFont);
-    mText.setString(std::to_string(value));
-    centerOrigin(mText);
+    mText.setColor(VIZ::TextColor);
     mText.setPosition(mShape.getPosition());
+    updateText();
+
+    mNote.setFont(mFont);
+    mNote.setColor(VIZ::TextColor);
+    mNote.setPosition(mShape.getPosition() + sf::Vector2f(0, radius + 10));
+    mNote.setCharacterSize(mTextSize);
+    setNote("");
 }
 
 void CircleNode::update(sf::Time dt) 
@@ -26,9 +45,10 @@ void CircleNode::update(sf::Time dt)
 
 void CircleNode::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform = getTransform();
+    states.transform *= getTransform();
     target.draw(mShape, states);
     target.draw(mText, states);
+    target.draw(mNote, states);
 }
 
 sf::Color CircleNode::getFillColor()
@@ -55,19 +75,59 @@ void CircleNode::setOutlineColor(sf::Color color)
 void CircleNode::setOpacity(float opacity)
 {
     if (opacity > 1) return;
+    int alpha = int(255 * opacity);
     sf::Color newFillColor = mShape.getFillColor();
-    newFillColor.a = 255 * opacity;
+    if (VIZ::NODE::FillColor != sf::Color::Transparent)
+    {
+        newFillColor.a = alpha;
+        mShape.setFillColor(newFillColor);
+    }
+
     sf::Color newOutlineColor = mShape.getOutlineColor();
-    newOutlineColor.a = 255 * opacity;
-    sf::Color newTextColor = mText.getFillColor();
-    newTextColor.a = 255 * opacity;
-    
-    mShape.setFillColor(newFillColor);
+    newOutlineColor.a = alpha;
     mShape.setOutlineColor(newOutlineColor);
+
+    sf::Color newTextColor = mText.getFillColor();
+    newTextColor.a = alpha;
     mText.setFillColor(newTextColor);
+}
+
+float CircleNode::getOpacity()
+{
+    return mShape.getFillColor().a / 255.f;
 }
 
 float CircleNode::getRadius()
 {
     return mShape.getRadius() + mShape.getOutlineThickness();
+}
+
+void CircleNode::setValue(int value)
+{
+    mValue = value;
+    updateText();
+}
+
+float CircleNode::getTextSize()
+{
+    return mText.getCharacterSize();
+}
+
+void CircleNode::setTextSize(float textSize)
+{
+    mTextSize = textSize;
+    updateText();
+}
+
+void CircleNode::updateText()
+{
+    mText.setCharacterSize(mTextSize);
+    mText.setString(std::to_string(mValue));
+    centerOrigin(mText);
+}
+
+void CircleNode::setNote(std::string note)
+{
+    mNote.setString(note);
+    centerOrigin(mNote);
 }

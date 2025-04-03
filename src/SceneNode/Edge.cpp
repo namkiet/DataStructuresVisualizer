@@ -1,12 +1,13 @@
 #include <SceneNode/Edge.hpp>
 #include <Core/Utility.hpp>
-#include<iostream>
+#include <Core/Variables.hpp>
+#include <iostream>
 
 Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness): 
     mFrom(from),
     mTo(to),
     mLine(sf::Quads, 4),
-    mThickness(thickness),
+    mThickness(VIZ::EDGE::Thickness),
     mColor(color),
     mHasArrow(hasArrow),
     mIsChangingTail(false)
@@ -30,12 +31,16 @@ void Edge::updateEdge()
     mArrowHead.setFillColor(mColor);
 
     sf::Vector2f dir = mTail - mHead;
-    sf::Vector2f perp(-dir.y, dir.x);
 
-    if (norm(dir) <= 2 * mFrom->getRadius()) return;
+    sf::Vector2f perp(-dir.y, dir.x);
+    perp = perp * ((mThickness / 2) / norm(perp));
 
     sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
-    perp = perp * ((mThickness / 2) / norm(perp));
+    if (norm(dir) <= 2 * mFrom->getRadius()) 
+    {
+        offset = sf::Vector2f(0, 0);
+        perp = sf::Vector2f(0, 0);
+    }
 
     mLine[0].position = mHead + offset - perp;
     mLine[1].position = mHead + offset + perp;
