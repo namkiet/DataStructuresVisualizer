@@ -17,11 +17,17 @@ namespace UI
 {
     namespace TOOLBOX
     {
-        extern sf::Color Color;
+        extern sf::Color OutlineColor;
+        extern sf::Color FillColor;
         extern sf::Vector2f Size;
         extern sf::Vector2f Position;
     }
-    extern sf::Color OperationBoxColor;
+    
+    namespace BUTTON
+    {
+        extern sf::Color FillColor;
+        extern sf::Color OutlineColor;
+    }
 }
 
 namespace VIZ
@@ -36,6 +42,7 @@ namespace VIZ
     namespace NODE
     {
         extern float Radius;
+        extern float Thickness;
         extern sf::Color FillColor;
         extern sf::Color OutlineColor;
     }

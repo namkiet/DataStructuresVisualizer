@@ -1,42 +1,34 @@
 #include <SceneNode/PseudoCode.hpp>
 
-PseudoCode::PseudoCode(sf::Font& font, float x, float y) : currentStep(-1) {
-    lines = {
-        "insert node normally",
-        "update height",
-        "check balance:",
-        "    if LL -> rotateRight",
-        "    if RR -> rotateLeft",
-        "    if LR -> rotateLeft on left child, then rotateRight",
-        "    if RL -> rotateRight on right child, then rotateLeft"
-    };
+PseudoCode::PseudoCode(sf::Font& font) : mCurrentStep(-1), mFont(font) {}
 
-    background.setSize(sf::Vector2f(500, 200));
-    background.setPosition(x, y);
-    background.setFillColor(sf::Color(50, 50, 50, 200));
-    background.setOutlineColor(sf::Color::White);
-    background.setOutlineThickness(2);
+void PseudoCode::updateCurrent(sf::Time)
+{
+    // do nothing
+}
 
+void PseudoCode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+{    
+    for (const auto &text : mTextObjects)
+        target.draw(text, states);
+}
+
+void PseudoCode::setCode(std::string lines)
+{
     float offsetY = 10;
+    mTextObjects.clear();
     for (const auto& line : lines) {
-        sf::Text text(line, font, 14);
+        sf::Text text(line, mFont, 14);
         text.setFillColor(sf::Color::White);
-        text.setPosition(x + 10, y + offsetY);
-        textObjects.push_back(text);
+        text.setPosition(10, offsetY);
+        mTextObjects.push_back(text);
         offsetY += 20;
     }
 }
 
 void PseudoCode::setStep(int step) {
-    currentStep = step;
-    for (size_t i = 0; i < textObjects.size(); ++i) {
-        textObjects[i].setFillColor(i == step ? sf::Color::Yellow : sf::Color::White);
-    }
-}
-
-void PseudoCode::draw(sf::RenderWindow& window) {
-    window.draw(background);
-    for (const auto& text : textObjects) {
-        window.draw(text);
+    mCurrentStep = step;
+    for (size_t i = 0; i < mTextObjects.size(); ++i) {
+        mTextObjects[i].setFillColor(i == step ? sf::Color::Yellow : sf::Color::White);
     }
 }
