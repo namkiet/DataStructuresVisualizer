@@ -55,3 +55,8 @@ float angle(sf::Vector2f a, sf::Vector2f b)
 	sf::Vector2f vec = b - a;
     return std::atan2(vec.y, vec.x);
 }
+
+sf::Vector2f NormalUnitVector(sf::Vector2f vec){
+	return sf::Vector2f(vec.y / norm(vec), vec.x * (-1) / norm(vec));
+	
+}

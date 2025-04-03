@@ -2,6 +2,7 @@
 #include "Core/World.hpp"
 #include <memory>
 #include <DataStructures/LinkedList.hpp>
+#include <DataStructures/Graph.hpp>
 #include "GUI/ChildComponent.hpp"
 #include <GUI/TextBox.hpp>
 #include <Core/Variables.hpp>
@@ -152,6 +153,8 @@ void MainUI::initAVLButtons(AVLTree* avl)
         }
         SearchButton->resetSubComponentInfo();
     });
+
+    
 
     // Pack all buttons
     OperationButtonsList->pack(CreateButton);
@@ -374,6 +377,54 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
         OperationButtonsList->pack(InsertButton);
         OperationButtonsList->pack(DeleteButton);
     }
+
+    else if (mode == World::Mode::GraphMode)
+{
+    auto mGraph = static_cast<Graph*>(mDataStructure);
+
+    GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
+
+    GUI::Button::Ptr RandomButton = std::make_shared<GUI::Button>(
+        mFont,
+        sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y),
+        "Random",
+        sf::Vector2f(100.f, 40.f)
+    );
+
+    RandomButton->setCallback([CreateButton]() {
+        CreateButton->setSubComponentInfo(0);
+    });
+
+    CreateButton->addSubComponent(RandomButton);
+
+    CreateButton->setFunc([CreateButton, mGraph]() {
+        if (CreateButton->getSubComponentInfo().InfoID == -1) return;
+
+        if (CreateButton->getSubComponentInfo().InfoID == 0) // RANDOM
+        {
+        }
+
+        CreateButton->resetSubComponentInfo();
+    });
+
+    GUI::ExpandableButton::Ptr MSTButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "MST", ButtonSize);
+    MSTButton->setCallback([MSTButton]{
+        MSTButton->setSubComponentInfo(0);
+    });
+    MSTButton->setFunc([MSTButton, mGraph]() {
+            int ActionType = MSTButton->getSubComponentInfo().InfoID;
+            if (ActionType == -1) return;
+            else if (ActionType == 0)
+                {
+                    mGraph->Prim();
+                }
+                
+            MSTButton->resetSubComponentInfo();
+            });
+
+    OperationButtonsList->pack(CreateButton);
+    OperationButtonsList->pack(MSTButton);
+}
 }
 
 void MainUI::handleEvent(const sf::Event& event)

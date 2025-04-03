@@ -21,9 +21,6 @@ public:
     virtual void                    empty();
     void                            loadFromVector(std::vector<int> numList);
 
-// private:
-//     virtual void                    rawInsert(int value) = 0;
-
 public:
     sf::RectangleShape              mBounds = sf::RectangleShape(sf::Vector2f(VIZ::DS::Size.x - 3, VIZ::DS::Size.y - 3));
 
@@ -53,14 +50,17 @@ protected:
     void                            removeNode(CircleNode* node);
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
     void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration);
+    void                            changeNodeColor(CircleNode* node, sf::Color highlightColor, float duration);
     void                            swapTwoNodes(CircleNode* a, CircleNode* b);
     void                            deleteNodeEffect(CircleNode* node, float duration);
     void                            deleteNode(CircleNode* node);
 
-    void                            addEdge(CircleNode* parent, CircleNode* child, bool hasArrow = false);
+    void                            addEdge(CircleNode* parent, CircleNode* child, int weight = -1,bool hasArrow = false);
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+    void                            changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+
 
 
 // UNDO - REDO    

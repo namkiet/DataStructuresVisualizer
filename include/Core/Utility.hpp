@@ -15,3 +15,5 @@ sf::Vector2f& operator+=(sf::Vector2f& lhs, const sf::Vector2f& rhs);
 float norm(sf::Vector2f a);
 float dist(sf::Vector2f a, sf::Vector2f b);
 float angle(sf::Vector2f a, sf::Vector2f b);
+
+sf::Vector2f NormalUnitVector(sf::Vector2f vec);

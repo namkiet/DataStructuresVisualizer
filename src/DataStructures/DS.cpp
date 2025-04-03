@@ -61,13 +61,28 @@ void DS::removeNode(CircleNode* node)
         return true;
     });
 }
-void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
+void DS::addEdge(CircleNode* parent, CircleNode* child, int weight, bool hasArrow) 
 {
-    mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
+    if(weight == -1)
+    {
+        mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
     {
         mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
         return true;
     });
+    }
+    //no Weight
+
+    else
+    {
+        std::cout<<"Go here ok"<<std::endl;
+        mActionQueue.pushAction([this, parent, child, hasArrow,weight](sf::Time dt) mutable -> bool
+    {
+        mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, weight, hasArrow, VIZ::EDGE::Thickness));
+        return true;
+    });
+    } // has Weight
+    
 }
 
 void DS::removeEdge(CircleNode* parent, CircleNode* child) {
@@ -94,6 +109,11 @@ void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duratio
 {
 
     mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration));
+}
+
+void DS::changeNodeColor(CircleNode* node, sf::Color highlightColor, float duration)
+{
+    mActionQueue.pushAction(Action::ChangeNodeColor(node, highlightColor, duration));
 }
 void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
 {
@@ -135,6 +155,10 @@ void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail,
 void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
 {
     mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
+}
+void DS::changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
+{
+    mActionQueue.pushAction(Action::ChangeEdgeColor(mEdgeList,parent, child, highlightColor, duration));
 }
 
 void DS::swapTwoNodes(CircleNode* a, CircleNode* b)

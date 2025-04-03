@@ -136,6 +136,7 @@ void AVLTree::remove(TreeNode* &node, int value)
 
             createNewActionGroup();
             mActionQueue.pushAction(Action::FadeNode(node, 0.5f));
+            
 
             // All edges lead TO it now lead to NULL
             for (auto& e: mEdgeList)

@@ -50,43 +50,43 @@ void LinkedList::InsertAtHead(int value)
 
 void LinkedList::InsertAtLast(int value)
 {
-    insertAtIndex(value, 3);
-    // if (!mHead)
-    // {
-    //     InsertAtHead(value);
-    //     return;
-    // }
+    // insertAtIndex(value, 3);
+    if (!mHead)
+    {
+        InsertAtHead(value);
+        return;
+    }
 
-    // LinkedListNode* newLast = new LinkedListNode(value, 16.f, sf::Color::White, sf::Color::Black);
-    // newLast->mTargetPosition = sf::Vector2f(0, 0);
-    // newLast->setPosition(newLast->mTargetPosition);
-    // newLast->setNext(nullptr);
+    LinkedListNode* newLast = new LinkedListNode(value, 16.f, sf::Color::White, sf::Color::Black);
+    newLast->mTargetPosition = sf::Vector2f(0, 0);
+    newLast->setPosition(newLast->mTargetPosition);
+    newLast->setNext(nullptr);
 
-    // createNewActionGroup();
-    // addNode(newLast);
-    // // highlightNode(newLast, sf::Color::Red, mAnimationSpeed);
+    createNewActionGroup();
+    addNode(newLast);
+    highlightNode(newLast, sf::Color::Red, mAnimationSpeed);
 
-    // LinkedListNode* temp = mHead;
-    // while (temp->mNext)
-    // {
-    //     createNewActionGroup();
-    //     highlightNode(temp, sf::Color::Red, mAnimationSpeed);
-    //     createNewActionGroup();
-    //     traverseEdge(temp, temp->mNext, sf::Color::Red, mAnimationSpeed);
-    //     temp = temp->mNext;
-    // }
-
-    // // createNewActionGroup();
-    // // highlightNode(temp1, sf::Color::Red, mAnimationSpeed);
-
-    // temp->setNext(newLast);
-    // newLast->setPrev(temp);
+    LinkedListNode* temp = mHead;
+    while (temp->mNext)
+    {
+        createNewActionGroup();
+        highlightNode(temp, sf::Color::Red, mAnimationSpeed);
+        createNewActionGroup();
+        traverseEdge(temp, temp->mNext, sf::Color::Red, mAnimationSpeed);
+        temp = temp->mNext;
+    }
 
     // createNewActionGroup();
+    // highlightNode(temp1, sf::Color::Red, mAnimationSpeed);
 
-    // addEdge(temp, newLast, true);
+    temp->setNext(newLast);
+    newLast->setPrev(temp);
 
-    // align(mHead);
+    createNewActionGroup();
+
+    addEdge(temp, newLast, true);
+
+    align(mHead);
 
     // newLast->mTargetPosition = temp1->mTargetPosition + sf::Vector2f(100, 0);
     // moveNode(newLast, newLast->mTargetPosition, mAnimationSpeed, true);

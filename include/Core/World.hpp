@@ -18,7 +18,7 @@
 
 #include <GUI/InfoPanel.hpp>
 #include <DataStructures/LinkedList.hpp>
-
+#include "DataStructures/Graph.hpp"
 #include <SceneNode/PseudoCode.hpp>
 
 class MainUI;

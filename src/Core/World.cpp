@@ -9,6 +9,7 @@
 #include <Core/Variables.hpp>
 #include "GUI/MainUI.hpp"
 #include "DataStructures/LinkedList.hpp"
+#include "DataStructures/Graph.hpp"
 
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
@@ -95,7 +96,9 @@ void World::setMode(World::Mode mode)
 	}
 	else if (mode == World::Mode::GraphMode)
 	{
-		// mDataStructure = new Graph();
+		std::unique_ptr<Graph> graph(new Graph());
+		mDataStructure = graph.get();
+		mSceneLayers[DataStructure]->attachChild(std::move(graph));
 	}
 
 	mSceneLayers[DataStructure]->setPosition(VIZ::DS::Position);
