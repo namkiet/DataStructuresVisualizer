@@ -13,10 +13,10 @@
 #include <GUI/ExpandableButton.hpp>
 #include <GUI/DeliverTextBox.hpp>
 
-#include <GUI/InfoPanel.hpp>
 #include <DataStructures/LinkedList.hpp>
 
 #include <SceneNode/PseudoCode.hpp>
+#include <SceneNode/InfoPanel.hpp>
 
 class MainUI;
 
@@ -51,7 +51,6 @@ public:
 private:
     void								loadTextures();
     void								buildScene();
-    // void                                initPseudoCode();
     void                                CreateModeContainer();
     void                                updateBackRequest();
 
@@ -62,6 +61,7 @@ private:
         Background,
         SidePanel,
         CodeBox,
+        InfoBox,
         DataStructure,
         LayerCount
     };
@@ -71,8 +71,8 @@ private:
 
     DS*                                 mDataStructure;
     PseudoCode*                         mPseudoCode;
+    InfoPanel*                          mInfoPanel;
     MainUI*                             mMainUI;
-    GUI::InfoPanel*                     mInfoPanel;
 
 public:
     void                                handleEvent(const sf::Event& event);

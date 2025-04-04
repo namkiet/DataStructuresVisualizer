@@ -31,6 +31,9 @@ void World::update(sf::Time dt)
 {
 	mSceneGraph.update(dt);
 
+	mPseudoCode->setCode(mDataStructure->getCode());
+	mPseudoCode->setStep(mDataStructure->getStep());
+
 	mInfoPanel->setText(mDataStructure->getInfo());
 }
 
@@ -59,12 +62,14 @@ void World::buildScene()
 	}
 
 	PseudoCode::Ptr pseudo(new PseudoCode(mFonts.get(Fonts::ID::Main)));
+	pseudo->setPosition(UI::CODEBOX::Position);
 	mPseudoCode = pseudo.get();
 	mSceneLayers[CodeBox]->attachChild(std::move(pseudo));
-	mSceneLayers[CodeBox]->setPosition(UI::TOOLBOX::Position);
 
-	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
-	mInfoPanel->setCharacterSize(30);
+	InfoPanel::Ptr panel(new InfoPanel(mFonts.get(Fonts::ID::Main), UI::INFOBOX::Size));
+	panel->setPosition(UI::INFOBOX::Position);
+	mInfoPanel = panel.get();
+	mSceneLayers[InfoBox]->attachChild(std::move(panel));
 	
 	MainUI::Ptr mainUI(new MainUI(mTextures, mFonts));
 	mMainUI = mainUI.get();

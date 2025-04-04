@@ -2,6 +2,7 @@
 #include <SceneNode/SceneNode.hpp>
 #include <SceneNode/Edge.hpp>
 #include <DataStructures/DS.hpp>
+#include <Core/Utility.hpp>
 
 
 LinkedList::LinkedList(): mHead(nullptr) {
@@ -104,12 +105,12 @@ void LinkedList::insertAtIndex(int value, int index)
         if (index == 0)
         {
             LinkedListNode* newNode = new LinkedListNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
-            newNode->setPosition(sf::Vector2f(0, 0));
+            if (cur->mNext) newNode->setPosition((cur->getPosition() + cur->mNext->getPosition()) / 2.f + sf::Vector2f(25, -50));
 
             createNewActionGroup();
             addNode(newNode);
             addEdge(newNode, nullptr, true);
-            // exit(0);
+            
 
             createNewActionGroup();
 

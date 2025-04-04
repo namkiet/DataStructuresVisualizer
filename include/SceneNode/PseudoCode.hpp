@@ -10,14 +10,11 @@ public:
     typedef std::unique_ptr<PseudoCode> Ptr;
                                         PseudoCode(sf::Font& font);
     void                                setStep(int step);
-    void                                setCode(std::string lines);
-
-public:
-    virtual void                        updateCurrent(sf::Time dt) override;
+    void                                setCode(std::vector<std::string> lines);
 
 private:
+    virtual void                        updateCurrent(sf::Time dt) override;
     virtual void                        drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
-
 
 private:
     sf::Font                            mFont;

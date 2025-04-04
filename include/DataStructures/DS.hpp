@@ -92,8 +92,12 @@ protected:
 
 protected:
     std::string                     mInfo = "";
+    std::vector<std::string>        mCode = {};
+    int                             mStep = 0;
 
 public:
     std::string                     getInfo();
+    std::vector<std::string>        getCode();
+    int                             getStep();
 };
 

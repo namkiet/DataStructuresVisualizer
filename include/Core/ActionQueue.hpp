@@ -17,5 +17,5 @@ public:
     void pushInstantAction(std::function<void()> func);
     void update(sf::Time dt);
     void createNewBatch();
-    bool empty() const;
+    bool isEmpty() const;
 };

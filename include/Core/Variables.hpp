@@ -22,6 +22,30 @@ namespace UI
         extern sf::Vector2f Size;
         extern sf::Vector2f Position;
     }
+
+    namespace INFOBOX
+    {
+        extern sf::Vector2f Size;
+        extern sf::Vector2f Position;
+    }
+
+    namespace CODEBOX
+    {
+        extern sf::Vector2f Size;
+        extern sf::Vector2f Position;
+    }
+
+    namespace OPERATIONBOX
+    {
+        extern sf::Vector2f Size;
+        extern sf::Vector2f Position;
+    }
+
+    namespace CONTROLBOX
+    {
+        extern sf::Vector2f Size;
+        extern sf::Vector2f Position;
+    }
     
     namespace BUTTON
     {

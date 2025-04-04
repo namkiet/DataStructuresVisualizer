@@ -7,15 +7,53 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 void AVLTree::insert(int value)
 {
     saveState();
+
+    mCode = {
+        "insert x",
+        "check bf of this and its children",
+        "  LL: this.rotR",
+        "  LR: this.left.rotL, this.rotR",
+        "  RR: this.rotL",
+        "  RL: this.right.rotR, this.rotL",
+        "this is balanced"
+    };
+
+    mActionQueue.pushInstantAction([=]() { mStep = 0; });
+
     insertHelper(mRoot, nullptr, value);
-    mActionQueue.pushInstantAction([&]() { align(mRoot); });
+    align(mRoot);
 }
 
 void AVLTree::remove(int value)
 {
     saveState();
+    
+    mCode = {
+        "remove x",
+        "check balance factor of this and its children",
+        "    case1: this.rotateRight",
+        "    case2: this.left.rotateLeft, this.rotateRight",
+        "    case3: this.rotateLeft",
+        "    case4: this.right.rotateRight, this.rotateLeft",
+        "this is balanced"
+    };
+
+    mActionQueue.pushInstantAction([=]() { mStep = 0; });
     removeHelper(mRoot, value);
     mActionQueue.pushInstantAction([&]() { align(mRoot); });
+    // mActionQueue.pushInstantAction([&]() {
+    //     mRoot = balance(mRoot);
+    // });
+    // align(mRoot);
+
+    mActionQueue.pushInstantAction([=]() {
+        for (const auto &n: mNodeList)
+        {
+            std::cerr << n->mValue << " -- ";
+        }
+        std::cerr << "\n";
+     });
+    // mActionQueue.pushInstantAction([=]() { mStep = 6; });
 }
 
 bool AVLTree::search(int value)
@@ -131,7 +169,6 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
             if (temp)
                 temp->mParent = node->mParent;
 
-
             createNewActionGroup();
             mActionQueue.pushAction(Action::FadeNode(node, 0.5f));
 
@@ -141,13 +178,16 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
                 if (e->mTo == node)
                 {
                     moveEdge(e->mFrom, node, temp, 0.5f);
-                    align(mRoot);
+                    // align(mRoot);
+                    // mActionQueue.pushAction(Action::MoveNode(temp, node->getPosition(), 0.5f, false));
                     break;
                 }
             }
 
             createNewActionGroup();
             removeNode(node); // Remove a node and all edges FROM it
+            // mActionQueue.pushAction(Action::MoveNode(temp, node->getPosition(), 0.5f, false));
+
 
             node = temp;
         }
@@ -163,10 +203,6 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
             mActionQueue.pushInstantAction([=]() {
                 removeHelper(node->mRight, value);
             });
-
-            // align(value == mRoot->mValue ? node : mRoot);
-
-            // return node;
         }
     }
     
@@ -174,7 +210,6 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
         node = updateHeight(node);
         node = balance(node);
     });
-    // return node;
 }
 
 bool AVLTree::search(TreeNode* node, int value)
@@ -225,8 +260,6 @@ int AVLTree::getBalanceFactor(TreeNode* root)
 
 TreeNode* AVLTree::updateHeight(TreeNode* root)
 {
-    if (updateStepCallback) updateStepCallback(1);
-
     if (!root) 
         return nullptr;
 
@@ -313,8 +346,10 @@ TreeNode* AVLTree::balance(TreeNode* root)
     int bf = getBalanceFactor(root);
 
     mActionQueue.pushInstantAction([=]() {
+        mStep = 1;
         root->setNote("bf = " + std::to_string(bf));
     });
+
 
     highlightNode(root, sf::Color::Blue, 0.5f);
 
@@ -326,10 +361,12 @@ TreeNode* AVLTree::balance(TreeNode* root)
     {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
         {
+            mActionQueue.pushInstantAction([=]() { mStep = 4; });
             return rightRotate(root);
         }
         else 
         {
+            mActionQueue.pushInstantAction([=]() { mStep = 5; });
             root->mLeft = leftRotate(root->mLeft); // LR
             return rightRotate(root);
         }
@@ -338,10 +375,12 @@ TreeNode* AVLTree::balance(TreeNode* root)
     {
         if (getBalanceFactor(root->mRight) <= 0) // RR
         {
+            mActionQueue.pushInstantAction([=]() { mStep = 2; });
             return leftRotate(root);
         }
         else 
         {
+            mActionQueue.pushInstantAction([=]() { mStep = 3; });
             root->mRight = rightRotate(root->mRight); // RL
             return leftRotate(root);
         }
@@ -363,7 +402,7 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     
     // std::cerr << curNode->mValue << ": " << curPos.x << "-" << curPos.y << "\n";
 
-    moveNode(curNode, curPos, 0.5f, false);
+    moveNode(curNode, sf::Vector2f(int(curPos.x), int(curPos.y)), 0.5f, false);
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);

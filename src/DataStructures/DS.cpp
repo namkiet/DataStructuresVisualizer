@@ -23,11 +23,15 @@ void DS::updateCurrent(sf::Time dt)
 {
     mActionQueue.update(dt);
 
+    if (mActionQueue.isEmpty())
+        mStep = mCode.size() - 1;
+
     for (auto &edge: mEdgeList)
         if (edge) edge->update(dt);
 
     for (auto &node: mNodeList)
         if (node) node->update(dt);
+
 }
 
 void DS::addNode(CircleNode* node)
@@ -183,7 +187,7 @@ void DS::loadFromVector(std::vector<int> numList)
 {
     empty();
     auto curSpeed = ANIMATION::Speed;
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = 1000; });
+    ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
     mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
 }    
@@ -213,4 +217,14 @@ void DS::undo()
 std::string DS::getInfo()
 {
     return mInfo;
+}
+
+std::vector<std::string> DS::getCode()
+{
+    return mCode;
+}
+
+int DS::getStep()
+{
+    return mStep;
 }

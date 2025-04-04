@@ -48,7 +48,7 @@ void ActionQueue::createNewBatch()
     queue.emplace_back();
 }
 
-bool ActionQueue::empty() const
+bool ActionQueue::isEmpty() const
 {
     return queue.empty();
 }
