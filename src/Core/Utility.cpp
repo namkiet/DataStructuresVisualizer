@@ -1,5 +1,5 @@
 #include <Core/Utility.hpp>
-
+#include <iostream>
 void centerOrigin(sf::Sprite& sprite)
 {
 	sf::FloatRect bounds = sprite.getLocalBounds();
@@ -60,3 +60,18 @@ sf::Vector2f NormalUnitVector(sf::Vector2f vec){
 	return sf::Vector2f(vec.y / norm(vec), vec.x * (-1) / norm(vec));
 	
 }
+
+sf::Vector2f Repulsion(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
+{
+	float dist = norm(pos1 - pos2);
+	if (dist == 0) return sf::Vector2f(0, 0);
+	return (pos1 - pos2)/norm(pos1-pos2) * (coefficient / (dist * dist));
+} // repulsion of pos 1 acting on pos 2
+
+sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
+{
+	// std::cout<<"Jump to attraction ok"<<std::endl;
+	float dist = norm(pos1 - pos2);
+	if (dist == 0) return sf::Vector2f(0, 0);
+	return (pos2 - pos1)/norm(pos1-pos2) * (coefficient / (dist * dist));
+} // attraction of pos1 acting on pos2

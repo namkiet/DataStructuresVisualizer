@@ -34,9 +34,6 @@ private:
     virtual void            drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
     void                    drawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
 
-// public:
-//     sf::Vector2f		getWorldPosition() const;
-//     sf::Transform		getWorldTransform() const;
 public:
     virtual unsigned int    getCategory() const;
 

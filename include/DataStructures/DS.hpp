@@ -29,6 +29,9 @@ public:
     virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
+    void                            changeNodePosition(int id, sf::Vector2f Pos);
+
+public:
     std::function<void(int)>        updateStepCallback; 
 
 protected:
@@ -36,11 +39,13 @@ protected:
     float                           mMaxWidth = 1200;
     float                           mVerticalSpacing = 100;
 
-protected:
+public:
     ActionQueue                     mActionQueue;
     std::vector<CircleNode::Ptr>    mNodeList;
     std::vector<Edge::Ptr>          mEdgeList;
 
+public:
+    sf::Vector2f                    getWorldPosition(int id);
 
 // ACTIONS
 protected:

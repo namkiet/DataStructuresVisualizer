@@ -16,6 +16,7 @@ public:
     virtual void                update(sf::Time dt);
     // void                        setWeight(int weight);
     int                         getWeight();
+    void                        updateEdge();
 
 
 public:
@@ -32,7 +33,7 @@ private:
     sf::Color                   mMarkColor;
     sf::VertexArray             mLine1; // mFrom to mMid
     sf::VertexArray             mLine2; // mMid to mTo
-    bool                        FlowDirection; // for drawing flow in Prim only, if mFrom -> mTo , set true, else set false, 
+    bool                        isReversed;
 
 private:
     bool                        mHasArrow;
@@ -45,7 +46,7 @@ private:
     sf::Text                    mWeightText;
     sf::Font                    mFont;
     
-    void                        updateEdge();
+
 
 public:
     void                        setHead(sf::Vector2f head);
@@ -57,7 +58,8 @@ public:
     sf::Vector2f                getTail();
     sf::Color                   getColor();
     void                        resetColor();
-    void                        setFlowDirection(bool flow);
-
+    sf::Color                   getMarkColor();
+    void                        resetMid();
+    double                      lengthEdge();
     void                        swapEndpoint();
 }; 

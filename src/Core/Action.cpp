@@ -383,20 +383,21 @@ namespace Action
 
     Action::ActionFunc MarkEdge(Edge* edge, int direction, float duration)
 {
-    std::cout<<"Direction = "<<direction<<std::endl;
     return [edge, duration, 
-            elapsed = 0.f, direction
+            elapsed = 0.f, isInit = false, direction
             ](sf::Time dt) mutable -> bool
     {
         if (!edge) return true;
 
-        if(direction == -1){
+        if(direction == -1 && isInit == false){
             // swap mHead and mTail
             edge->swapEndpoint();
+            isInit = true;
+            edge->mIsChangingTail = true;
         }
-
         sf::Vector2f head = edge->getHead();
         sf::Vector2f tail = edge->getTail();
+        
         elapsed += dt.asSeconds() * ANIMATION::Speed;
         float t = elapsed / duration;
         t = std::min(t, 1.0f);
@@ -406,11 +407,14 @@ namespace Action
 
         if (elapsed >= duration || ANIMATION::Speed >= 1000)
         {
-            edge->setMid(tail);
             if(direction == -1){
                 // swap mHead and mTail again
                 edge->swapEndpoint();
+                edge->mIsChangingTail = false;
             }
+            edge->resetMid();
+            edge->setColor(edge->getMarkColor());
+
             return true;
         }
 

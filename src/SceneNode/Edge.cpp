@@ -12,7 +12,8 @@ Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, flo
     mThickness(thickness),
     mColor(color),
     mHasArrow(hasArrow),
-    mIsChangingTail(false)
+    mIsChangingTail(false),
+    isReversed(false)
 {   
     mArrowSize = 12;
     mArrowHead.setPointCount(3);
@@ -34,7 +35,8 @@ Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, int weight, bool h
     mHasArrow(hasArrow),
     mIsChangingTail(false),
     mWeight(weight),
-    mHasWeight(true)
+    mHasWeight(true),
+    isReversed(false)
 {   
     mFont.loadFromFile("assets/fonts/jetbrains.ttf");
     mWeightText.setFont(mFont);
@@ -65,15 +67,28 @@ int Edge::getWeight(){
 
 
 void Edge::updateEdge()
-{   
+{  
     if(mTail == mHead) return;
-    // co cach nao de cout cho chac chan khong?
-    // neu khong co dong chaeck isChangingTail thi no se doi head voi 
+    // update mHead mTail mMid to remain the same proportion
+    if(isReversed){
+        double proportion = dist(mMid, mHead) / dist(mTail, mHead);
+        mHead = mTo->getPosition();
+        mTail = mFrom->getPosition();
+        mMid = mHead + (mTail - mHead) * proportion;
+    }
+    else{
 
-    mLine1[0].color = sf::Color::Yellow;
-    mLine1[1].color = sf::Color::Yellow;
-    mLine1[2].color = sf::Color::Yellow;
-    mLine1[3].color = sf::Color::Yellow;
+        double proportion = dist(mMid, mHead) / dist(mTail, mHead);
+        mHead = mFrom->getPosition();
+        mTail = mTo->getPosition();
+        mMid = mHead + (mTail - mHead) * proportion;
+    }
+
+
+    mLine1[0].color = mMarkColor;
+    mLine1[1].color = mMarkColor;
+    mLine1[2].color = mMarkColor;
+    mLine1[3].color = mMarkColor;
 
     sf::Vector2f dir = mTail - mHead;
 
@@ -94,21 +109,16 @@ void Edge::updateEdge()
 
     float theta = angle(mHead, mTail);
 
-    mLine2[0].color = sf::Color::Cyan;
-    mLine2[1].color = sf::Color::Cyan;
-    mLine2[2].color = sf::Color::Cyan;   
-    mLine2[3].color = sf::Color::Cyan;
+    mLine2[0].color =mColor;
+    mLine2[1].color =mColor;
+    mLine2[2].color =mColor;   
+    mLine2[3].color =mColor;
     
     mLine2[0].position = mLine1[2].position;
     mLine2[1].position = mLine1[3].position;
     mLine2[2].position = mTail - offset + perp;
     mLine2[3].position = mTail - offset - perp;
-    if(mTail == mFrom->getPosition()){
-        std::cout<<"check Swap ok hereeeeeeeeeee"<<std::endl;
-    }
-    if(mHead == mTo->getPosition()){
-        std::cout<<"check swap still ok hereeeeee"<<std::endl;
-    }
+
     // set Arrow
     sf::Color ArrowColor = (mMid != mTail)? mColor : mMarkColor;
     mArrowHead.setFillColor(ArrowColor);
@@ -122,14 +132,27 @@ void Edge::updateEdge()
         mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
     });
 
-    
+    sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
+    sf::Vector2f vec = NormalUnitVector(mTo->getPosition() - mFrom->getPosition());
+    vec = sf::Vector2f(vec.x * 5.f, vec.y * 5.f);
+
+    mWeightText.setPosition(mid + vec);
+
+
 }
 
 void Edge::resetColor()
 {
-    mMid = mHead;
+    mMid = (isReversed)? mTail: mHead;
     mColor = VIZ::EDGE::Color;
+    updateEdge();
 
+}
+
+void Edge::resetMid()
+{
+    mMid = (isReversed)? mTail : mHead;
+    updateEdge();
 }
 void Edge::setHead(sf::Vector2f head)
 {
@@ -163,6 +186,9 @@ sf::Color Edge::getColor()
 {
     return mColor;
 }
+sf::Color Edge::getMarkColor(){
+    return mMarkColor;
+}
 
 sf::Vector2f Edge::getHead()
 {
@@ -195,7 +221,11 @@ void Edge::draw(sf::RenderTarget &target, sf::RenderStates states) const
     }
 }
 
+double Edge::lengthEdge(){
+    return dist(mHead, mTail);
+}
 void Edge::swapEndpoint(){
+    isReversed = !isReversed;
     sf::Vector2f temp = mHead;
     mHead = mTail;
     mTail = temp;

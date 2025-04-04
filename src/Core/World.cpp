@@ -76,6 +76,7 @@ void World::buildScene()
 
 void World::setMode(World::Mode mode)
 {
+	mMode = mode;
 	if (mode == World::Mode::AVLMode)
 	{
 		std::unique_ptr<AVLTree> avl(new AVLTree());
@@ -109,6 +110,13 @@ void World::handleEvent(const sf::Event& event)
 {
 
 	mMainUI->handleEvent(event);
+
+	if(mMode == World::Mode::GraphMode)
+	{
+		auto mGraph = static_cast<Graph*>(mDataStructure);
+		// std::cout<<"In world can jump to graph handle event"<<std::endl;
+		mGraph->handleEvent(event);
+	}
 	updateBackRequest();
 }
 

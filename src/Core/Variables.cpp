@@ -23,7 +23,7 @@ namespace UI
     sf::Color OperationBoxColor = sf::Color(176, 183, 198); // #B0B7C6
 }
 
-namespace VIZ
+namespace VIZ    
 {
     namespace DS
     {

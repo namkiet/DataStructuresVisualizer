@@ -17,3 +17,5 @@ float dist(sf::Vector2f a, sf::Vector2f b);
 float angle(sf::Vector2f a, sf::Vector2f b);
 
 sf::Vector2f NormalUnitVector(sf::Vector2f vec);
+sf::Vector2f Repulsion(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2);
+sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2);

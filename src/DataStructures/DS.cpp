@@ -23,6 +23,7 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 
 void DS::updateCurrent(sf::Time dt)   
 {
+    
     mActionQueue.update(dt);
 
     for (auto &edge: mEdgeList)
@@ -239,4 +240,16 @@ void DS::undo()
 std::string DS::getInfo()
 {
     return mInfo;
+}
+
+sf::Vector2f DS::getWorldPosition(int id){
+    return mNodeList[id]->getPosition() + VIZ::DS::Position;
+}
+
+void DS::changeNodePosition(int id, sf::Vector2f pos)
+{
+    mNodeList[id]->setPosition(pos);
+    for(auto& edge: mEdgeList){
+        edge->updateEdge();
+    }
 }
