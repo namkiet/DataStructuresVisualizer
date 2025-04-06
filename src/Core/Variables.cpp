@@ -27,8 +27,9 @@ namespace VIZ
 {
     namespace DS
     {
-        sf::Vector2f Size       = sf::Vector2f(SCREEN::Width - UI::TOOLBOX::Size.x, 700);
-        sf::Vector2f Position   = sf::Vector2f(SCREEN::Width - Size.x, (SCREEN::Height - Size.y) / 2);
+        sf::Vector2f Size       = sf::Vector2f(SCREEN::Width - UI::TOOLBOX::Size.x, 680); // 900 680
+        sf::Vector2f Position   = sf::Vector2f(SCREEN::Width - Size.x, (SCREEN::Height - Size.y) / 2); // 300 10
+        sf::Vector2f Center     = sf::Vector2f(Position.x + Size.x / 2, Position.y + Size.y / 2); // 750 360
         float RowSpacing        = Size.y / 8;
     }
 

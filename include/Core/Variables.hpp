@@ -20,6 +20,7 @@ namespace UI
         extern sf::Color Color;
         extern sf::Vector2f Size;
         extern sf::Vector2f Position;
+
     }
     extern sf::Color OperationBoxColor;
 }
@@ -31,6 +32,7 @@ namespace VIZ
         extern sf::Vector2f Size;
         extern sf::Vector2f Position;
         extern float RowSpacing;
+        extern sf::Vector2f Center;
     }
 
     namespace NODE

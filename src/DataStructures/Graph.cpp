@@ -5,6 +5,7 @@ using namespace std;
 #include <cmath>
 #include <Core/Action.hpp>
 #include <Core/Utility.hpp>
+#include "Core/Variables.hpp"
 Graph::Graph(){
     isReady = false;
     selectID = -1;
@@ -12,7 +13,7 @@ Graph::Graph(){
     std::cout<<"success jump to constructor"<<std::endl;
     NumVer = 8;
     NumEdge = 13;
-    
+    velocity.resize(NumVer, sf::Vector2f(0,0));
     ForceConstant = VIZ::DS::Size.x * VIZ::DS::Size.y / NumVer;
 
     EdgeList = {
@@ -38,7 +39,7 @@ Graph::Graph(){
     vector<CircleNode*> ListGraphNode;
     ListGraphNode.resize(n);
 
-    sf::Vector2f Center = sf::Vector2f(450.f,350.f);
+    sf::Vector2f Center = VIZ::DS::Center - VIZ::DS::Position; // vi tri tuong doi
 
     double magnitude = 200;
     constexpr double PI = 3.14159265358979323846;
@@ -94,7 +95,11 @@ void Graph::handleEvent(const sf::Event& event){
     {
         if (selectID != -1) {
             sf::Vector2f Pos = sf::Vector2f(event.mouseMove.x - VIZ::DS::Position.x, event.mouseMove.y - VIZ::DS::Position.y);
-            changeNodePosition(selectID, Pos);
+            if(isValidNodePosition(Pos))
+            {
+                changeNodePosition(selectID, Pos);
+            }
+            else selectID = -1;
         }
     }
 }
@@ -212,56 +217,58 @@ void Graph::loadState(History history) {
 
 }
 
-// void Graph::updateCurrent(sf::Time dt)
-// {
+void Graph::updateCurrent(sf::Time dt)
+{
+    // std::cout<<"Update current occur in graph func"<<std::endl;
 
-//     if(!isReady || mNodeList.empty())
-//     {
-//         if(!isReady)std::cout<<"Not ready"<<std::endl;
-//         else std::cout<<"NodeList is empty"<<std::endl;
-//     }
-//     velocity.resize(NumVer,(sf::Vector2f(0,0)));
-//     std::cout<<"update graph"<<std::endl;
-//     // // change position based on force
+    //     if(mEdgeList.empty())
+    // {
+    //     std::cout<<"mEdgeList is empty"<<std::endl;
+    // }
+         mActionQueue.update(dt);
 
-//     // // for(int i = 0 ; i < NumVer;i++){
-//     // //     std::cout<<mNodeList[i]->mValue<<std::endl;
-//     // // }
+    for (auto &edge: mEdgeList)
+        if (edge) edge->update(dt);
 
-//     for(auto& edge: EdgeList){
-//         int start = edge.first.first;
-//         int end = edge.first.second;
-//         mActionQueue.pushInstantAction([=](){
-//             velocity[start] += Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
-//             velocity[end] += Attraction(ForceConstant, mNodeList[start]->getPosition(), mNodeList[end]->getPosition());
-//         });
+    for (auto &node: mNodeList)
+        if (node) node->update(dt);
 
-//     }
-//     for(int i = 0 ; i < NumVer;i++)
-//     {
-//         for(int j = 0; j < NumVer;j++)
-//         {
-//             if(i == j) continue;
-//             mActionQueue.pushInstantAction([=](){
-//                 velocity[i] += Repulsion(ForceConstant, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
-//             });
-//         }
-//     }
-
-//     for(int i = 0 ; i < NumVer;i++)
-//     {
-//         mActionQueue.pushInstantAction([=](){
-//                 changeNodePosition(i, mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds());
-//         });
-
-//     }
-//         mActionQueue.update(dt);
-
-//     for (auto &edge: mEdgeList)
-//         if (edge) edge->update(dt);
-
-//     for (auto &node: mNodeList)
-//         if (node) node->update(dt);
+    // attraction between node
+    for(auto& edge: EdgeList){
+        int start = edge.first.first;
+        int end = edge.first.second;
+        sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
+        velocity[start] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+        velocity[end] -= sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+    }
 
 
-// }
+    // repulsion between adjacent node
+    for(int i = 0 ; i < NumVer;i++)
+    {
+        for(int j = 0; j < NumVer;j++)
+        {
+            if(i == j) continue;
+            sf::Vector2f force = Repulsion(ForceConstant, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
+            velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+        }
+    }
+
+    // center attraction
+    for(int i = 0 ; i < NumVer;i++){
+        sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
+        velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+    }
+
+    // update position, take into account friction
+    for(int i = 0 ; i < NumVer;i++)
+    {
+        velocity[i] *= 0.999f; // friction
+        sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
+        makeValidNodePosition(newPosition);
+        changeNodePosition(i, newPosition);
+
+    }
+// mActionqueue phu trach viec add vao cac node cac canh
+
+}

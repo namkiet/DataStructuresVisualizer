@@ -1,5 +1,6 @@
 #include <Core/Utility.hpp>
 #include <iostream>
+#include "Core/Variables.hpp"
 void centerOrigin(sf::Sprite& sprite)
 {
 	sf::FloatRect bounds = sprite.getLocalBounds();
@@ -63,15 +64,39 @@ sf::Vector2f NormalUnitVector(sf::Vector2f vec){
 
 sf::Vector2f Repulsion(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
 {
-	float dist = norm(pos1 - pos2);
-	if (dist == 0) return sf::Vector2f(0, 0);
-	return (pos1 - pos2)/norm(pos1-pos2) * (coefficient / (dist * dist));
+	float dist = (norm(pos1 - pos2) <= 1)? 1: norm(pos1 - pos2);
+	// if (dist == 0) return sf::Vector2f(0, 0);
+	return (pos2 - pos1)/norm(pos1-pos2) * (coefficient / (dist * dist));
 } // repulsion of pos 1 acting on pos 2
 
 sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
 {
 	// std::cout<<"Jump to attraction ok"<<std::endl;
-	float dist = norm(pos1 - pos2);
-	if (dist == 0) return sf::Vector2f(0, 0);
-	return (pos2 - pos1)/norm(pos1-pos2) * (coefficient / (dist * dist));
+	float dist = (norm(pos1 - pos2) <= 1)? 1: norm(pos1 - pos2);
+	// if (dist == 0) return sf::Vector2f(0, 0);
+	return 3*(pos1 - pos2)/norm(pos1-pos2) * (dist * dist)/ coefficient;
 } // attraction of pos1 acting on pos2
+
+sf::Vector2f CenterAttraction(sf::Vector2f pos){
+	float k_a = 0.008f;
+	sf::Vector2f center = VIZ::DS::Center - VIZ::DS::Position;
+	sf::Vector2f dist = center - pos;
+	return sf::Vector2f (dist.x * k_a, dist.y * k_a);
+}
+
+bool isValidNodePosition(sf::Vector2f pos)
+{
+	if(pos.x < 0 || pos.x > VIZ::DS::Size.x || pos.y < 0 || pos.y > VIZ::DS::Size.y)
+	{
+		return false;
+	}
+	return true;
+}
+
+void makeValidNodePosition(sf::Vector2f& pos)
+{
+	if(pos.x < 0) pos.x = 0;
+	if(pos.x > VIZ::DS::Size.x) pos.x = VIZ::DS::Size.x;
+	if(pos.y < 0) pos.y = 0;
+	if(pos.y > VIZ::DS::Size.y) pos.y = VIZ::DS::Size.y;
+}
