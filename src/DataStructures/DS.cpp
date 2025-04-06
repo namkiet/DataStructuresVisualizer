@@ -24,7 +24,7 @@ void DS::updateCurrent(sf::Time dt)
     mActionQueue.update(dt);
 
     if (mActionQueue.isEmpty())
-        mStep = mCode.size() - 1;
+        mStep = mLast;
 
     for (auto &edge: mEdgeList)
         if (edge) edge->update(dt);
@@ -92,11 +92,12 @@ void DS::createNewActionGroup()
     mActionQueue.createNewBatch();
 }
 
-void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration)
+void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse)
 {
 
-    mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration));
+    mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration, reverse));
 }
+
 void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
 {
     std::cout<<"start Delete node effect\n";

@@ -11,13 +11,12 @@ public:
     void                        insert(int value) override;
     void                        remove(int value) override;
     bool                        search(int value) override;
+    void                        empty() override;
     void                        InsertAtHead(int value);   
     void                        InsertAtLast(int value);
 
-    void                        insertAtIndex(int value, int index = 2);
-public:
-    // virtual void                updateCurrent(sf::Time dt) override;
-    // virtual void                drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void                        insertAtIndex(int value, int index);
+
 private:
     LinkedListNode*             mHead;
     void                        align(LinkedListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));

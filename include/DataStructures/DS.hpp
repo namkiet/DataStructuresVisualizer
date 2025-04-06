@@ -54,7 +54,7 @@ protected:
     void                            addNode(CircleNode* node);
     void                            removeNode(CircleNode* node);
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect);
-    void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration);
+    void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse = true);
     void                            swapTwoNodes(CircleNode* a, CircleNode* b);
     void                            deleteNodeEffect(CircleNode* node, float duration);
     void                            deleteNode(CircleNode* node);
@@ -93,7 +93,8 @@ protected:
 protected:
     std::string                     mInfo = "";
     std::vector<std::string>        mCode = {};
-    int                             mStep = 0;
+    int                             mStep = -1;
+    int                             mLast = -1;
 
 public:
     std::string                     getInfo();

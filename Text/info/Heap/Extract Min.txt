@@ -1,0 +1,20 @@
+Extract Min:
+
+Text:
+
+Root stores the min item.
+
+Take out the root <root>.
+
+Replace root with the last leaf <last>.
+
+The new root.
+
+Invalid nodes are shown in red.
+
+<par> > <child>, so swap them.
+
+<par> <-> <child> have been swapped.
+
+ExtractMin() has been completed
+We return the min item: <root>.

@@ -1,7 +1,6 @@
 #include <GUI/Carousel.hpp>
-#include <iostream>
 
-void Carousel::pushItem(Item::ItemType type, std::string imageName, GUI::Button::Callback callback)
+void Carousel::pushItem(Item::ItemType type, std::string imageName, std::function<void()> callback)
 {
     items.push_back(new Item(type, imageName));
     items.back()->setCallback(callback);
@@ -9,7 +8,7 @@ void Carousel::pushItem(Item::ItemType type, std::string imageName, GUI::Button:
     for (int i = 0; i < items.size(); i++)
     {
         items[i]->mInitialPosition = sf::Vector2f(SCREEN::Width / 2 + i * 350, SCREEN::Height / 2);
-        items[i]->setDotPosition(sf::Vector2f(SCREEN::Width / 2 + i * 20 - 20, 600));
+        items[i]->setDotPosition(sf::Vector2f(SCREEN::Width / 2 + i * 20 - 20, SCREEN::Height / 2 + 250));
         items[i]->setScale(defaultScale);
     }
 
@@ -40,33 +39,21 @@ void Carousel::update(sf::Time dt)
     for (auto &currentItem: items)
     {
         float scale = currentItem->getScale();
-        float opacity;
+        float opacity = currentItem->getOpacity();
         if (currentItem->mIsSelected)
         {
-            scale += (selectedScale - currentItem->getScale()) * 5 * dt.asSeconds();
-            opacity = 1.f;
+            scale += (selectedScale - scale) * 5 * dt.asSeconds();
+            opacity += (1.f - opacity) * 5 * dt.asSeconds();
         }
         else
         {
-            scale += (defaultScale - currentItem->getScale()) * 5 * dt.asSeconds();
-            opacity = 0.5f;
+            scale += (defaultScale - scale) * 5 * dt.asSeconds();
+            opacity += (0.5f - opacity) * 5 * dt.asSeconds();
         }
 
         currentItem->setScale(scale);
         currentItem->setOffset(sf::Vector2f(currentOffset, 0));
         currentItem->setOpacity(opacity);
-        currentItem->setDotOpacity(opacity);
-    }
-}
-
-void Carousel::checkClick(sf::Vector2f mousePos)
-{
-    for (int i = 0; i < items.size(); i++)
-    {
-        if (i == currentIndex && items[i]->isClicked(mousePos))
-        {
-            // std::cout << "Clicked on: " << items[i]->name << std::endl;
-        }
     }
 }
 

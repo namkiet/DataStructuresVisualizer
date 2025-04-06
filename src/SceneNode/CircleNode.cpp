@@ -34,7 +34,7 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
 
     mNote.setFont(mFont);
     mNote.setColor(VIZ::TextColor);
-    mNote.setPosition(mShape.getPosition() + sf::Vector2f(0, radius + 10));
+    mNote.setPosition(mShape.getPosition() + sf::Vector2f(mTextSize, radius + 10));
     mNote.setCharacterSize(mTextSize);
     setNote("");
 }

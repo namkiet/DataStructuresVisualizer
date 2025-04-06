@@ -6,18 +6,18 @@ void ActionQueue::empty()
         queue.pop_back();
 }
 
-void ActionQueue::pushAction(ActionFunc action)
+void ActionQueue::pushAction(ActionFunc action, bool withPrevious)
 {
-    std::cout<<"start Push action\n";
-    if (queue.empty())
+    if (queue.empty() || !withPrevious)
         queue.emplace_back();
     queue.back().push_back(std::move(action));
 }
 
-void ActionQueue::pushInstantAction(std::function<void()> func)
+void ActionQueue::pushInstantAction(std::function<void()> func, bool withPrevious)
 {
-    createNewBatch();
-    pushAction([func](sf::Time) { func(); return true; });
+    if (!withPrevious)   
+        queue.emplace_back();
+    pushAction([func](sf::Time) { func(); return true; }, true);
 }
 
 void ActionQueue::update(sf::Time dt)

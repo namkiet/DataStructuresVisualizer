@@ -2,12 +2,12 @@
 
 namespace ANIMATION
 {
-    float Speed = 1.0f;
+    float Speed = 0.5f;
 }
 
 namespace SCREEN
 {
-    sf::Color BackgroundColor   = sf::Color::Black;
+    sf::Color BackgroundColor   = sf::Color(50, 50, 50);
     float Width                 = 1600;
     float Height                = 900;
 }

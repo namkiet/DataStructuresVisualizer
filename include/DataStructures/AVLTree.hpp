@@ -18,7 +18,7 @@ private:
     TreeNode*                   mRoot;
     void                        insertHelper(TreeNode* &node, TreeNode* prev, int value);
     void                        removeHelper(TreeNode* &node, int value);
-    bool                        search(TreeNode* node, int value);
+    bool                        searchHelper(TreeNode* node, int value);
     int                         getHeight(TreeNode* root);
     int                         getBalanceFactor(TreeNode* root);
     TreeNode*                   updateHeight(TreeNode* root);

@@ -1,0 +1,7 @@
+Insert at tail:
+
+Pseudo-code:
+
+Vertex vtx = new Vertex(v)
+tail.next = vtx
+tail = vtx

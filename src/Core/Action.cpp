@@ -16,11 +16,11 @@ namespace Action
         };
     }
 
-    ActionFunc HighlightNode(CircleNode* node, sf::Color highlightColor, float duration)
+    ActionFunc HighlightNode(CircleNode* node, sf::Color highlightFillColor, float duration, bool reverse)
     {
-        return [node, highlightColor, duration, 
+        return [node, highlightFillColor, duration, reverse,
                 elapsed = 0.0f, isInit = false,
-                startFillColor = sf::Color(), startOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
+                startFillColor = sf::Color(), startOutlineColor = sf::Color(), highlightOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
         {   
             if (!node) return true;
         
@@ -28,24 +28,30 @@ namespace Action
             {   
                 startFillColor = node->getFillColor();
                 startOutlineColor = node->getOutlineColor();
+
+                if (highlightFillColor == VIZ::NODE::FillColor)
+                    highlightOutlineColor = VIZ::NODE::OutlineColor;
+                else
+                    highlightOutlineColor = highlightFillColor;
+
                 isInit = true;
             }
 
             elapsed += dt.asSeconds() * ANIMATION::Speed;
-            float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
+            float t = std::sin((elapsed / duration) * 3.14159f * (reverse ? 1.f : 0.5f)); // Biến thiên theo sóng sin
 
             sf::Color newFillColor(
-                int(startFillColor.r + t * (highlightColor.r - startFillColor.r)),
-                int(startFillColor.g + t * (highlightColor.g - startFillColor.g)),
-                int(startFillColor.b + t * (highlightColor.b - startFillColor.b)),
-                int(startFillColor.a + t * (highlightColor.a - startFillColor.a))
+                int(startFillColor.r + t * (highlightFillColor.r - startFillColor.r)),
+                int(startFillColor.g + t * (highlightFillColor.g - startFillColor.g)),
+                int(startFillColor.b + t * (highlightFillColor.b - startFillColor.b)),
+                int(startFillColor.a + t * (highlightFillColor.a - startFillColor.a))
             );
 
             sf::Color newOutlineColor(
-                int(startOutlineColor.r + t * (highlightColor.r - startOutlineColor.r)),
-                int(startOutlineColor.g + t * (highlightColor.g - startOutlineColor.g)),
-                int(startOutlineColor.b + t * (highlightColor.b - startOutlineColor.b)),
-                int(startOutlineColor.a + t * (highlightColor.a - startOutlineColor.a))
+                int(startOutlineColor.r + t * (highlightOutlineColor.r - startOutlineColor.r)),
+                int(startOutlineColor.g + t * (highlightOutlineColor.g - startOutlineColor.g)),
+                int(startOutlineColor.b + t * (highlightOutlineColor.b - startOutlineColor.b)),
+                int(startOutlineColor.a + t * (highlightOutlineColor.a - startOutlineColor.a))
             );
 
             node->setFillColor(newFillColor);
@@ -53,9 +59,8 @@ namespace Action
 
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
-                // std::cerr << "Node " << node->mValue << " is highlighted \n";
-                node->setFillColor(startFillColor);
-                node->setOutlineColor(startOutlineColor);
+                node->setFillColor(reverse ? startFillColor : highlightFillColor);
+                node->setOutlineColor(reverse ? startOutlineColor : highlightOutlineColor);
                 return true;
             }
 

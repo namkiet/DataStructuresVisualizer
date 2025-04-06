@@ -13,8 +13,8 @@ private:
     std::deque<std::vector<ActionFunc>> queue;
 
 public:
-    void pushAction(ActionFunc action);
-    void pushInstantAction(std::function<void()> func);
+    void pushAction(ActionFunc action, bool withPrevious = true);
+    void pushInstantAction(std::function<void()> func, bool withPrevious = false);
     void update(sf::Time dt);
     void createNewBatch();
     bool isEmpty() const;

@@ -1,0 +1,26 @@
+Insert at specify position:
+
+Text:
+
+Set tmp1 to head.
+
+Decrement k, index specified has not been reached.
+k is now: <i>.						//for loop
+
+We set prev to the next vertex.
+
+We have found the insertion point.
+We continue the next insertion step.
+
+The index before insertion point is found.
+pre is before the insertion point and aft is the insertion point.
+
+Create new vertex to store value <num>.
+
+vtx.next points to aft.
+
+pre.next points to vtx.
+
+The whole process is O(N).
+
+Please enter a valid index between [1..<N - 1>].	//cerr

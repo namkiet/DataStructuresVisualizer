@@ -1,0 +1,7 @@
+Create:
+
+Pseudo-code:
+
+Start from an empty Binary Min Heap
+for (i = 0; i < A.length; ++i)
+  Insert(A[i])

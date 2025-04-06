@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <GUI/Button.hpp>
 #include <Core/Variables.hpp>
+#include <Core/Utility.hpp>
 #include <vector>
 #include <string>
 
@@ -25,6 +25,7 @@ public:
         {
             if (!mTexture.loadFromFile("assets/images/" + imageName))
                 exit(0);
+            mTexture.setSmooth(true);
     
             mSprite.setTexture(mTexture);
             mSprite.setOrigin(mTexture.getSize().x / 2, mTexture.getSize().y / 2);
@@ -53,21 +54,24 @@ public:
         {
             mSprite.setPosition(mInitialPosition + offset);
         }
+
+        float getOpacity()
+        {
+            return mSprite.getColor().a / 255.f;
+        }
     
         void setOpacity(float alpha)
         {
-            sf::Color color = mSprite.getColor();
-            color.a = alpha * 255.f;
-            mSprite.setColor(color);
+            if (alpha > 1) alpha = 1;
+            sf::Color spriteColor = mSprite.getColor();
+            spriteColor.a = int(alpha * 255.f);
+            mSprite.setColor(spriteColor);
+
+            sf::Color dotColor = mDot.getFillColor();
+            dotColor.a = int(alpha * 255.f);
+            mDot.setFillColor(dotColor);
         }
-    
-        void setDotOpacity(float alpha)
-        {
-            sf::Color color = mDot.getFillColor();
-            color.a = alpha * 255.f;
-            mDot.setFillColor(color);
-        }
-    
+        
         bool isClicked(sf::Vector2f mousePos)
         {
             return mSprite.getGlobalBounds().contains(mousePos);
@@ -79,7 +83,7 @@ public:
             window.draw(mDot);
         }
 
-        void setCallback(GUI::Button::Callback callback)
+        void setCallback(std::function<void()> callback)
         {
             mCallback = callback;
         }
@@ -98,11 +102,10 @@ private:
     std::vector<Item*>      items;
 
 public:
-    void                    pushItem(Item::ItemType type, std::string imageName, GUI::Button::Callback callback);
+    void                    pushItem(Item::ItemType type, std::string imageName, std::function<void()> callback);
     void                    next();
     void                    prev();
     void                    update(sf::Time dt);
-    void                    checkClick(sf::Vector2f mousePos);
     void                    draw(sf::RenderWindow& window);
     void                    handleEvent(sf::Event event);
 };

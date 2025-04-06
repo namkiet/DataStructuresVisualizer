@@ -13,10 +13,6 @@ namespace Textures
 {
 	enum ID
 	{
-		Eagle,
-		Raptor,
-		Desert,
-		TitleScreen,
 		AppBackground,
 		Button,
 		HomeIcon,

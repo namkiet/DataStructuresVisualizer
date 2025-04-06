@@ -37,5 +37,8 @@ public:
 public:
     void                                createButtonList(World::Mode mode, DS* mDataStructure);
     void                                initAVLButtons(AVLTree* avl);
+    void                                initHeapButtons(HeapTree* heap);
+    void                                initLinkedListButtons(LinkedList* ll);
+    // void                                initAVLButtons(AVLTree* avl);
     bool                                getBackRequest();
 };

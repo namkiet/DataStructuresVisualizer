@@ -1,0 +1,11 @@
+Search:
+
+Pseudo-code:
+
+if empty, return NOT_FOUND
+index = 0, tmp = head
+while (tmp.item != v)
+  index++, tmp = tmp.next
+  if tmp == null
+    return NOT_FOUND
+return index

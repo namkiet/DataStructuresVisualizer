@@ -99,8 +99,8 @@ void HeapTree::heapifyUp(int index)
     mActionQueue.pushAction(Action::Wait(0.2f));
     
     createNewActionGroup();
-    mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f));
-    mActionQueue.pushAction(Action::HighlightNode(mNodeList[parent].get(), sf::Color::Red, 0.5f));
+    highlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f);
+    highlightNode(mNodeList[parent].get(), sf::Color::Red, 0.5f);
 
     int curValue = mNodeList[index]->mValue;
     int parValue = mNodeList[parent]->mValue;
@@ -125,8 +125,8 @@ void HeapTree::heapifyDown(int index)
     mActionQueue.pushAction(Action::Wait(0.2f));
 
     createNewActionGroup();
-    mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f));
-    mActionQueue.pushAction(Action::HighlightNode(mNodeList[smallest].get(), sf::Color::Red, 0.5f));
+    highlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f);
+    highlightNode(mNodeList[smallest].get(), sf::Color::Red, 0.5f);
 
     if (left < n && mNodeList[smallest]->mValue > mNodeList[left]->mValue)
         smallest = left;
