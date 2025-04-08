@@ -29,7 +29,7 @@ void HeapTree::insert(int value)
             else
                 newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
 
-            moveNode(newNode, newNode->mTargetPosition, 0.5f, true);
+            moveNode(newNode, newNode->mTargetPosition, 0.5f);
 
             createNewActionGroup();
             moveEdge(par, nullptr, newNode, 0.5f);
@@ -38,7 +38,7 @@ void HeapTree::insert(int value)
         {
             newNode->mTargetPosition = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing);
             createNewActionGroup();
-            moveNode(newNode, newNode->mTargetPosition, 0.5f, true);
+            moveNode(newNode, newNode->mTargetPosition, 0.5f);
         }
 
         mActionQueue.pushInstantAction([=]() { heapifyUp(n); });
@@ -55,7 +55,7 @@ void HeapTree::remove(int value)
         swapTwoNodes(mNodeList[0].get(), mNodeList[n - 1].get());
 
     createNewActionGroup();
-    mActionQueue.pushAction(Action::FadeNode(mNodeList[n - 1].get(), 0.5f));
+    mActionQueue.pushAction(Action::FadeOutNode(mNodeList[n - 1].get(), 0.5f));
     if (n > 1)
         moveEdge(mNodeList[(n - 2) / 2].get(), mNodeList[n - 1].get(), nullptr, 0.5f);
 
@@ -77,7 +77,7 @@ void HeapTree::align(int index, sf::Vector2f curPos, float curSpacingX, float cu
     if (index == 0) // is root node
         createNewActionGroup();
     
-    moveNode(mNodeList[index].get(), curPos, 0.5f, false);
+    moveNode(mNodeList[index].get(), curPos, 0.5f);
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
@@ -147,7 +147,7 @@ void HeapTree::empty()
     mRoot = nullptr;
 }
 
-void HeapTree::saveState()
+void HeapTree::saveState(std::stack<History> &stack)
 {
 
 }

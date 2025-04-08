@@ -18,4 +18,5 @@ public:
     void update(sf::Time dt);
     void createNewBatch();
     bool isEmpty() const;
+    int size() const;
 };

@@ -19,10 +19,11 @@ public:
 
 private:
     LinkedListNode*             mHead;
+    void                        align() override { align(mHead); };
     void                        align(LinkedListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));
     
-public:
-    void                        saveState() override;
+private:
+    void                        saveState(std::stack<History> &stack) override;
     void                        loadState(History history) override;
 
 private:

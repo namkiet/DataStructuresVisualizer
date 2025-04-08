@@ -1,5 +1,8 @@
 #include <DataStructures/DS.hpp>
 #include <Core/Variables.hpp>
+#include <iostream>
+
+// bool DS::
 
 void DS::empty()
 {
@@ -21,6 +24,7 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 
 void DS::updateCurrent(sf::Time dt)   
 {
+    // std::cerr << mActionQueue.size() << "\n";
     mActionQueue.update(dt);
 
     if (mActionQueue.isEmpty())
@@ -122,11 +126,11 @@ void DS::deleteNode(CircleNode* node){
 
 }
 
-void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
+void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
 {
     if (!node) return;
     sf::Vector2f prevPos = node->getPosition();
-    mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration, appearEffect));
+    mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration));
     std::cout<<"1 here"<<std::endl;
 }
 
@@ -167,8 +171,8 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
     // Swap the 2 fake nodes
     createNewActionGroup();
-    moveNode(fakeA, b->getPosition(), 0.5f, false);
-    moveNode(fakeB, a->getPosition(), 0.5f, false);
+    moveNode(fakeA, b->getPosition(), 0.5f);
+    moveNode(fakeB, a->getPosition(), 0.5f);
 
     // Remove the 2 fake nodes
     createNewActionGroup();
@@ -190,7 +194,7 @@ void DS::loadFromVector(std::vector<int> numList)
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; align(); });
 }    
 
 bool DS::canUndo()
@@ -203,16 +207,34 @@ bool DS::canRedo()
     return !mRedoStack.empty();
 }
 
+void DS::execute()
+{
+    saveState(mUndoStack);
+    std::cerr << "Undo size: " << mUndoStack.size() << "\n";
+    while (!mRedoStack.empty())
+        mRedoStack.pop();
+}
 
 void DS::undo()
 {
+    std::cerr << "HELLO";
     if (!canUndo()) return;
-    
-    empty();
-    History history = std::move(mUndoStack.top());
-    mUndoStack.pop();
 
-    loadState(std::move(history));
+    std::cerr << "VCL";
+    
+    saveState(mRedoStack); // save current state to the redo stack
+    loadState(std::move(mUndoStack.top()));
+    mUndoStack.pop();
+}
+
+void DS::redo()
+{
+    if (!canRedo()) return;
+
+    saveState(mUndoStack);
+    loadState(std::move(mRedoStack.top()));
+    mRedoStack.pop();
+
 }
 
 std::string DS::getInfo()

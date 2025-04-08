@@ -6,7 +6,7 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 
 void AVLTree::insert(int value)
 {
-    saveState();
+    execute();
 
     mCode = {
         "insert x",
@@ -27,7 +27,7 @@ void AVLTree::insert(int value)
 
 void AVLTree::remove(int value)
 {
-    saveState();
+    // saveState();
     
     mCode = {
         "remove x",
@@ -83,16 +83,23 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
 
         node = new TreeNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
         node->mParent = prev;
+        node->setOpacity(0);
+
 
         createNewActionGroup();
         addNode(node);
         addEdge(node, nullptr);
         addEdge(node, nullptr);
 
+        // if (ANIMATION::Speed < 100)
+        // {
+            createNewActionGroup();
+            mActionQueue.pushAction(Action::FadeInNode(node, 0.5f));
+        // }
+
         if (prev) // Not root node
         {
             node->setPosition(prev->getPosition());
-            node->setOpacity(0);
             node->mLevel = prev->mLevel + 1;
 
             // Calculate current position
@@ -102,8 +109,9 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
             else // is right child
                 curPos += sf::Vector2f(VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             
-            createNewActionGroup();
-            moveNode(node, curPos, 0.5f, true);
+            if (ANIMATION::Speed < 1000) {
+                moveNode(node, curPos, 0.5f);
+            }
 
             createNewActionGroup();
             moveEdge(prev, nullptr, node, 0.5f);
@@ -143,6 +151,7 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         insertHelper(node->mRight, node, value);
     }
 
+
     createNewActionGroup();
     highlightNode(node, VIZ::NODE::FillColor, 0.5f, false);
 
@@ -179,7 +188,7 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
                 temp->mParent = node->mParent;
 
             createNewActionGroup();
-            mActionQueue.pushAction(Action::FadeNode(node, 0.5f));
+            mActionQueue.pushAction(Action::FadeOutNode(node, 0.5f));
 
             if (node->mParent)
             {
@@ -189,7 +198,7 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
             moveEdge(node, temp, nullptr, 0.5f);
 
             createNewActionGroup();
-            mActionQueue.pushAction(Action::MoveNode(temp, node->getPosition(), 0.5f, false));
+            mActionQueue.pushAction(Action::MoveNode(temp, node->getPosition(), 0.5f));
 
             createNewActionGroup();
             removeNode(node); // Remove a node and all edges FROM it\
@@ -285,6 +294,7 @@ TreeNode* AVLTree::updateHeight(TreeNode* root)
 TreeNode* AVLTree::leftRotate(TreeNode* root)
 {
     if (!root || !root->mRight) return root;
+
     createNewActionGroup();
     
     TreeNode* newRoot = root->mRight;
@@ -322,6 +332,7 @@ TreeNode* AVLTree::leftRotate(TreeNode* root)
 TreeNode* AVLTree::rightRotate(TreeNode* root)
 {
     if (!root || !root->mLeft) return root;
+
     createNewActionGroup();
 
     TreeNode* newRoot = root->mLeft;
@@ -408,6 +419,8 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
 {
     if (!curNode) return;
 
+    if (ANIMATION::Speed >= 100) return;
+
     if (!curNode->mParent)
     {
         curNode->mLevel = 0;
@@ -416,9 +429,9 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     else
         curNode->mLevel = curNode->mParent->mLevel + 1;
     
-    // std::cerr << curNode->mValue << ": " << curPos.x << "-" << curPos.y << "\n";
+    std::cerr << curNode->mValue << ": " << curNode->getOpacity() << "\n";
 
-    moveNode(curNode, sf::Vector2f(int(curPos.x), int(curPos.y)), 0.5f, false);
+    moveNode(curNode, sf::Vector2f(int(curPos.x), int(curPos.y)), 0.5f);
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
@@ -431,15 +444,14 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
     align(curNode->mRight, rightChildPos, newSpacingX, newSpacingY);
 }
 
-void AVLTree::saveState() {
-    if (ANIMATION::Speed < 1000) return;
+void AVLTree::saveState(std::stack<History> &stack) {
+    if (ANIMATION::Speed >= 1000) return;
 
     std::vector<CircleNode::Ptr> savedNodeList;
     std::vector<Edge::Ptr> savedEdgeList;
 
     if (!mRoot) {
-        mUndoStack.push(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr));
-        std::cerr << mUndoStack.size() << "\n";
+        stack.push(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr));
         return;
     }
 
@@ -469,10 +481,10 @@ void AVLTree::saveState() {
         if (newRight) newRight->mParent = newNode;
 
         // nodeMap[oldNode->mLeft] = newLeft;
-        // nodeMap[oldNode->mRight] = newRight;
+        // nodeMap[oldNode->mRight] = newRight; 
 
-        savedEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, newNode, newNode->mLeft, false, 1.5f));
-        savedEdgeList.push_back(std::make_unique<Edge>(sf::Color::Black, newNode, newNode->mRight, false, 1.5f));
+        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, newNode, newNode->mLeft, false, 1.5f));
+        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, newNode, newNode->mRight, false, 1.5f));
 
         if (newLeft) {
             tempNodeList.push_back(TreeNode::Ptr(newLeft));
@@ -488,21 +500,18 @@ void AVLTree::saveState() {
     for (auto& node : tempNodeList)
         savedNodeList.push_back(std::move(node));
 
-    TreeNode* savedBaseNode = static_cast<TreeNode*>(savedNodeList.front().get());
+    // auto savedRoot = static_cast<TreeNode*>(savedNodeList.front().get());
 
+    stack.push(History(std::move(savedNodeList), std::move(savedEdgeList), savedRoot));
 
-    while (!mRedoStack.empty())
-        mRedoStack.pop();
-
-    mUndoStack.push(History(std::move(savedNodeList), std::move(savedEdgeList), savedBaseNode));
-
-    std::cerr << mUndoStack.size() << "\n";
+    std::cerr << "VCL: " << stack.size() << "\n";
 }
 
 void AVLTree::loadState(History history)
 {
+    empty();
+
     mNodeList = std::move(history.nodeList);
     mEdgeList = std::move(history.edgeList);
     mRoot = static_cast<TreeNode*>(history.baseNode);
-    std::cerr << mUndoStack.size() << "\n";
 }

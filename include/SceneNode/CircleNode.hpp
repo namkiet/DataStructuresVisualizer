@@ -26,6 +26,7 @@ protected:
     sf::Text                mNote;
     sf::Font                mFont;
     float                   mTextSize;
+    float                   mOpacity;
 
 public:
     sf::Color               getFillColor();

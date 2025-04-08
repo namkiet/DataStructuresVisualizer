@@ -10,7 +10,7 @@ LinkedList::LinkedList(): mHead(nullptr) {
 
 void LinkedList::insert(int value)
 {
-    InsertAtLast(value);
+    InsertAtHead(value);
 }
 
 bool LinkedList::search(int value)
@@ -54,7 +54,7 @@ void LinkedList::remove(int value)
         if (temp->mValue == value)
         {
             createNewActionGroup();
-            mActionQueue.pushAction(Action::MoveNode(temp, temp->getPosition() + sf::Vector2f(0, -50), 0.5f, 0));
+            mActionQueue.pushAction(Action::MoveNode(temp, temp->getPosition() + sf::Vector2f(0, -50), 0.5f));
 
             createNewActionGroup();
             if (temp->mPrev)
@@ -71,7 +71,7 @@ void LinkedList::remove(int value)
                 temp->mNext->mPrev = temp->mPrev;
 
             createNewActionGroup();
-            mActionQueue.pushAction(Action::FadeNode(temp, 0.5f));
+            mActionQueue.pushAction(Action::FadeOutNode(temp, 0.5f));
 
             createNewActionGroup();
             removeNode(temp);
@@ -83,9 +83,6 @@ void LinkedList::remove(int value)
 
     align(mHead);
 }
-
-
-
 
 void LinkedList::InsertAtHead(int value)
 {
@@ -102,7 +99,7 @@ void LinkedList::InsertAtHead(int value)
     addNode(newHead);
     addEdge(newHead, mHead, true);
 
-    align(newHead);
+    // align(newHead);
     mHead = newHead;
 }
 
@@ -173,7 +170,7 @@ void LinkedList::align(LinkedListNode* curNode, sf::Vector2f curPos)
         return true;
     });
 
-    moveNode(curNode, curPos, 0.5f, false);
+    moveNode(curNode, curPos, 0.5f);
     
     int rowIndex = curNode->mIndex / maxRowNode;
     sf::Vector2f nextPos;
@@ -189,7 +186,7 @@ void LinkedList::align(LinkedListNode* curNode, sf::Vector2f curPos)
         else // odd row
             nextPos = curPos + sf::Vector2f(-150, 0);
     }
-    
+
     align(curNode->mNext, nextPos);
 }
 
@@ -200,7 +197,7 @@ void LinkedList::empty()
 }
 
 
-void LinkedList::saveState() {
+void LinkedList::saveState(std::stack<History> &stack) {
     // std::vector<CircleNode::Ptr> savedNodeList;
     // std::vector<Edge::Ptr> savedEdgeList;
 

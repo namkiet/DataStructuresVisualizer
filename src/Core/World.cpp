@@ -40,11 +40,7 @@ void World::update(sf::Time dt)
 void World::draw()
 {
 	mWindow.draw(background);
-
-	// mMainUI->draw(mWindow, sf::RenderStates::Default);
 	mWindow.draw(mSceneGraph);
-	// if (mPseudoCode) mPseudoCode->draw(mWindow);
-
 }
 
 void World::loadTextures()
@@ -116,6 +112,15 @@ void World::handleEvent(const sf::Event& event)
 
 	mMainUI->handleEvent(event);
 	updateBackRequest();
+
+	if (event.type == sf::Event::KeyPressed) {
+		if (event.key.code == sf::Keyboard::U) {
+			mDataStructure->undo();
+		}
+		if (event.key.code == sf::Keyboard::R) {
+			mDataStructure->redo();
+		}
+	}
 }
 
 void World::updateBackRequest()

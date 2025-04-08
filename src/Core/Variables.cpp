@@ -2,7 +2,7 @@
 
 namespace ANIMATION
 {
-    float Speed = 0.5f;
+    float Speed = 1.8f;
 }
 
 namespace SCREEN

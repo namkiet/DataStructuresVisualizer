@@ -20,7 +20,7 @@ private:
     void                        heapifyUp(int index); 
     void                        heapifyDown(int index);
     
-public:
-    void                        saveState() override;
+private:
+    void                        saveState(std::stack<History> &stack) override;
     void                        loadState(History history) override;
 };

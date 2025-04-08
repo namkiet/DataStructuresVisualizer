@@ -6,7 +6,7 @@ CircleNode::CircleNode(const CircleNode &other)
     : sf::Transformable(other), sf::Drawable(other),
       mValue(other.mValue), mTargetPosition(other.mTargetPosition),
       mShape(other.mShape), mText(other.mText), mNote(other.mNote),
-      mFont(other.mFont), mTextSize(other.mTextSize) 
+      mFont(other.mFont), mTextSize(other.mTextSize), mOpacity(other.mOpacity)
 {
     // Cập nhật font cho text
     mText.setFont(mFont);
@@ -14,7 +14,7 @@ CircleNode::CircleNode(const CircleNode &other)
 }
 
 CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor):
-    mValue(value)
+    mValue(value), mOpacity(1.f)
 {
     mShape.setRadius(radius);
     mShape.setOrigin(sf::Vector2f(radius, radius));
@@ -74,8 +74,11 @@ void CircleNode::setOutlineColor(sf::Color color)
 
 void CircleNode::setOpacity(float opacity)
 {
-    if (opacity > 1) return;
-    int alpha = int(255 * opacity);
+    if (opacity > 1) opacity = 1;
+
+    mOpacity = opacity;
+    int alpha = int(255.f * mOpacity);
+
     sf::Color newFillColor = mShape.getFillColor();
     if (VIZ::NODE::FillColor != sf::Color::Transparent)
     {
@@ -94,7 +97,7 @@ void CircleNode::setOpacity(float opacity)
 
 float CircleNode::getOpacity()
 {
-    return mShape.getFillColor().a / 255.f;
+    return mOpacity;
 }
 
 float CircleNode::getRadius()
