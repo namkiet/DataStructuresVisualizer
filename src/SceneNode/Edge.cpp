@@ -116,8 +116,8 @@ void Edge::updateEdge()
     
     mLine2[0].position = mLine1[2].position;
     mLine2[1].position = mLine1[3].position;
-    mLine2[2].position = mTail - offset + perp;
-    mLine2[3].position = mTail - offset - perp;
+    mLine2[3].position = mTail - offset + perp;
+    mLine2[2].position = mTail - offset - perp;
 
     // set Arrow
     sf::Color ArrowColor = (mMid != mTail)? mColor : mMarkColor;
