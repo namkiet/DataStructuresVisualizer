@@ -4,6 +4,7 @@
 #include <Core/Utility.hpp>
 #include <vector>
 #include <string>
+#include <functional>
 
 class Carousel
 {
