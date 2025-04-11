@@ -9,40 +9,50 @@ void HeapTree::insert(int value)
     TreeNode* newNode = new TreeNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     newNode->setOpacity(0);
 
-    createNewActionGroup();
+    // createNewActionGroup();
     addNode(newNode);
     addEdge(newNode, nullptr);
     addEdge(newNode, nullptr);
+
     
-    mActionQueue.pushInstantAction([=]()
+    if (ANIMATION::Speed < 1000)
     {
-        int n = mNodeList.size() - 1;
-        if (n >= 1)
-        {
-            CircleNode* par = mNodeList[(n - 1) / 2].get();
-            newNode->mLevel = floor(log2(n + 1));
-            newNode->setPosition(par->getPosition());
+        createNewActionGroup();
+        mActionQueue.pushAction(Action::FadeInNode(newNode, 0.5f));
+    }
+    
+    // mActionQueue.pushInstantAction([=]()
+    // {
+    int n = mNodeList.size() - 1;
+    if (n >= 1)
+    {
+        CircleNode* par = mNodeList[(n - 1) / 2].get();
+        newNode->mLevel = floor(log2(n + 1));
+        newNode->setPosition(par->getPosition());
 
-            createNewActionGroup();
-            if (n % 2 == 1)
-                newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(-VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
-            else
-                newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
-
-            moveNode(newNode, newNode->mTargetPosition, 0.5f);
-
-            createNewActionGroup();
-            moveEdge(par, nullptr, newNode, 0.5f);
-        }
+        // createNewActionGroup();
+        if (n % 2 == 1)
+            newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(-VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
         else
+            newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(VIZ::DS::Size.x / (1 << (newNode->mLevel + 1)), VIZ::DS::RowSpacing);
+
+        if (ANIMATION::Speed < 1000)
         {
-            newNode->mTargetPosition = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing);
-            createNewActionGroup();
             moveNode(newNode, newNode->mTargetPosition, 0.5f);
         }
 
-        mActionQueue.pushInstantAction([=]() { heapifyUp(n); });
-    });
+        createNewActionGroup();
+        moveEdge(par, nullptr, newNode, 0.5f);
+    }
+    else
+    {
+        newNode->mTargetPosition = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing);
+        createNewActionGroup();
+        newNode->setPosition(newNode->mTargetPosition);
+    }
+
+    mActionQueue.pushInstantAction([=]() { heapifyUp(n); });
+    // });
     
 }
 
@@ -78,6 +88,7 @@ void HeapTree::align(int index, sf::Vector2f curPos, float curSpacingX, float cu
         createNewActionGroup();
     
     moveNode(mNodeList[index].get(), curPos, 0.5f);
+    mActionQueue.pushAction(Action::FadeInNode(mNodeList[index].get(), 0.5f));
     
     // DFS down to their children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);
@@ -95,8 +106,8 @@ void HeapTree::heapifyUp(int index)
     if (index == 0) return;
     int parent = (index - 1) / 2;
 
-    createNewActionGroup();
-    mActionQueue.pushAction(Action::Wait(0.2f));
+    // createNewActionGroup();
+    // mActionQueue.pushAction(Action::Wait(0.1f));
     
     createNewActionGroup();
     highlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f);
@@ -121,8 +132,8 @@ void HeapTree::heapifyDown(int index)
     int right = 2 * index + 2;
     int n = mNodeList.size();
 
-    createNewActionGroup();
-    mActionQueue.pushAction(Action::Wait(0.2f));
+    // createNewActionGroup();
+    // mActionQueue.pushAction(Action::Wait(0.1f));
 
     createNewActionGroup();
     highlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f);

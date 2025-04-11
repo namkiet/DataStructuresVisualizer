@@ -8,11 +8,10 @@ GUI::Button::Button(sf::Vector2f position, sf::Vector2f buttonSize)
 {
     mShapeType = ShapeType::Rectangle;
     mContentType = ContentType::Image;
-
     mIsToggle = true;
     mNormalColor = UI::BUTTON::FillColor;
-    mSelectedColor = sf::Color(76, 91, 99);
-    mActivatedColor = sf::Color(96, 121, 129);
+    mSelectedColor = UI::BUTTON::SelectedColor;
+    mActivatedColor = UI::BUTTON::ActivatedColor;
 
     mShape.setSize(buttonSize);
     mShape.setPosition(position);
@@ -25,8 +24,8 @@ GUI::Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf:
     mContentType = content;
     mIsToggle = true;
     mNormalColor = UI::BUTTON::FillColor;
-    mSelectedColor = sf::Color(76, 91, 99);
-    mActivatedColor = sf::Color(96, 121, 129);
+    mSelectedColor = UI::BUTTON::SelectedColor;
+    mActivatedColor = UI::BUTTON::ActivatedColor;
 
     mText.setFont(font);
     mText.setString(text);

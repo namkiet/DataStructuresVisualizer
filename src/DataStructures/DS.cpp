@@ -40,16 +40,12 @@ void DS::updateCurrent(sf::Time dt)
 
 void DS::addNode(CircleNode* node)
 {
-    mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
-    {
-        mNodeList.push_back(CircleNode::Ptr(node));
-        return true;
-    });
+    mNodeList.push_back(CircleNode::Ptr(node));
 }
 
 void DS::removeNode(CircleNode* node)
 {
-    mActionQueue.pushAction([this, node](sf::Time dt) mutable->bool
+    mActionQueue.pushInstantAction([=]()
     {
         mEdgeList.erase(
             std::remove_if(mEdgeList.begin(), mEdgeList.end(),
@@ -64,20 +60,15 @@ void DS::removeNode(CircleNode* node)
             [node](const CircleNode::Ptr& ptr) { return ptr.get() == node; }),
             mNodeList.end()
         );
-        return true;
     });
 }
 void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
 {
-    mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
-    {
-        mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
-        return true;
-    });
+    mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
 }
 
 void DS::removeEdge(CircleNode* parent, CircleNode* child) {
-    mActionQueue.pushAction([this, parent, child](sf::Time dt) mutable -> bool
+    mActionQueue.pushInstantAction([=]() 
     {
         mEdgeList.erase(
             std::remove_if(mEdgeList.begin(), mEdgeList.end(),
@@ -86,8 +77,6 @@ void DS::removeEdge(CircleNode* parent, CircleNode* child) {
             }),
             mEdgeList.end()
         );
-        std::cout<<"Edge removed\n";
-        return true;
     });
 }
 
@@ -98,7 +87,6 @@ void DS::createNewActionGroup()
 
 void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse)
 {
-
     mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration, reverse));
 }
 
@@ -151,6 +139,9 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
     int aVal = a->mValue;
     int bVal = b->mValue;
 
+    int aOpa = a->getOpacity();
+    int bOpa = b->getOpacity();
+
     // Create 2 fake nodes
     TreeNode* fakeA = new TreeNode(aVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     TreeNode* fakeB = new TreeNode(bVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
@@ -181,9 +172,9 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
     // Make the real nodes appear again
     mActionQueue.pushInstantAction([=]() {
-        a->setOpacity(1);
+        a->setOpacity(aOpa);
+        b->setOpacity(bOpa);
         a->setValue(bVal);
-        b->setOpacity(1);
         b->setValue(aVal);
     });
 }
@@ -194,7 +185,8 @@ void DS::loadFromVector(std::vector<int> numList)
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; align(); });
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = 0.3f; align(); });
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
 }    
 
 bool DS::canUndo()

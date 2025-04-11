@@ -114,6 +114,11 @@ void World::handleEvent(const sf::Event& event)
 	updateBackRequest();
 
 	if (event.type == sf::Event::KeyPressed) {
+		if (event.key.code == sf::Keyboard::A) {
+			ANIMATION::Speed *= 1.2;
+			if (ANIMATION::Speed >= 10) 
+			ANIMATION::Speed = 0.2f;
+		}
 		if (event.key.code == sf::Keyboard::U) {
 			mDataStructure->undo();
 		}

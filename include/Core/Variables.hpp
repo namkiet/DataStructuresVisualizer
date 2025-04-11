@@ -50,6 +50,8 @@ namespace UI
     namespace BUTTON
     {
         extern sf::Color FillColor;
+        extern sf::Color SelectedColor;
+        extern sf::Color ActivatedColor;
         extern sf::Color OutlineColor;
     }
 }
