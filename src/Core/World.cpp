@@ -62,6 +62,10 @@ void World::buildScene()
 	mMainUI = mainUI.get();
 	mSceneLayers[SidePanel]->attachChild(std::move(mainUI));
 
+	ProgressBar::Ptr progress(new ProgressBar(100, 100, 100, 20));
+	mProgressBar = progress.get();
+	mSceneLayers[Progress]->attachChild(std::move(progress));
+
 	sf::Texture &bg = mTextures.get(Textures::AppBackground);
 	background.setTexture(bg);
 	sf::Color bgcolor = background.getColor();
@@ -117,6 +121,8 @@ void World::handleEvent(const sf::Event& event)
 			mDataStructure->redo();
 		}
 	}
+
+	mProgressBar->handleEvent(event);
 }
 
 void World::updateBackRequest()

@@ -17,6 +17,7 @@
 
 #include <SceneNode/PseudoCode.hpp>
 #include <SceneNode/InfoPanel.hpp>
+#include <SceneNode/ProgressBar.hpp>
 
 class MainUI;
 
@@ -60,6 +61,7 @@ private:
         CodeBox,
         InfoBox,
         DataStructure,
+        Progress,
         LayerCount
     };
 
@@ -70,6 +72,7 @@ private:
     PseudoCode*                         mPseudoCode;
     InfoPanel*                          mInfoPanel;
     MainUI*                             mMainUI;
+    ProgressBar*                        mProgressBar;
 
 public:
     void                                handleEvent(const sf::Event& event);
