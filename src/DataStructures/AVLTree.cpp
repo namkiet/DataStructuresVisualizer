@@ -76,6 +76,8 @@ void AVLTree::empty()
 
 void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
 {
+    // execute();
+
     if (!node)
     {
         mActionQueue.pushInstantAction([=]() {
@@ -87,7 +89,6 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         node->setOpacity(0);
 
         // mActionQueue.pushInstantAction([])
-        execute();
 
         createNewActionGroup();
         addNode(node);
@@ -143,6 +144,8 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         mInfo = "Comparing " + std::to_string(value) + " with " + std::to_string(node->mValue);
     });
 
+
+    execute();
     createNewActionGroup();
     highlightNode(node, sf::Color::Red, 0.3f, false);
 
@@ -151,6 +154,8 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         mActionQueue.pushInstantAction([=]() {
             mInfo = std::to_string(value) + " is less than " + std::to_string(node->mValue) + ", go left.";
         });
+
+        execute();
         createNewActionGroup();
         traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
         insertHelper(node->mLeft, node, value);
@@ -160,6 +165,8 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         mActionQueue.pushInstantAction([=]() {
             mInfo = std::to_string(value) + " is greater than " + std::to_string(node->mValue) + ", go right.";
         });
+
+        execute();
         createNewActionGroup();
         traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
         insertHelper(node->mRight, node, value);
@@ -170,6 +177,7 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
             mInfo = std::to_string(value) + " is already in the tree.";
         });
 
+        execute();
         createNewActionGroup();
         highlightNode(node, VIZ::NODE::FillColor, 0.3f, false);
 
