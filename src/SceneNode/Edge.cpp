@@ -68,76 +68,115 @@ int Edge::getWeight(){
 
 void Edge::updateEdge()
 {  
-    if(mTail == mHead) return;
-    // update mHead mTail mMid to remain the same proportion
-    if(isReversed){
-        double proportion = dist(mMid, mHead) / dist(mTail, mHead);
-        mHead = mTo->getPosition();
-        mTail = mFrom->getPosition();
-        mMid = mHead + (mTail - mHead) * proportion;
-    }
-    else{
-
-        double proportion = dist(mMid, mHead) / dist(mTail, mHead);
-        mHead = mFrom->getPosition();
-        mTail = mTo->getPosition();
-        mMid = mHead + (mTail - mHead) * proportion;
-    }
-
-
-    mLine1[0].color = mMarkColor;
-    mLine1[1].color = mMarkColor;
-    mLine1[2].color = mMarkColor;
-    mLine1[3].color = mMarkColor;
-
-    sf::Vector2f dir = mTail - mHead;
-
-    sf::Vector2f perp(-dir.y, dir.x);
-    perp = perp * ((mThickness / 2) / norm(perp));
-
-    sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
-    if (norm(dir) <= 2 * mFrom->getRadius()) 
+    if (mHasWeight)
     {
-        offset = sf::Vector2f(0, 0);
-        perp = sf::Vector2f(0, 0);
+        if(mTail == mHead) return;
+        // update mHead mTail mMid to remain the same proportion
+        if(isReversed){
+            double proportion = dist(mMid, mHead) / dist(mTail, mHead);
+            mHead = mTo->getPosition();
+            mTail = mFrom->getPosition();
+            mMid = mHead + (mTail - mHead) * proportion;
+        }
+        else{
+
+            double proportion = dist(mMid, mHead) / dist(mTail, mHead);
+            mHead = mFrom->getPosition();
+            mTail = mTo->getPosition();
+            mMid = mHead + (mTail - mHead) * proportion;
+        }
+
+
+        mLine1[0].color = mMarkColor;
+        mLine1[1].color = mMarkColor;
+        mLine1[2].color = mMarkColor;
+        mLine1[3].color = mMarkColor;
+
+        sf::Vector2f dir = mTail - mHead;
+
+        sf::Vector2f perp(-dir.y, dir.x);
+        perp = perp * ((mThickness / 2) / norm(perp));
+
+        sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+        if (norm(dir) <= 2 * mFrom->getRadius()) 
+        {
+            offset = sf::Vector2f(0, 0);
+            perp = sf::Vector2f(0, 0);
+        }
+
+        mLine1[0].position = mHead + offset - perp;
+        mLine1[1].position = mHead + offset + perp;
+        mLine1[2].position = mMid - offset + perp;
+        mLine1[3].position = mMid - offset - perp;
+
+        float theta = angle(mHead, mTail);
+
+        mLine2[0].color =mColor;
+        mLine2[1].color =mColor;
+        mLine2[2].color =mColor;   
+        mLine2[3].color =mColor;
+        
+        mLine2[0].position = mLine1[2].position;
+        mLine2[1].position = mLine1[3].position;
+        mLine2[3].position = mTail - offset + perp;
+        mLine2[2].position = mTail - offset - perp;
+
+        // set Arrow
+        sf::Color ArrowColor = (mMid != mTail)? mColor : mMarkColor;
+        mArrowHead.setFillColor(ArrowColor);
+        mArrowHead.setPoint(0, mTail - offset);
+        mArrowHead.setPoint(1, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
+        });
+        mArrowHead.setPoint(2, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
+        });
+
+        sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
+        sf::Vector2f vec = NormalUnitVector(mTo->getPosition() - mFrom->getPosition());
+        vec = sf::Vector2f(vec.x * 5.f, vec.y * 5.f);
+
+        mWeightText.setPosition(mid + vec);
     }
+    else
+    {
+        mLine1[0].color = mColor;
+        mLine1[1].color = mColor;
+        mLine1[2].color = mColor;
+        mLine1[3].color = mColor;
+        mArrowHead.setFillColor(mColor);
 
-    mLine1[0].position = mHead + offset - perp;
-    mLine1[1].position = mHead + offset + perp;
-    mLine1[2].position = mMid - offset + perp;
-    mLine1[3].position = mMid - offset - perp;
+        sf::Vector2f dir = mTail - mHead;
 
-    float theta = angle(mHead, mTail);
+        sf::Vector2f perp(-dir.y, dir.x);
+        perp = perp * ((mThickness / 2) / norm(perp));
 
-    mLine2[0].color =mColor;
-    mLine2[1].color =mColor;
-    mLine2[2].color =mColor;   
-    mLine2[3].color =mColor;
-    
-    mLine2[0].position = mLine1[2].position;
-    mLine2[1].position = mLine1[3].position;
-    mLine2[3].position = mTail - offset + perp;
-    mLine2[2].position = mTail - offset - perp;
+        sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+        if (norm(dir) <= 2 * mFrom->getRadius()) 
+        {
+            offset = sf::Vector2f(0, 0);
+            perp = sf::Vector2f(0, 0);
+        }
 
-    // set Arrow
-    sf::Color ArrowColor = (mMid != mTail)? mColor : mMarkColor;
-    mArrowHead.setFillColor(ArrowColor);
-    mArrowHead.setPoint(0, mTail - offset);
-    mArrowHead.setPoint(1, {
-        mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
-        mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
-    });
-    mArrowHead.setPoint(2, {
-        mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
-        mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
-    });
+        mLine1[0].position = mHead + offset - perp;
+        mLine1[1].position = mHead + offset + perp;
+        mLine1[2].position = mTail - offset + perp;
+        mLine1[3].position = mTail - offset - perp;
 
-    sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
-    sf::Vector2f vec = NormalUnitVector(mTo->getPosition() - mFrom->getPosition());
-    vec = sf::Vector2f(vec.x * 5.f, vec.y * 5.f);
+        float theta = angle(mHead, mTail);
 
-    mWeightText.setPosition(mid + vec);
-
+        mArrowHead.setPoint(0, mTail - offset);
+        mArrowHead.setPoint(1, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
+        });
+        mArrowHead.setPoint(2, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
+        });
+    }
 
 }
 
