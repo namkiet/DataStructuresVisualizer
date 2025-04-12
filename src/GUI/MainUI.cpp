@@ -137,7 +137,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     // Add Insert button
     GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
-    GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
     InputBoxInsert->setCallback([InsertButton, InputBoxInsert]() {
         InsertButton->setSubComponentInfo(InputBoxInsert->getInputNum(),0);
     });
@@ -343,7 +343,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
     GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
 
     // initialize the textbox
-    GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f), 24.f, "Insert at Head");
+    GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f), "Insert at Head");
     // attach it to its parent
     InsertButton->addSubComponent(InputBoxInsertAtHead);
     // set callback for the textbox
@@ -352,7 +352,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         InsertButton->setSubComponentInfo(InputBoxInsertAtHead->getInputNum(),0);
     });
 
-    GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f), 24.f, "Insert at Tail");
+    GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f), "Insert at Tail");
 
     InsertButton->addSubComponent(InputBoxInsertAtLast);
 

@@ -18,14 +18,9 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	mTextures(textures),
 	mFonts(fonts)
 {
-    loadTextures();
     buildScene();
+	// mShader.loadFromFile("shader/colormode.frag", sf::Shader::Fragment);
 }
-
-void World::CreateModeContainer()
-{
-}
-
 
 void World::update(sf::Time dt)
 {
@@ -41,10 +36,6 @@ void World::draw()
 {
 	mWindow.draw(background);
 	mWindow.draw(mSceneGraph);
-}
-
-void World::loadTextures()
-{
 }
 
 void World::buildScene()

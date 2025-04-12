@@ -28,7 +28,10 @@ void DS::updateCurrent(sf::Time dt)
     mActionQueue.update(dt);
 
     if (mActionQueue.isEmpty())
-        mStep = mLast;
+    {
+        mStep = mLastStep;
+        if (mLastInfo != "#") mInfo = mLastInfo;
+    }
 
     for (auto &edge: mEdgeList)
         if (edge) edge->update(dt);
@@ -132,7 +135,7 @@ void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlight
     mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
 }
 
-void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
+void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 {
     if (!a || !b) return;
 
@@ -162,8 +165,8 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
     // Swap the 2 fake nodes
     createNewActionGroup();
-    moveNode(fakeA, b->getPosition(), 0.5f);
-    moveNode(fakeB, a->getPosition(), 0.5f);
+    moveNode(fakeA, b->getPosition(), duration);
+    moveNode(fakeB, a->getPosition(), duration);
 
     // Remove the 2 fake nodes
     createNewActionGroup();
@@ -189,6 +192,13 @@ void DS::loadFromVector(std::vector<int> numList)
     mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
 }    
 
+void DS::loadState(History history)
+{
+    empty();
+    mNodeList = std::move(history.nodeList);
+    mEdgeList = std::move(history.edgeList);
+}
+
 bool DS::canUndo()
 {
     return !mUndoStack.empty();
@@ -201,10 +211,13 @@ bool DS::canRedo()
 
 void DS::execute()
 {
-    saveState(mUndoStack);
-    std::cerr << "Undo size: " << mUndoStack.size() << "\n";
-    while (!mRedoStack.empty())
-        mRedoStack.pop();
+    mActionQueue.pushInstantAction([=]() 
+    {
+        saveState(mUndoStack);
+        std::cerr << "Undo size: " << mUndoStack.size() << "\n";
+        while (!mRedoStack.empty())
+            mRedoStack.pop();
+    });
 }
 
 void DS::undo()

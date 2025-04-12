@@ -156,6 +156,9 @@ void GUI::Button::setCallback(Callback callback){
 }
 
 void GUI::Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    if (isActive())
+        std::cerr << mText.getString().toAnsiString() << "\n";
+
     if(mShapeType == ShapeType::Rectangle)
         target.draw(mShape, states);
     else if(mShapeType == ShapeType::Circle)
@@ -176,7 +179,7 @@ void GUI::Button::handleEvent(const sf::Event& event)
         if (mShapeType == ShapeType::Rectangle && mShape.getGlobalBounds().contains(mousePos)
             || mShapeType == ShapeType::Circle && mCircle.getGlobalBounds().contains(mousePos))
         {
-            std::cerr << "Click " << this->mText.getString().toAnsiString() << std::endl;
+            // std::cerr << "Click " << this->mText.getString().toAnsiString() << std::endl;
             this->activate();
         }
     }
@@ -213,9 +216,9 @@ bool GUI::Button::isSelectable() const
 void GUI::Button::select()
 {
 	Component::select();
-    std::cerr << "Select \n";
+    // std::cerr << "Select \n";
     if (mIsToggle){
-        std::cerr << "OK\n";
+        // std::cerr << "OK\n";
         if (mShapeType == ShapeType::Rectangle)
             mShape.setFillColor(mSelectedColor);
         else if (mShapeType == ShapeType::Circle)
@@ -262,8 +265,8 @@ void GUI::Button::deactivate()
 	if (mIsToggle)
 	{
         if(mShapeType == ShapeType::Rectangle)
-            mShape.setFillColor(mSelectedColor);
+            mShape.setFillColor(mNormalColor);
         else if(mShapeType == ShapeType::Circle)
-            mCircle.setFillColor(mSelectedColor);
+            mCircle.setFillColor(mNormalColor);
     }
 }

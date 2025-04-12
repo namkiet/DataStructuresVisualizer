@@ -7,7 +7,7 @@ namespace ANIMATION
 
 namespace SCREEN
 {
-    sf::Color BackgroundColor   = sf::Color(50, 50, 50);
+    sf::Color BackgroundColor   = sf::Color(76, 44, 132);
     float Width                 = 1600;
     float Height                = 900;
 }

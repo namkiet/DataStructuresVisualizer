@@ -21,7 +21,7 @@ void InfoPanel::setText(const std::string& text)
         std::string newLine = (line.empty() ? "" : line + " ") + word;
         tempText.setString(newLine);
 
-        if (tempText.getLocalBounds().width > mSize.x)
+        if (tempText.getLocalBounds().width > mSize.x - 16)
         {
             wrappedText += (wrappedText.empty() ? "" : "\n") + line;
             line = word; // Bắt đầu dòng mới

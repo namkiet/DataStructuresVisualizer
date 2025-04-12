@@ -44,7 +44,7 @@ protected:
     void                            removeNode(CircleNode* node);
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration);
     void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse = true);
-    void                            swapTwoNodes(CircleNode* a, CircleNode* b);
+    void                            swapTwoNodes(CircleNode* a, CircleNode* b, float duration);
     void                            deleteNodeEffect(CircleNode* node, float duration);
     void                            deleteNode(CircleNode* node);
 
@@ -79,7 +79,7 @@ public:
 protected:
     void                            execute();
     virtual void                    saveState(std::stack<History> &stack) = 0;
-    virtual void                    loadState(History history) = 0;
+    virtual void                    loadState(History history);
 
     
 // ==================== INFO / PSEUDOCODE SUPPORT ====================
@@ -87,7 +87,8 @@ protected:
     std::string                     mInfo = "";
     std::vector<std::string>        mCode = {};
     int                             mStep = -1;
-    int                             mLast = -1;
+    int                             mLastStep = -1;
+    std::string                     mLastInfo = "";
 
 public:
     std::string                     getInfo();

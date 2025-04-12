@@ -1,12 +1,12 @@
-    #include "GUI/ExpandableButton.hpp"
-    #include <iostream>
-    namespace GUI{
+#include "GUI/ExpandableButton.hpp"
+#include <iostream>
+namespace GUI{
 
     ExpandableButton::ExpandableButton(sf::Font& fonts, sf::Vector2f Position, std::string text,sf::Vector2f ButtonSize,GUI::Button::ShapeType shapeType, GUI::Button::ContentType content):
-    Button(fonts, Position,text,sf::Vector2f(ButtonSize.x,ButtonSize.y),shapeType, content),
-    isExpanded(false),
-    mSubComponents(),
-    Info()
+        Button(fonts, Position,text,sf::Vector2f(ButtonSize.x,ButtonSize.y),shapeType, content),
+        isExpanded(false),
+        mSubComponents(),
+        Info()
     {
     }
 
@@ -15,49 +15,65 @@
     }
 
     void ExpandableButton::handleEvent(const sf::Event& event)
-{
-    if (event.type == sf::Event::MouseButtonPressed &&
-        mShape.getGlobalBounds().contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
     {
-        std::cout << "Click " << this->getText() << std::endl;
-
-        if(!isActive())activate();
-        else deactivate();
-    }
-
-    else if (event.type == sf::Event::MouseMoved)
-    {
-        sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
-        bool hoverNow = mShape.getGlobalBounds().contains(mousePos);
-
-        if (hoverNow)
+        if (event.type == sf::Event::MouseButtonPressed &&
+            mShape.getGlobalBounds().contains(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
         {
-            std::cout<<"hover"<<std::endl;
-            select();
+            if (!isActive()) 
+                activate();
+            else 
+                deactivate();
         }
-        else if (!hoverNow && isSelected())
-        {
-            deselect();
-        }
-    }
 
-    // 3. Subcomponent event
-    if (isActive())
-    {
-        for (auto& subComponent : mSubComponents)
+        else if (event.type == sf::Event::MouseMoved)
+        {
+            sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
+            bool hoverNow = mShape.getGlobalBounds().contains(mousePos);
+
+            // if (hoverNow)
+            // {
+            //     // std::cout<<"hover"<<std::endl;
+            //     select();
+            // }
+            // else if (!hoverNow && isSelected())
+            // {
+            //     deselect();
+            // }
+            
+
+            if (hoverNow && !isActive())
+            {
+                select();
+            }
+            else if (!hoverNow && isSelected() && !isActive())
+            {
+                deselect();
+            }
+        }
+
+        // 3. Subcomponent event
+        if (isActive())
+        {
+            for (auto& subComponent : mSubComponents)
             {
                 subComponent->handleEvent(event);
             }
-        if(mFunc && Info.InfoID != -1){ // if there was a change in subcomponent info, execute the callback
-            mFunc();
-            deactivate();
+
+            if (mFunc && Info.InfoID != -1){ // if there was a change in subcomponent info, execute the callback
+                mFunc();
+                deactivate();
+
+                for (auto& subComponent : mSubComponents)
+                {
+                    subComponent->deactivate();
+                }
+            }
         }
-    }
 }
 
     void ExpandableButton::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         Button::draw(target,states);
-        if(isActive()){
+        if (isActive()){
             for (auto& subComponent : mSubComponents) {
                 target.draw(*subComponent, states);
             }
@@ -88,4 +104,4 @@
     void ExpandableButton::setFunc(std::function<void()> func){
         mFunc = func;
     }
-    }
+}

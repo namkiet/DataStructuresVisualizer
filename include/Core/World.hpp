@@ -49,11 +49,8 @@ public:
     };
 
 private:
-    void								loadTextures();
     void								buildScene();
-    void                                CreateModeContainer();
     void                                updateBackRequest();
-
 
 private:
     enum Layer
@@ -84,6 +81,6 @@ private:
     Mode                                mMode;
     bool                                BackRequest;
 
-
+    sf::Shader                          mShader;
 
 };

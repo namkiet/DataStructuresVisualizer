@@ -14,6 +14,7 @@ namespace Textures
 	enum ID
 	{
 		AppBackground,
+		MenuBackground,
 		Button,
 		HomeIcon,
 	};
