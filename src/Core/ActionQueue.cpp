@@ -34,10 +34,12 @@ void ActionQueue::pushInstantAction(std::function<void()> func, bool withPreviou
     pushAction([func](sf::Time) { func(); return true; }, true);
 }
 
-void ActionQueue::update(sf::Time dt)
+float ActionQueue::update(sf::Time dt)
 {
     if (!queue.empty())
     {
+        timer += dt.asSeconds();
+
         auto &currentBatch = queue.front();
         bool allFinished = true;
 
@@ -53,8 +55,18 @@ void ActionQueue::update(sf::Time dt)
         }
 
         if (allFinished)
+        {
             queue.pop_front();
+            // if (timer != dt.asSeconds())
+            // {
+                float t = timer;
+                timer = 0;
+                return 1;
+            // }
+            // return true;
+        }
     }
+    return 0;
 }
 
 void ActionQueue::createNewBatch()

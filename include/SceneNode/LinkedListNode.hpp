@@ -8,6 +8,7 @@ class LinkedListNode : public CircleNode
 {
 public:
                             LinkedListNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
+                            LinkedListNode(const LinkedListNode &other);
 
 public:
     void                    setNext(LinkedListNode* next);

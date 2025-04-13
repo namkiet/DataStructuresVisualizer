@@ -112,6 +112,7 @@ void Edge::update(sf::Time dt)
 void Edge::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(mLine, states);
-    if (mHasArrow)
+    
+    if (norm(mTail - mHead) > 2 * mFrom->getRadius() && mHasArrow)
         target.draw(mArrowHead, states);
 }

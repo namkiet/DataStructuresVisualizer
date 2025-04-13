@@ -22,15 +22,15 @@ private:
     int                         getHeight(TreeNode* root);
     int                         getBalanceFactor(TreeNode* root);
     TreeNode*                   updateHeight(TreeNode* root);
+    void                        balance(TreeNode* &root);
     TreeNode*                   leftRotate(TreeNode* root);
     TreeNode*                   rightRotate(TreeNode* root);
-    TreeNode*                   balance(TreeNode* root);
 
 private:
     void                        align() override { align(mRoot); };
     void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing), float curSpacingX = VIZ::DS::Size.x / 4, float curSpacingY = VIZ::DS::RowSpacing);        
 
 private:
-    void                        saveState(std::stack<History> &stack) override;
+    void                        saveState(std::vector<History> &stack) override;
     void                        loadState(History history) override;
 };

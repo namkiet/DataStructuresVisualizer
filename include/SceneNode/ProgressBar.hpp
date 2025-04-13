@@ -8,8 +8,9 @@ public:
     typedef std::unique_ptr<ProgressBar> Ptr;
     ProgressBar(float x, float y, float width, float height);
 
-    void handleEvent(const sf::Event& event);
+    bool handleEvent(const sf::Event& event);
     float getProgress() const;
+    void setProgress(float p);
 
 private:
     virtual void updateCurrent(sf::Time dt) override;

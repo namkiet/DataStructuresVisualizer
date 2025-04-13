@@ -147,6 +147,24 @@ void GUI::Button::setSprite(sf::Sprite sprite)
     updateSpritePosition();
 }
 
+void GUI::Button::setText(std::string text)
+{
+    mText.setString(text);
+    mText.setCharacterSize(20);
+    mText.setFillColor(sf::Color::White);
+
+    // if(mShapeType == ShapeType::Rectangle)
+    // {
+    //     centerOrigin(mText);
+    //     mText.setPosition(mShape.getPosition() + ButtonSize / 2.f);
+    // }
+    // else if (mShapeType == ShapeType::Circle)
+    // {
+        centerOrigin(mText);
+        mText.setPosition(mCircle.getPosition() + sf::Vector2f(mCircle.getRadius(), mCircle.getRadius()));
+    // }
+}
+
 std::string GUI::Button::getText(){
     return mText.getString().toAnsiString();
 }

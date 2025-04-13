@@ -34,6 +34,9 @@ namespace Action
                 else
                     highlightOutlineColor = highlightFillColor;
 
+                if (highlightFillColor == startFillColor && highlightOutlineColor == startOutlineColor)
+                    return true;
+
                 isInit = true;
             }
 

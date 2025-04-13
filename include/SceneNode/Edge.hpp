@@ -6,7 +6,7 @@ class Edge :
     public sf::Transformable, public sf::Drawable
 {
 public:
-    typedef std::unique_ptr<Edge> Ptr;
+    typedef std::shared_ptr<Edge> Ptr;
 
 public:
                                 Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness);
@@ -25,9 +25,9 @@ private:
     sf::Vector2f                mTail;
     sf::Color                   mColor;
     sf::VertexArray             mLine;
+    bool                        mHasArrow;
 
 private:
-    bool                        mHasArrow;
     float                       mArrowSize;
     sf::ConvexShape             mArrowHead;
 

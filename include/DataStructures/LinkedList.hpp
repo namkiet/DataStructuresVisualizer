@@ -4,6 +4,7 @@
 #include <SceneNode/Edge.hpp>
 #include <DataStructures/DS.hpp>
 #include <SceneNode/LinkedListNode.hpp>
+
 class LinkedList: public DS
 {
 public:
@@ -23,7 +24,7 @@ private:
     void                        align(LinkedListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));
     
 private:
-    void                        saveState(std::stack<History> &stack) override;
+    void                        saveState(std::vector<History> &stack) override;
     void                        loadState(History history) override;
 
 private:

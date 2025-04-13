@@ -183,7 +183,7 @@ void HeapTree::empty()
     DS::empty();
 }
 
-void HeapTree::saveState(std::stack<History> &stack)
+void HeapTree::saveState(std::vector<History> &stack)
 {
     if (ANIMATION::Speed >= 1000) return;
 
@@ -203,7 +203,7 @@ void HeapTree::saveState(std::stack<History> &stack)
         savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, cur, right, false, VIZ::EDGE::Thickness));
     }
 
-    stack.push(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr));
+    stack.push_back(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr, mInfo, mStep));
 }
 
 void HeapTree::loadState(History history)

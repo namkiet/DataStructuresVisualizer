@@ -2,13 +2,120 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 
-// bool DS::
-
 void DS::empty()
 {
     mEdgeList.clear();
     mNodeList.clear();
     mActionQueue.empty();
+}
+
+bool DS::isRunning()
+{
+    return !mActionQueue.isEmpty();
+}
+
+void DS::loadState(float progress)
+{
+    if (mUndoStack.empty()) return;
+
+    curId = int(progress * (mUndoStack.size() - 1));
+    loadState(mUndoStack[curId]);
+}
+
+void DS::loadState(History history)
+{
+    empty();
+    mNodeList = std::move(history.nodeList);
+    mEdgeList = std::move(history.edgeList);
+    mInfo = std::move(history.info);
+    mStep = std::move(history.step);
+}
+
+bool DS::canUndo()
+{
+    return curId >= 1;
+}
+
+bool DS::canRedo()
+{
+    return curId < mUndoStack.size() - 1;
+}
+
+void DS::execute()
+{
+    saveState(mUndoStack);
+    std::cerr << "Undo size: " << mUndoStack.size() << "\n";
+}
+
+void DS::undo()
+{
+    // if (!canUndo()) return;
+    // loadState(mUndoStack[--curId]);
+}
+
+void DS::redo()
+{
+    // if (!canRedo()) return;
+    // loadState(mUndoStack[++curId]);
+}
+
+float DS::getProgress()
+{
+    if (currentHistorySize <= 1) return 1.f;
+
+    float progress = (curId * 1.f) / (currentHistorySize - 1);
+
+    std::cerr << "Cur id: " << curId << "_ " << currentHistorySize << " " << " - Progress: " << progress << "\n";
+
+    return progress;
+}
+
+void DS::updateCurrent(sf::Time dt)   
+{
+    std::cerr << mNodeList.size() << "\n";
+    if (mActionQueue.isEmpty())
+    {
+        mStep = mLastStep;
+        if (mLastInfo != "#") mInfo = mLastInfo;
+
+        currentHistorySize = 0;
+        curId = 0;
+
+    }
+    else 
+    {
+        // // timer += dt.asSeconds();
+        // if (currentHistorySize == 0)
+        //     currentHistorySize = mActionQueue.size();
+
+        // execute();
+        float t = mActionQueue.update(dt);
+        if (t)
+        {
+            execute();
+        }
+        // //     // timer = t;
+
+        // //     std::cerr << "time: " << t << "\n";
+
+        // //     execute();
+        // //     curId = mUndoStack.size() - 1;
+
+        // //     std::cerr << "???: " << curId << "\n";
+        // // }
+
+        // if (!t) 
+        // {
+        //     mUndoStack.pop_back();
+        // }
+    }
+
+    for (auto &edge: mEdgeList)
+        if (edge) edge->update(dt);
+
+    for (auto &node: mNodeList)
+        if (node) node->update(dt);
+
 }
 
 void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -22,25 +129,6 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
         if (node) node->draw(target, states);
 }
 
-void DS::updateCurrent(sf::Time dt)   
-{
-    // std::cerr << mActionQueue.size() << "\n";
-    mActionQueue.update(dt);
-
-    if (mActionQueue.isEmpty())
-    {
-        mStep = mLastStep;
-        if (mLastInfo != "#") mInfo = mLastInfo;
-    }
-
-    for (auto &edge: mEdgeList)
-        if (edge) edge->update(dt);
-
-    for (auto &node: mNodeList)
-        if (node) node->update(dt);
-
-}
-
 void DS::addNode(CircleNode* node)
 {
     mNodeList.push_back(CircleNode::Ptr(node));
@@ -52,7 +140,7 @@ void DS::removeNode(CircleNode* node)
     {
         mEdgeList.erase(
             std::remove_if(mEdgeList.begin(), mEdgeList.end(),
-                [node](const std::unique_ptr<Edge>& edge) {
+                [node](const Edge::Ptr& edge) {
                     return edge->mFrom == node;
                 }),
             mEdgeList.end()
@@ -65,6 +153,7 @@ void DS::removeNode(CircleNode* node)
         );
     });
 }
+
 void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
 {
     mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
@@ -75,7 +164,7 @@ void DS::removeEdge(CircleNode* parent, CircleNode* child) {
     {
         mEdgeList.erase(
             std::remove_if(mEdgeList.begin(), mEdgeList.end(),
-            [parent, child](const std::unique_ptr<Edge>& edge) {
+            [parent, child](const Edge::Ptr& edge) {
                 return edge->mFrom == parent && edge->mTo == child;
             }),
             mEdgeList.end()
@@ -122,7 +211,6 @@ void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
     if (!node) return;
     sf::Vector2f prevPos = node->getPosition();
     mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration));
-    std::cout<<"1 here"<<std::endl;
 }
 
 void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
@@ -141,6 +229,9 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 
     int aVal = a->mValue;
     int bVal = b->mValue;
+
+    a->mValue = bVal;
+    b->mValue = aVal;
 
     int aOpa = a->getOpacity();
     int bOpa = b->getOpacity();
@@ -188,59 +279,8 @@ void DS::loadFromVector(std::vector<int> numList)
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = 0.3f; align(); });
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; align(); });
 }    
-
-void DS::loadState(History history)
-{
-    empty();
-    mNodeList = std::move(history.nodeList);
-    mEdgeList = std::move(history.edgeList);
-}
-
-bool DS::canUndo()
-{
-    return !mUndoStack.empty();
-}
-
-bool DS::canRedo()
-{
-    return !mRedoStack.empty();
-}
-
-void DS::execute()
-{
-    mActionQueue.pushInstantAction([=]() 
-    {
-        saveState(mUndoStack);
-        std::cerr << "Undo size: " << mUndoStack.size() << "\n";
-        while (!mRedoStack.empty())
-            mRedoStack.pop();
-    });
-}
-
-void DS::undo()
-{
-    std::cerr << "HELLO";
-    if (!canUndo()) return;
-
-    std::cerr << "VCL";
-    
-    saveState(mRedoStack); // save current state to the redo stack
-    loadState(std::move(mUndoStack.top()));
-    mUndoStack.pop();
-}
-
-void DS::redo()
-{
-    if (!canRedo()) return;
-
-    saveState(mUndoStack);
-    loadState(std::move(mRedoStack.top()));
-    mRedoStack.pop();
-
-}
 
 std::string DS::getInfo()
 {

@@ -25,7 +25,7 @@ ProgressBar::ProgressBar(float x, float y, float width, float height) {
     progress = 0.f;
 }
 
-void ProgressBar::handleEvent(const sf::Event& event) {
+bool ProgressBar::handleEvent(const sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
         if (knob.getGlobalBounds().contains(mousePos)) {
@@ -38,8 +38,20 @@ void ProgressBar::handleEvent(const sf::Event& event) {
         mouseX = std::clamp(mouseX, x, x + width);
         progress = (mouseX - x) / width;
         fill.setSize({progress * width, bar.getSize().y});
-        knob.setPosition(mouseX, bar.getPosition().y + bar.getSize().y / 2);
+        knob.setPosition(progress * width + x, bar.getPosition().y + bar.getSize().y / 2);
+
+        return true;
     }
+
+    return false;
+}
+
+void ProgressBar::setProgress(float p)
+{
+    if (p < 0 || p > 1) return;
+    progress = p;
+    fill.setSize({progress * width, bar.getSize().y});
+    knob.setPosition(progress * width + x, bar.getPosition().y + bar.getSize().y / 2);
 }
 
 float ProgressBar::getProgress() const {

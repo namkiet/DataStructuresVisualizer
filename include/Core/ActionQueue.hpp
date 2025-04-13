@@ -8,14 +8,15 @@ class ActionQueue
 public:
     using ActionFunc = std::function<bool(sf::Time)>;
 
-    void empty();
 private:
     std::deque<std::vector<ActionFunc>> queue;
+    float timer;
 
 public:
+    void empty();
     void pushAction(ActionFunc action, bool withPrevious = true);
     void pushInstantAction(std::function<void()> func, bool withPrevious = false);
-    void update(sf::Time dt);
+    float update(sf::Time dt);
     void createNewBatch();
     bool isEmpty() const;
     int size() const;

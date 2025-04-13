@@ -19,6 +19,6 @@ private:
     void                        heapifyDown(int index);
     
 private:
-    void                        saveState(std::stack<History> &stack) override;
+    void                        saveState(std::vector<History> &stack) override;
     void                        loadState(History history) override;
 };

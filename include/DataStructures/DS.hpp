@@ -62,25 +62,32 @@ protected:
         std::vector<CircleNode::Ptr> nodeList;
         std::vector<Edge::Ptr> edgeList;
         CircleNode* baseNode;
+        std::string info;
+        float step;
 
-        History(std::vector<CircleNode::Ptr>&& nodeList, std::vector<Edge::Ptr>&& edgeList, CircleNode* baseNode)
-        : nodeList(std::move(nodeList)), edgeList(std::move(edgeList)), baseNode(baseNode) {};
+        History(std::vector<CircleNode::Ptr>&& nodeList, std::vector<Edge::Ptr>&& edgeList, CircleNode* baseNode, std::string info, float step)
+        : nodeList(std::move(nodeList)), edgeList(std::move(edgeList)), baseNode(baseNode), info(info), step(step) {};
     };
 
-    std::stack<History>             mUndoStack;
+    std::vector<History>            mUndoStack;
     std::stack<History>             mRedoStack;
 
 public:
+    bool                            isRunning();
     bool                            canUndo();
     bool                            canRedo();
     void                            undo();
     void                            redo();
+    void                            loadState(float progress);
+    float                           getProgress();
 
 protected:
-    void                            execute();
-    virtual void                    saveState(std::stack<History> &stack) = 0;
-    virtual void                    loadState(History history);
+    int                             curId = 0;
+    int                             currentHistorySize;
 
+    void                            execute();
+    virtual void                    saveState(std::vector<History> &stack) = 0;
+    virtual void                    loadState(History history);
     
 // ==================== INFO / PSEUDOCODE SUPPORT ====================
 protected:
@@ -94,4 +101,7 @@ public:
     std::string                     getInfo();
     std::vector<std::string>        getCode();
     int                             getStep();
+
+private:
+    float                           timer;
 };

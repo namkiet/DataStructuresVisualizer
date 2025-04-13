@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 
 MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 {
@@ -52,6 +54,16 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     HomeSprite.setTexture(textures.get(Textures::HomeIcon));
     BackButtons = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f,20.f), "", sf::Vector2f(50.f,50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
     BackButtons->setSprite(HomeSprite);
+
+    mSpeedButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f, 20.f), "1x", sf::Vector2f(100, 100), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Text);
+    mSpeedButton->setCallback([=]()
+    {
+        speedIndex = (speedIndex + 1) % speed.size();
+        std::ostringstream oss;
+        oss << std::setprecision(2) << speed[speedIndex];
+        mSpeedButton->setText(oss.str() + "x");
+        ANIMATION::Speed = speed[speedIndex];
+    });
 }
 
 void MainUI::updateCurrent(sf::Time dt)
@@ -64,6 +76,8 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(OperationBox, states);
     target.draw(*OperationButtonsList, states);
     target.draw(*BackButtons, states);
+    target.draw(*mSpeedButton, states);
+    
     
     for(auto &lines: mSeperateToolBoxLine)
         target.draw(lines, states);
@@ -205,13 +219,19 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
-    GUI::Button::Ptr RandomButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y), "Random", sf::Vector2f(100.f,40.f));
-    RandomButton->setCallback([CreateButton]()
-    {
-        CreateButton->setSubComponentInfo(0);
-    });
     
+    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+
+    RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
+    LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
+    EmptyButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(2); });
+
     CreateButton->addSubComponent(RandomButton);
+    CreateButton->addSubComponent(LoadButton);
+    CreateButton->addSubComponent(EmptyButton);
+
     CreateButton->setFunc([CreateButton, heap]()
     {
         if (CreateButton->getSubComponentInfo().InfoID == -1) 
@@ -286,12 +306,18 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
-    GUI::Button::Ptr RandomButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y), "Random", sf::Vector2f(100.f,40.f));
+    
+    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+
+    RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
+    LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
+    EmptyButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(2); });
+
     CreateButton->addSubComponent(RandomButton);
-    RandomButton->setCallback([CreateButton]()
-    {
-        CreateButton->setSubComponentInfo(0);
-    });
+    CreateButton->addSubComponent(LoadButton);
+    CreateButton->addSubComponent(EmptyButton);
 
     CreateButton->setFunc([CreateButton, ll]()
     {
@@ -454,8 +480,15 @@ void MainUI::handleEvent(const sf::Event& event)
     BackButtons->handleEvent(event);
     if (BackButtons->isActive())
     {
+        ANIMATION::Speed = 1;
         BackRequest = true;
     }
+
+    mSpeedButton->handleEvent(event);
+    // if (mSpeedButton->isActive())
+    // {
+
+    // }
 }
 
 bool MainUI::getBackRequest()

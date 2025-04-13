@@ -93,6 +93,10 @@ void CircleNode::setOpacity(float opacity)
     sf::Color newTextColor = mText.getFillColor();
     newTextColor.a = alpha;
     mText.setFillColor(newTextColor);
+
+    sf::Color newNoteColor = mNote.getFillColor();
+    newNoteColor.a = alpha;
+    mNote.setFillColor(newNoteColor);
 }
 
 float CircleNode::getOpacity()

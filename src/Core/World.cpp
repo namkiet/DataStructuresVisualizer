@@ -30,6 +30,8 @@ void World::update(sf::Time dt)
 	mPseudoCode->setStep(mDataStructure->getStep());
 
 	mInfoPanel->setText(mDataStructure->getInfo());
+
+	// mProgressBar->setProgress(mDataStructure->getProgress());
 }
 
 void World::draw()
@@ -122,7 +124,10 @@ void World::handleEvent(const sf::Event& event)
 		}
 	}
 
-	mProgressBar->handleEvent(event);
+	if (mProgressBar->handleEvent(event))
+	{
+		mDataStructure->loadState(mProgressBar->getProgress());	
+	}
 }
 
 void World::updateBackRequest()
