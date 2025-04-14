@@ -13,5 +13,7 @@ public:
 	virtual bool			handleEvent(const sf::Event& event);
 
 private:
+	sf::Shader				mShader;
+	sf::Sprite				mBackground;
 	Carousel				mCarousel;
 };

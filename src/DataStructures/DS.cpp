@@ -1,5 +1,11 @@
 #include <DataStructures/DS.hpp>
 #include <Core/Variables.hpp>
+#include <iostream>
+
+DS::DS()
+{
+    saveStep();
+}
 
 void DS::empty()
 {
@@ -8,20 +14,113 @@ void DS::empty()
     mActionQueue.empty();
 }
 
-void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
-{    
-    states.transform *= getTransform();  
-    
+bool DS::isRunning()
+{
+    return !mActionQueue.isEmpty();
+}
+
+void DS::saveStep() {
+    if (ANIMATION::Speed >= 1000) return;
+
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8; 
+
+    sf::RenderTexture rt;
+    rt.create(VIZ::DS::Size.x, VIZ::DS::Size.y, settings);
+    rt.clear(sf::Color::Transparent);
+
     for (auto &edge: mEdgeList)
-        if (edge) edge->draw(target, states);
+        if (edge) rt.draw(*edge);
 
     for (auto &node: mNodeList)
-        if (node) node->draw(target, states);
+        if (node) rt.draw(*node);
+    rt.display();
+
+    // rt.setSmooth(true);
+    mH.push_back(rt.getTexture());
+}
+
+void DS::loadStep(float progress)
+{
+    if (mH.empty()) return;
+    cS = int(progress * (mH.size() - 1));
+}
+
+bool DS::canUndo()
+{
+    return cS > 0;
+}
+
+bool DS::canRedo()
+{
+    return cS + 1 < mH.size();
+}
+
+void DS::undo()
+{
+    // isReverse = true;
+    if (canUndo()) cS--;
+}
+
+void DS::redo()
+{
+    if (canRedo()) cS++;
+}
+
+float DS::getProgress()
+{
+    if (mH.size() <= 1) return 1.f;
+    float progress = (cS * 1.f) / (mH.size() - 1);
+    return progress;
+}
+
+void DS::resetHistory()
+{
+    auto c = mH.back();
+    mH.clear();
+    mH.push_back(c);
+    cS = 0;
 }
 
 void DS::updateCurrent(sf::Time dt)   
 {
-    mActionQueue.update(dt);
+    if (isReverse)
+    {
+        timer += dt.asSeconds();
+        if (timer >= 20 * dt.asSeconds())
+        {
+            if (cS > 0) cS--;
+            else isReverse = false;
+
+            timer = 0;
+        }
+        return;
+    }
+
+    if (mActionQueue.isEmpty())
+    {
+        mStep = mLastStep;
+        if (mLastInfo != "#") mInfo = mLastInfo;
+    }
+    else 
+    {
+        timer += dt.asSeconds();
+        float t = mActionQueue.update(dt);
+
+        // if (timer >= 0.1)
+        // {
+        saveStep();
+        cS++;
+        // timer = 0;
+        // }
+        if (!t && timer < 0.1f)
+        {
+            mH.pop_back();
+            cS--;
+        }
+
+        if (timer >= 0.1f) timer = 0;
+    }
 
     for (auto &edge: mEdgeList)
         if (edge) edge->update(dt);
@@ -30,22 +129,40 @@ void DS::updateCurrent(sf::Time dt)
         if (node) node->update(dt);
 }
 
+void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
+{    
+    states.transform *= getTransform();  
+
+    if (cS != mH.size() - 1) // not the last step
+    {
+        if (!mH.empty())
+        {
+            sf::Sprite sprite(mH[cS]);
+            target.draw(sprite, states);
+        }
+    }
+    else // last step
+    {   
+        for (auto &edge: mEdgeList)
+            if (edge) edge->draw(target, states);
+
+        for (auto &node: mNodeList)
+            if (node) node->draw(target, states);
+    }
+}
+
 void DS::addNode(CircleNode* node)
 {
-    mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
-    {
-        mNodeList.push_back(CircleNode::Ptr(node));
-        return true;
-    });
+    mNodeList.push_back(CircleNode::Ptr(node));
 }
 
 void DS::removeNode(CircleNode* node)
 {
-    mActionQueue.pushAction([this, node](sf::Time dt) mutable->bool
+    mActionQueue.pushInstantAction([=]()
     {
         mEdgeList.erase(
             std::remove_if(mEdgeList.begin(), mEdgeList.end(),
-                [node](const std::unique_ptr<Edge>& edge) {
+                [node](const Edge::Ptr& edge) {
                     return edge->mFrom == node;
                 }),
             mEdgeList.end()
@@ -56,30 +173,24 @@ void DS::removeNode(CircleNode* node)
             [node](const CircleNode::Ptr& ptr) { return ptr.get() == node; }),
             mNodeList.end()
         );
-        return true;
-    });
-}
-void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
-{
-    mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
-    {
-        mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
-        return true;
     });
 }
 
+void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
+{
+    mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
+}
+
 void DS::removeEdge(CircleNode* parent, CircleNode* child) {
-    mActionQueue.pushAction([this, parent, child](sf::Time dt) mutable -> bool
+    mActionQueue.pushInstantAction([=]() 
     {
         mEdgeList.erase(
             std::remove_if(mEdgeList.begin(), mEdgeList.end(),
-            [parent, child](const std::unique_ptr<Edge>& edge) {
+            [parent, child](const Edge::Ptr& edge) {
                 return edge->mFrom == parent && edge->mTo == child;
             }),
             mEdgeList.end()
         );
-        std::cout<<"Edge removed\n";
-        return true;
     });
 }
 
@@ -88,20 +199,18 @@ void DS::createNewActionGroup()
     mActionQueue.createNewBatch();
 }
 
-void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration)
+void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse)
 {
-
-    mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration));
+    mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration, reverse));
 }
+
 void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
 {
-    std::cout<<"start Delete node effect\n";
     mActionQueue.pushAction(Action::DeleteNode(node, duration));
-    std::cout<<"end Delete node effect\n";
 }
 
-void DS::deleteNode(CircleNode* node){
-    std::cout<<"start Delete node\n";
+void DS::deleteNode(CircleNode* node)
+{
     mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
     {
         mNodeList.erase(
@@ -111,18 +220,14 @@ void DS::deleteNode(CircleNode* node){
         }),
         mNodeList.end()
     );
-    std::cout<<"end Node removed\n";
         return true;
     });
-
 }
 
-void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
+void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
 {
     if (!node) return;
-    sf::Vector2f prevPos = node->getPosition();
-    mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration, appearEffect));
-    std::cout<<"1 here"<<std::endl;
+    mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration));
 }
 
 void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
@@ -135,12 +240,18 @@ void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlight
     mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
 }
 
-void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
+void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 {
     if (!a || !b) return;
 
     int aVal = a->mValue;
     int bVal = b->mValue;
+
+    a->mValue = bVal;
+    b->mValue = aVal;
+
+    int aOpa = a->getOpacity();
+    int bOpa = b->getOpacity();
 
     // Create 2 fake nodes
     TreeNode* fakeA = new TreeNode(aVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
@@ -162,8 +273,8 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
     // Swap the 2 fake nodes
     createNewActionGroup();
-    moveNode(fakeA, b->getPosition(), 0.5f, false);
-    moveNode(fakeB, a->getPosition(), 0.5f, false);
+    moveNode(fakeA, b->getPosition(), duration);
+    moveNode(fakeB, a->getPosition(), duration);
 
     // Remove the 2 fake nodes
     createNewActionGroup();
@@ -172,9 +283,9 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b)
 
     // Make the real nodes appear again
     mActionQueue.pushInstantAction([=]() {
-        a->setOpacity(1);
+        a->setOpacity(aOpa);
+        b->setOpacity(bOpa);
         a->setValue(bVal);
-        b->setOpacity(1);
         b->setValue(aVal);
     });
 }
@@ -183,34 +294,22 @@ void DS::loadFromVector(std::vector<int> numList)
 {
     empty();
     auto curSpeed = ANIMATION::Speed;
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = 1000; });
+    ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; });
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; align(); });
 }    
-
-bool DS::canUndo()
-{
-    return !mUndoStack.empty();
-}
-
-bool DS::canRedo()
-{
-    return !mRedoStack.empty();
-}
-
-
-void DS::undo()
-{
-    if (!canUndo()) return;
-    
-    empty();
-    History history = std::move(mUndoStack.top());
-    mUndoStack.pop();
-
-    loadState(std::move(history));
-}
 
 std::string DS::getInfo()
 {
     return mInfo;
+}
+
+std::vector<std::string> DS::getCode()
+{
+    return mCode;
+}
+
+int DS::getStep()
+{
+    return mStep;
 }

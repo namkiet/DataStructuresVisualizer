@@ -1,0 +1,13 @@
+Insert at head:
+
+Text:
+
+Create new vertex to store value <num>.		
+
+vtx.next points to the current head.
+
+head points to vtx.
+
+Tail points to head.			//empty
+
+The whole process is O(1).

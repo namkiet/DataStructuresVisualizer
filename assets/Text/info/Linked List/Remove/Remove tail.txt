@@ -1,0 +1,24 @@
+Remove tail:
+
+Text:
+
+The Linked List is already empty.
+No action is performed.				//empty
+
+
+Set up pre pointer.
+pre will eventually point to the last vertex before tail.
+
+Set up tmp pointer.
+tmp will eventually point to the current tail.
+
+Check if tmp.next is null.
+
+It is not null.
+So both pre and tmp pointers advance to their next vertex.	//not tail
+
+It is null.
+So set the next of pre (the new tail) to null.			//tail
+
+Delete tmp (the previous tail) then update the tail pointer to pre (the current tail). 
+The whole process is O(N) just to find the pre pointer.

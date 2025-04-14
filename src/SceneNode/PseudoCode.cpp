@@ -13,16 +13,16 @@ void PseudoCode::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) 
         target.draw(text, states);
 }
 
-void PseudoCode::setCode(std::string lines)
+void PseudoCode::setCode(std::vector<std::string> lines)
 {
-    float offsetY = 10;
+    float offsetY = 16;
     mTextObjects.clear();
     for (const auto& line : lines) {
-        sf::Text text(line, mFont, 14);
+        sf::Text text(line, mFont, 16);
         text.setFillColor(sf::Color::White);
-        text.setPosition(10, offsetY);
+        text.setPosition(14, offsetY);
         mTextObjects.push_back(text);
-        offsetY += 20;
+        offsetY += 32;
     }
 }
 

@@ -1,0 +1,25 @@
+Create:
+
+Text:
+
+N must be ∈ [1..99]					//cerr
+
+
+Start from an empty Binary Min Heap.
+
+<num> is inserted.
+It becomes the new root.				//first element
+
+The current Binary Min Heap.				//every after insert
+
+<num> is inserted at the back of compact array A.	
+
+Invalid nodes are shown in red.				//if invalid
+
+<num> < <par>, so swap them.
+
+<num> <-> <par> have been swapped.
+
+<num> has been inserted successfully.
+
+The Binary Min Heap has been created from array A: <arr>.

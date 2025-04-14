@@ -7,6 +7,13 @@ LinkedListNode::LinkedListNode(int value, float radius, sf::Color fillColor, sf:
 {
 }
 
+LinkedListNode::LinkedListNode(const LinkedListNode &other) 
+    : CircleNode(other), mIndex(other.mIndex), mPrev(nullptr) 
+{
+    mNext = (other.mNext) ? new LinkedListNode(*other.mNext) : nullptr;
+    if (mNext) mNext->mPrev = this;
+}
+
 void LinkedListNode::setNext(LinkedListNode* next)
 {
     mNext = next;

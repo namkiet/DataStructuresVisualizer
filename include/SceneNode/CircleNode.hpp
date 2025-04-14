@@ -8,7 +8,7 @@ class CircleNode:
     public sf::Transformable, public sf::Drawable
 {
 public:
-    typedef std::unique_ptr<CircleNode> Ptr;
+    typedef std::shared_ptr<CircleNode> Ptr;
                             CircleNode(const CircleNode &other);
                             CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
 
@@ -26,6 +26,7 @@ protected:
     sf::Text                mNote;
     sf::Font                mFont;
     float                   mTextSize;
+    float                   mOpacity;
 
 public:
     sf::Color               getFillColor();
@@ -39,6 +40,7 @@ public:
     float                   getTextSize();
     void                    setTextSize(float textSize);   
     void                    setNote(std::string note);
+    void                    setSize(float size);
 
 protected:
     void                    updateText();

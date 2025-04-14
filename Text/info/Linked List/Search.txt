@@ -1,0 +1,23 @@
+Search:
+
+Text:
+
+The current Linked List is empty, we return NOT_FOUND.  		//empty list
+
+This is the current Linked List.
+We want to search for value v = <num> starting from the head (index 0).   //start
+
+Comparing <curNum> (index = <i>) with v = <num>.
+<curNum> is not equal to <num> so we have to continue. 			  //different value
+
+So tmp advances to the next vertex.
+tmp is not null, continue searching.  					 //move to next vertex
+
+We try advancing tmp to the next vertex.
+But...                                  				 //tail
+
+tmp is null (we have gone past the tail after O(N) step(s)).
+We conclude that value v = <num> is NOT_FOUND in the Linked List.        //not found
+
+Found value v = <num> at this highlighted vertex so we return index <i>.
+The whole operation is O(N).     					//found

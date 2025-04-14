@@ -1,6 +1,7 @@
 #include <Core/App.hpp>
 #include <State/TitleState.hpp>
 #include <State/MenuState.hpp>
+#include <State/SettingsState.hpp>
 #include <State/InApp.hpp>
 #include <Core/Variables.hpp>
 #include <iostream>
@@ -21,10 +22,10 @@ App::App():
 
 void App::loadTextures()
 {
-    mTextures.load(Textures::TitleScreen, "assets/images/TitleScreen.png");
     mTextures.load(Textures::Button, "assets/images/button.jpg");
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
-	mTextures.load(Textures::AppBackground, "assets/images/bg5.jpg");
+	mTextures.load(Textures::AppBackground, "assets/images/desert-night.png");
+	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
 }
 
 void App::loadFonts()
@@ -38,6 +39,7 @@ void App::registerStates()
 {
     mStateStack.registerState<TitleState>(States::Title);
     mStateStack.registerState<MenuState>(States::Menu);
+    mStateStack.registerState<SettingsState>(States::Settings);
     mStateStack.registerState<InApp>(States::InAppAVL);
     mStateStack.registerState<InApp>(States::InAppHeap);
     mStateStack.registerState<InApp>(States::InAppGraph);

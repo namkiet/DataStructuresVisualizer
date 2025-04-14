@@ -8,29 +8,32 @@ namespace GUI {
 
 const std::string TextBox::mAllowedChars = "0123456789";
 
-TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, unsigned int charSize, std::string placeholder)
+TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, std::string placeholder):
+    mCharSize(14),
+    mDefaultOutlineColor(sf::Color(255, 255, 255, 50)),
+    mSelectOutlineColor(sf::Color::White)
 {
-    mSelectOutlineColor = sf::Color(66, 133, 244);
-    mDefaultOutlineColor = sf::Color(76, 91, 99);
+    // mDefaultOutlineColor = UI::TEXTBOX::DefaultBorder;
+    // mSelectOutlineColor = UI::TEXTBOX::SelectedBorder;
     InputNum = -1;
     showCursor = false;
 
     mBox.setSize(size);
     mBox.setPosition(position);
-    mBox.setFillColor(sf::Color(31, 42, 47));
+    mBox.setFillColor(sf::Color::Transparent); //UI::TEXTBOX::FillColor);
     mBox.setOutlineColor(mDefaultOutlineColor);
     mBox.setOutlineThickness(2.f);
 
     mText.setFont(font);
-    mText.setCharacterSize(charSize);
+    mText.setCharacterSize(mCharSize);
     mText.setFillColor(sf::Color::White);
-    mText.setPosition(position.x + 5.f, position.y + (size.y - charSize) / 2.f);
+    mText.setPosition(position.x + 5.f, position.y + int((size.y - mCharSize) / 2.f));
     mText.setString("");
 
     mPlaceholder.setFont(font);
-    mPlaceholder.setCharacterSize(charSize);
+    mPlaceholder.setCharacterSize(mCharSize);
     mPlaceholder.setFillColor(sf::Color(150, 150, 150));
-    mPlaceholder.setPosition(position.x + 5.f, position.y + (size.y - charSize) / 2.f);
+    mPlaceholder.setPosition(position.x + 5.f, position.y + int((size.y - mCharSize) / 2.f));
     mPlaceholder.setString(placeholder);
 }
 
@@ -111,7 +114,7 @@ void TextBox::inputLogic(sf::Uint32 unicode) {
 
 void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(mBox, states);
-    if (mInput.empty() && !isSelected()) {
+    if (mInput.empty()) {
         target.draw(mPlaceholder, states);
     } else {
         target.draw(mText, states);

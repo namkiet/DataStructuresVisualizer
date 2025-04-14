@@ -1,0 +1,40 @@
+Insert:
+
+Text:
+
+The current BST rooted at null.			//empty
+
+Comparing <num> with <cur>.
+
+<num> is smaller than <cur>, so go left.
+
+<num> is larger than <cur>, so go right.
+
+Location found!
+Inserting <num>.
+
+<num> has been inserted!
+
+Balance factor of <cur> is <leftHeight - rightHeight>.
+It is ok.					//l - r == 1 || -1 || 0
+
+Balance factor of <cur> is <leftHeight - rightHeight>.
+It is not ok.					//l - r == -2 || 2
+
+And balance factor of <child> is <balance factor of child>.
+
+Rotate left <cur>.				//balance factor of cur == -2 and of child == -1
+
+Rotate right <cur>.				//balance factor of cur == 2 and of child == 1
+
+Rotate left <child>.				
+Rotate right <cur>.				//balance factor of cur == 2 and of child == -1
+
+Rotate right <child>.				
+Rotate left <cur>.				//balance factor of cur == -2 and of child == 1
+
+Relayout the BST and recompute its height.
+
+Check the parent vertex.
+
+The tree is balanced.

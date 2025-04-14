@@ -13,10 +13,11 @@
 #include <GUI/ExpandableButton.hpp>
 #include <GUI/DeliverTextBox.hpp>
 
-#include <GUI/InfoPanel.hpp>
 #include <DataStructures/LinkedList.hpp>
 
 #include <SceneNode/PseudoCode.hpp>
+#include <SceneNode/InfoPanel.hpp>
+#include <SceneNode/ProgressBar.hpp>
 
 class MainUI;
 
@@ -49,12 +50,8 @@ public:
     };
 
 private:
-    void								loadTextures();
     void								buildScene();
-    // void                                initPseudoCode();
-    void                                CreateModeContainer();
     void                                updateBackRequest();
-
 
 private:
     enum Layer
@@ -62,7 +59,9 @@ private:
         Background,
         SidePanel,
         CodeBox,
+        InfoBox,
         DataStructure,
+        Progress,
         LayerCount
     };
 
@@ -71,8 +70,9 @@ private:
 
     DS*                                 mDataStructure;
     PseudoCode*                         mPseudoCode;
+    InfoPanel*                          mInfoPanel;
     MainUI*                             mMainUI;
-    GUI::InfoPanel*                     mInfoPanel;
+    ProgressBar*                        mProgressBar;
 
 public:
     void                                handleEvent(const sf::Event& event);
@@ -84,6 +84,6 @@ private:
     Mode                                mMode;
     bool                                BackRequest;
 
-
+    sf::Shader                          mShader;
 
 };

@@ -15,8 +15,8 @@ namespace States {
         InAppHeap,
         InAppLinkedList,
         Title,
-        Menu
-        // Settings,
+        Menu,
+        Settings
         // StateCount
     };
 };

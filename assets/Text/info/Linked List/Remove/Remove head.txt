@@ -1,0 +1,21 @@
+Remove head:
+
+Text:
+
+The Linked List is already empty.
+No action is performed.				//empty
+
+
+The head is the only vertex in this List.	//one vertex
+
+Head points to next (which is null).		//one vertex
+
+Remove head vertex.
+We now have an empty List.			//one vertex
+
+
+The head has a next vertex.
+
+head points to the next vertex.
+
+Delete tmp, which was the (previous) head.

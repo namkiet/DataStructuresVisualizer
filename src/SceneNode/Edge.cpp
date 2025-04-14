@@ -1,16 +1,20 @@
 #include <SceneNode/Edge.hpp>
 #include <Core/Utility.hpp>
+#include<iostream>
 #include <Core/Variables.hpp>
-#include <iostream>
 
 Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness): 
     mFrom(from),
     mTo(to),
-    mLine(sf::Quads, 4),
-    mThickness(VIZ::EDGE::Thickness),
+    mLine(sf::Quads,4),
+    mLine1(sf::Quads, 4),
+    mLine2(sf::Quads,4),
+    mThickness(thickness),
     mColor(color),
     mHasArrow(hasArrow),
-    mIsChangingTail(false)
+    mIsChangingTail(false),
+    mHasWeight(false),
+    isReversed(false)
 {   
     mArrowSize = 12;
     mArrowHead.setPointCount(3);
@@ -22,50 +26,185 @@ Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, flo
 }
 
 
-void Edge::updateEdge()
-{
-    mLine[0].color = mColor;
-    mLine[1].color = mColor;
-    mLine[2].color = mColor;
-    mLine[3].color = mColor;
-    mArrowHead.setFillColor(mColor);
+Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, int weight, bool hasArrow, float thickness): 
+    mFrom(from),
+    mTo(to),
+    mLine(sf::Quads,4),
+    mLine1(sf::Quads, 4),
+    mLine2(sf::Quads, 4),
+    mThickness(thickness),
+    mColor(color),
+    mHasArrow(hasArrow),
+    mIsChangingTail(false),
+    mWeight(weight),
+    mHasWeight(true),
+    isReversed(false)
+{   
+    mFont.loadFromFile("assets/fonts/jetbrains.ttf");
+    mWeightText.setFont(mFont);
+    sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
+    sf::Vector2f vec = NormalUnitVector(mTo->getPosition() - mFrom->getPosition());
+    vec = sf::Vector2f(vec.x * 5.f, vec.y * 5.f);
 
-    sf::Vector2f dir = mTail - mHead;
+    mWeightText.setPosition(mid + vec);
+    mWeightText.setCharacterSize(13);
+    mWeightText.setColor(sf::Color::Black);
+    mWeightText.setString(std::to_string(mWeight));
 
-    sf::Vector2f perp(-dir.y, dir.x);
-    perp = perp * ((mThickness / 2) / norm(perp));
+    mArrowSize = 12;
+    mArrowHead.setPointCount(3);
 
-    sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
-    if (norm(dir) <= 2 * mFrom->getRadius()) 
-    {
-        offset = sf::Vector2f(0, 0);
-        perp = sf::Vector2f(0, 0);
-    }
+    mHead = mFrom->getPosition();
+    mMid = mHead;
+    mTail = (mTo ? mTo->getPosition() : mFrom->getPosition());
 
-    mLine[0].position = mHead + offset - perp;
-    mLine[1].position = mHead + offset + perp;
-    mLine[2].position = mTail - offset + perp;
-    mLine[3].position = mTail - offset - perp;
-
-    float theta = angle(mHead, mTail);
-
-    mArrowHead.setPoint(0, mTail - offset);
-    mArrowHead.setPoint(1, {
-        mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
-        mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
-    });
-    mArrowHead.setPoint(2, {
-        mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
-        mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
-    });
+    updateEdge();
 }
 
+
+int Edge::getWeight(){
+    if(mHasWeight == false) std::cerr<<"Edge has no weight"<<std::endl;
+    return mWeight;
+}
+
+
+void Edge::updateEdge()
+{  
+    if (!mHasWeight)
+    {
+        mLine[0].color = mColor;
+        mLine[1].color = mColor;
+        mLine[2].color = mColor;
+        mLine[3].color = mColor;
+        mArrowHead.setFillColor(mColor);
+
+        sf::Vector2f dir = mTail - mHead;
+
+        sf::Vector2f perp(-dir.y, dir.x);
+        perp = perp * ((mThickness / 2) / norm(perp));
+
+        sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+        if (norm(dir) <= 2 * mFrom->getRadius()) 
+        {
+            offset = sf::Vector2f(0, 0);
+            perp = sf::Vector2f(0, 0);
+        }
+
+        mLine[0].position = mHead + offset - perp;
+        mLine[1].position = mHead + offset + perp;
+        mLine[2].position = mTail - offset + perp;
+        mLine[3].position = mTail - offset - perp;
+
+        float theta = angle(mHead, mTail);
+
+        mArrowHead.setPoint(0, mTail - offset);
+        mArrowHead.setPoint(1, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
+        });
+        mArrowHead.setPoint(2, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
+        });
+    }
+    else
+    {
+        if(mTail == mHead) return;
+        // update mHead mTail mMid to remain the same proportion
+        if(isReversed){
+            double proportion = dist(mMid, mHead) / dist(mTail, mHead);
+            mHead = mTo->getPosition();
+            mTail = mFrom->getPosition();
+            mMid = mHead + (mTail - mHead) * proportion;
+        }
+        else{
+
+            double proportion = dist(mMid, mHead) / dist(mTail, mHead);
+            mHead = mFrom->getPosition();
+            mTail = mTo->getPosition();
+            mMid = mHead + (mTail - mHead) * proportion;
+        }
+
+        mLine1[0].color = mMarkColor;
+        mLine1[1].color = mMarkColor;
+        mLine1[2].color = mMarkColor;
+        mLine1[3].color = mMarkColor;
+
+        sf::Vector2f dir = mTail - mHead;
+
+        sf::Vector2f perp(-dir.y, dir.x);
+        perp = perp * ((mThickness / 2) / norm(perp));
+
+        sf::Vector2f offset = dir * (mFrom->getRadius() / norm(dir));
+        if (norm(dir) <= 2 * mFrom->getRadius()) 
+        {
+            offset = sf::Vector2f(0, 0);
+            perp = sf::Vector2f(0, 0);
+        }
+
+        mLine1[0].position = mHead + offset - perp;
+        mLine1[1].position = mHead + offset + perp;
+        mLine1[2].position = mMid - offset + perp;
+        mLine1[3].position = mMid - offset - perp;
+
+        float theta = angle(mHead, mTail);
+
+        mLine2[0].color =mColor;
+        mLine2[1].color =mColor;
+        mLine2[2].color =mColor;   
+        mLine2[3].color =mColor;
+        
+        mLine2[0].position = mLine1[2].position;
+        mLine2[1].position = mLine1[3].position;
+        mLine2[3].position = mTail - offset + perp;
+        mLine2[2].position = mTail - offset - perp;
+
+        return;
+
+        // set Arrow
+        sf::Color ArrowColor = (mMid != mTail)? mColor : mMarkColor;
+        mArrowHead.setFillColor(ArrowColor);
+        mArrowHead.setPoint(0, mTail - offset);
+        mArrowHead.setPoint(1, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta - 3.1415f / 6)),
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta - 3.1415f / 6))
+        });
+        mArrowHead.setPoint(2, {
+            mTail.x - offset.x - mArrowSize * float(std::cos(theta + 3.1415f / 6)), 
+            mTail.y - offset.y - mArrowSize * float(std::sin(theta + 3.1415f / 6))
+        });
+
+        sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
+        sf::Vector2f vec = NormalUnitVector(mTo->getPosition() - mFrom->getPosition());
+        vec = sf::Vector2f(vec.x * 5.f, vec.y * 5.f);
+
+        mWeightText.setPosition(mid + vec);
+    }
+}
+
+void Edge::resetColor()
+{
+    mMid = (isReversed)? mTail: mHead;
+    mColor = VIZ::EDGE::Color;
+    updateEdge();
+
+}
+
+void Edge::resetMid()
+{
+    mMid = (isReversed)? mTail : mHead;
+    updateEdge();
+}
 void Edge::setHead(sf::Vector2f head)
 {
     mHead = head;
     updateEdge();
 }
 
+void Edge::setMid(sf::Vector2f mid){
+    mMid = mid;
+    updateEdge();
+}
 void Edge::setTail(sf::Vector2f tail)
 {
     mTail = tail;
@@ -87,6 +226,9 @@ void Edge::setThickness(float thickness)
 sf::Color Edge::getColor()
 {
     return mColor;
+}
+sf::Color Edge::getMarkColor(){
+    return mMarkColor;
 }
 
 sf::Vector2f Edge::getHead()
@@ -111,7 +253,27 @@ void Edge::update(sf::Time dt)
 
 void Edge::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    target.draw(mLine, states);
-    if (mHasArrow)
+    if (mHasWeight)
+    {
+        target.draw(mLine1, states);
+        target.draw(mLine2,states);
+    }
+    else
+        target.draw(mLine, states);
+    
+    if (norm(mTail - mHead) > 2 * mFrom->getRadius() && mHasArrow)
         target.draw(mArrowHead, states);
+    if(mHasWeight){
+        target.draw(mWeightText, states);
+    }
+}
+
+double Edge::lengthEdge(){
+    return dist(mHead, mTail);
+}
+void Edge::swapEndpoint(){
+    isReversed = !isReversed;
+    sf::Vector2f temp = mHead;
+    mHead = mTail;
+    mTail = temp;
 }

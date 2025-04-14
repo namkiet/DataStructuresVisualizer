@@ -40,6 +40,7 @@ class Button: public Component
         void			        draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     public:
+        void                    setText(std::string text);
         std::string             getText();
         void					setToggle(bool flag); 
         virtual bool			isSelectable() const;

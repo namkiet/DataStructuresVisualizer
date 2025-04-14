@@ -1,0 +1,15 @@
+Insert:
+
+Text:
+
+The current Binary Min Heap.
+
+<num> is inserted at the back of compact array A.
+
+Invalid nodes are shown in red.					//invalid
+
+<num> < <par>, so swap them.
+
+<num> <-> <par> have been swapped.
+
+<num> has been inserted successfully.

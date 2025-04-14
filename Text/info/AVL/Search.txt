@@ -1,0 +1,21 @@
+Search:
+
+Text:
+
+The current BST rooted at null.			//empty
+
+Value <num> is not in the BST.			//Not found
+
+The current BST rooted at <root>.		//not empty
+
+Comparing <cur> with <num>.
+
+<cur> is smaller than <num>.
+
+So search on the right.
+
+<cur> is greater than <num>.
+
+So search on the left.
+
+Value <num> is found.				// found

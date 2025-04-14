@@ -16,11 +16,11 @@ namespace Action
         };
     }
 
-    ActionFunc HighlightNode(CircleNode* node, sf::Color highlightColor, float duration)
+    ActionFunc HighlightNode(CircleNode* node, sf::Color highlightFillColor, float duration, bool reverse)
     {
-        return [node, highlightColor, duration, 
+        return [node, highlightFillColor, duration, reverse,
                 elapsed = 0.0f, isInit = false,
-                startFillColor = sf::Color(), startOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
+                startFillColor = sf::Color(), startOutlineColor = sf::Color(), highlightOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
         {   
             if (!node) return true;
         
@@ -28,24 +28,33 @@ namespace Action
             {   
                 startFillColor = node->getFillColor();
                 startOutlineColor = node->getOutlineColor();
+
+                if (highlightFillColor == VIZ::NODE::FillColor)
+                    highlightOutlineColor = VIZ::NODE::OutlineColor;
+                else
+                    highlightOutlineColor = highlightFillColor;
+
+                if (highlightFillColor == startFillColor && highlightOutlineColor == startOutlineColor)
+                    return true;
+
                 isInit = true;
             }
 
             elapsed += dt.asSeconds() * ANIMATION::Speed;
-            float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
+            float t = std::sin((elapsed / duration) * 3.14159f * (reverse ? 1.f : 0.5f)); // Biến thiên theo sóng sin
 
             sf::Color newFillColor(
-                int(startFillColor.r + t * (highlightColor.r - startFillColor.r)),
-                int(startFillColor.g + t * (highlightColor.g - startFillColor.g)),
-                int(startFillColor.b + t * (highlightColor.b - startFillColor.b)),
-                int(startFillColor.a + t * (highlightColor.a - startFillColor.a))
+                int(startFillColor.r + t * (highlightFillColor.r - startFillColor.r)),
+                int(startFillColor.g + t * (highlightFillColor.g - startFillColor.g)),
+                int(startFillColor.b + t * (highlightFillColor.b - startFillColor.b)),
+                int(startFillColor.a + t * (highlightFillColor.a - startFillColor.a))
             );
 
             sf::Color newOutlineColor(
-                int(startOutlineColor.r + t * (highlightColor.r - startOutlineColor.r)),
-                int(startOutlineColor.g + t * (highlightColor.g - startOutlineColor.g)),
-                int(startOutlineColor.b + t * (highlightColor.b - startOutlineColor.b)),
-                int(startOutlineColor.a + t * (highlightColor.a - startOutlineColor.a))
+                int(startOutlineColor.r + t * (highlightOutlineColor.r - startOutlineColor.r)),
+                int(startOutlineColor.g + t * (highlightOutlineColor.g - startOutlineColor.g)),
+                int(startOutlineColor.b + t * (highlightOutlineColor.b - startOutlineColor.b)),
+                int(startOutlineColor.a + t * (highlightOutlineColor.a - startOutlineColor.a))
             );
 
             node->setFillColor(newFillColor);
@@ -53,9 +62,8 @@ namespace Action
 
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
-                // std::cerr << "Node " << node->mValue << " is highlighted \n";
-                node->setFillColor(startFillColor);
-                node->setOutlineColor(startOutlineColor);
+                node->setFillColor(reverse ? startFillColor : highlightFillColor);
+                node->setOutlineColor(reverse ? startOutlineColor : highlightOutlineColor);
                 return true;
             }
 
@@ -63,17 +71,14 @@ namespace Action
         };
     }
 
-    ActionFunc MoveNode(CircleNode* node, sf::Vector2f targetPos, float duration, bool appearEffect)
+    ActionFunc MoveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
     {
-        return [node, targetPos, duration, appearEffect, 
-                elapsed = 0.0f, isInit = false, opacity = 1.0f,
-                startPos = sf::Vector2f(), speed = sf::Vector2f()]
-                (sf::Time dt) mutable -> bool
+        return [node, targetPos, duration,
+            elapsed = 0.0f, isInit = false, startPos = sf::Vector2f(), speed = sf::Vector2f()] (sf::Time dt) mutable -> bool
         {
             if (!node) return true;
             
             if (!isInit) {
-                opacity = appearEffect ? 0 : 1;
                 startPos = node->getPosition();
                 speed = (targetPos - startPos) / duration;
                 isInit = true;
@@ -83,32 +88,48 @@ namespace Action
             sf::Vector2f newPos = startPos + speed * elapsed;
             node->setPosition(newPos);
 
-            if (appearEffect) {
-                float t = std::sin((elapsed / duration) * 3.14159f / 2);
-                opacity = t;
-                node->setOpacity(opacity);
-            }
-
             if (speed == sf::Vector2f(0, 0)  || elapsed >= duration || ANIMATION::Speed >= 1000) 
             {
-                // std::cerr << "Node " << node->mValue << " is moved to (" << targetPos.x << " " << targetPos.y << ")\n";
                 node->setPosition(targetPos);
-                node->setOpacity(1);
-                std::cerr<<"OK here"<<std::endl;
                 return true;
             }
             return false;
         };
     }
 
-    ActionFunc FadeNode(CircleNode* node, float duration)
+    ActionFunc FadeInNode(CircleNode* node, float duration)
     {
         return [node, duration, 
             elapsed = 0.f, opacity = 0.f, isInit = false](sf::Time dt) mutable->bool 
         {
             if (!isInit)
             {
-                opacity = node->getOpacity();
+                if (node->getOpacity() == 1.f) return true;
+                isInit = true;
+            }
+
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
+            float t = std::sin((elapsed / duration) * 3.14159f / 2);
+            opacity = t;
+            node->setOpacity(opacity);
+
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
+            {
+                node->setOpacity(1);
+                return true;
+            }
+            return false;
+        };
+    }
+
+    ActionFunc FadeOutNode(CircleNode* node, float duration)
+    {
+        return [node, duration, 
+            elapsed = 0.f, opacity = 1.f, isInit = false](sf::Time dt) mutable->bool 
+        {
+            if (!isInit)
+            {
+                if (node->getOpacity() == 0.f) return true;
                 isInit = true;
             }
 
@@ -124,24 +145,6 @@ namespace Action
             return false;
         };
     }
-
-    // ActionFunc SetNoteForNode(CircleNode* node, std::string note, float duration)
-    // {
-    //     return [node, note, duration,
-    //         elapsed = 0.f, isInit = false](sf::Time dt) mutable -> bool
-    //     {
-    //         if (!isInit)
-    //         {
-    //             node->setNote(note);
-    //             isInit = true;
-    //         }
-            
-    //         elapsed += dt.asSeconds() * ANIMATION::Speed;
-    //         if (elapsed >= duration || ANIMATION::Speed >= 1000)
-    //             return true;
-    //         return false;
-    //     }
-    // }
 
     ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration)
     {
@@ -217,7 +220,6 @@ namespace Action
 
             if (speed == sf::Vector2f(0, 0) || elapsed >= duration || ANIMATION::Speed >= 1000)
             {
-                // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is switched to " << parent->mValue << "-" << (targetTail ? targetTail->mValue : -1) << "\n";
                 edge->setTail(targetPos);
                 edge->mTo = targetTail;
                 edge->mIsChangingTail = false;
@@ -261,7 +263,6 @@ namespace Action
     
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
-                // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is traversed \n";
                 edge->setColor(startColor);
                 return true;
             }
@@ -286,12 +287,11 @@ namespace Action
             elapsed += dt.asSeconds();
             float t = std::sin((elapsed / duration) * 3.14159f / 2);
 
-            float curOpacity = std::max(0.0f, 1-t);
+            float curOpacity = std::max(0.0f, 1 - t);
             node->setOpacity(curOpacity);
 
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
-                std::cerr << "Node " << node->mValue << " is deleted \n";
                 node->setOpacity(0);
                 return true;
             }

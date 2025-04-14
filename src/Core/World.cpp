@@ -18,34 +18,26 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	mTextures(textures),
 	mFonts(fonts)
 {
-    loadTextures();
     buildScene();
+	// mShader.loadFromFile("shader/colormode.frag", sf::Shader::Fragment);
 }
-
-void World::CreateModeContainer()
-{
-}
-
 
 void World::update(sf::Time dt)
 {
 	mSceneGraph.update(dt);
 
+	mPseudoCode->setCode(mDataStructure->getCode());
+	mPseudoCode->setStep(mDataStructure->getStep());
+
 	mInfoPanel->setText(mDataStructure->getInfo());
+
+	// mProgressBar->setProgress(mDataStructure->getProgress());
 }
 
 void World::draw()
 {
 	mWindow.draw(background);
-
-	// mMainUI->draw(mWindow, sf::RenderStates::Default);
 	mWindow.draw(mSceneGraph);
-	// if (mPseudoCode) mPseudoCode->draw(mWindow);
-
-}
-
-void World::loadTextures()
-{
 }
 
 void World::buildScene()
@@ -59,16 +51,22 @@ void World::buildScene()
 	}
 
 	PseudoCode::Ptr pseudo(new PseudoCode(mFonts.get(Fonts::ID::Main)));
+	pseudo->setPosition(UI::CODEBOX::Position);
 	mPseudoCode = pseudo.get();
 	mSceneLayers[CodeBox]->attachChild(std::move(pseudo));
-	mSceneLayers[CodeBox]->setPosition(UI::TOOLBOX::Position);
 
-	mInfoPanel = new GUI::InfoPanel(300, 200, sf::Vector2f(100, 300));
-	mInfoPanel->setCharacterSize(30);
+	InfoPanel::Ptr panel(new InfoPanel(mFonts.get(Fonts::ID::Main), UI::INFOBOX::Size));
+	panel->setPosition(UI::INFOBOX::Position);
+	mInfoPanel = panel.get();
+	mSceneLayers[InfoBox]->attachChild(std::move(panel));
 	
 	MainUI::Ptr mainUI(new MainUI(mTextures, mFonts));
 	mMainUI = mainUI.get();
 	mSceneLayers[SidePanel]->attachChild(std::move(mainUI));
+
+	ProgressBar::Ptr progress(new ProgressBar(100, 100, 100, 20));
+	mProgressBar = progress.get();
+	mSceneLayers[Progress]->attachChild(std::move(progress));
 
 	sf::Texture &bg = mTextures.get(Textures::AppBackground);
 	background.setTexture(bg);
@@ -111,8 +109,27 @@ void World::handleEvent(const sf::Event& event)
 
 	mMainUI->handleEvent(event);
 	updateBackRequest();
-}
 
+	if (event.type == sf::Event::KeyPressed) {
+		if (event.key.code == sf::Keyboard::A) {
+			ANIMATION::Speed *= 1.2;
+			if (ANIMATION::Speed >= 10) 
+			ANIMATION::Speed = 0.2f;
+		}
+		if (event.key.code == sf::Keyboard::U) {
+			mDataStructure->undo();
+		}
+		if (event.key.code == sf::Keyboard::R) {
+			mDataStructure->redo();
+		}
+	}
+
+	if (mProgressBar->handleEvent(event))
+	{
+		mDataStructure->loadStep(mProgressBar->getProgress());	
+	}
+}
+ 
 void World::updateBackRequest()
 {
 	BackRequest = mMainUI->getBackRequest();
