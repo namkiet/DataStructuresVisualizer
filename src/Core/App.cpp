@@ -1,6 +1,7 @@
 #include <Core/App.hpp>
 #include <State/TitleState.hpp>
 #include <State/MenuState.hpp>
+#include <State/SettingsState.hpp>
 #include <State/InApp.hpp>
 #include <Core/Variables.hpp>
 #include <iostream>
@@ -38,6 +39,7 @@ void App::registerStates()
 {
     mStateStack.registerState<TitleState>(States::Title);
     mStateStack.registerState<MenuState>(States::Menu);
+    mStateStack.registerState<SettingsState>(States::Settings);
     mStateStack.registerState<InApp>(States::InAppAVL);
     mStateStack.registerState<InApp>(States::InAppHeap);
     mStateStack.registerState<InApp>(States::InAppGraph);

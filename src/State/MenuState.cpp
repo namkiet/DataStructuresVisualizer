@@ -55,13 +55,13 @@ bool MenuState::handleEvent(const sf::Event& event)
 		if (event.key.code == sf::Keyboard::Right)
 			mCarousel.next();
 
+
 		if (event.key.code == sf::Keyboard::A)
 		{
-			requestStackPush(States::InAppAVL);
+            requestStackPop();
+			requestStackPush(States::Settings);
 		}
 	}
-
 	mCarousel.handleEvent(event);
-
 	return true;
 }

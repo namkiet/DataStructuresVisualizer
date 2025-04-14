@@ -8,6 +8,12 @@ namespace ANIMATION
 namespace SCREEN
 {
     sf::Color BackgroundColor   = sf::Color(76, 44, 132);
+
+    // sf::Texture txt;
+    // txt.loadFromFile("assets/images/bg.jpg");
+    // sf::Sprite BackgroundImage(txt);
+    // BackgroundImage.setTexture(txt);
+    
     float Width                 = 1600;
     float Height                = 900;
 }

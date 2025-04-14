@@ -138,3 +138,13 @@ void CircleNode::setNote(std::string note)
     mNote.setString(note);
     centerOrigin(mNote);
 }
+
+void CircleNode::setSize(float size)
+{
+    mShape.setOutlineThickness(mShape.getOutlineThickness() / mShape.getRadius() * size);
+    mTextSize = mTextSize / mShape.getRadius() * size;
+    updateText();
+    mShape.setRadius(size);
+    mShape.setOrigin(sf::Vector2f(size, size));
+    mText.setPosition(mShape.getPosition());
+}

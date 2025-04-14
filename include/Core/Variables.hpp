@@ -9,6 +9,7 @@ namespace ANIMATION
 namespace SCREEN
 {
     extern sf::Color BackgroundColor;
+    // extern sf::Sprite BackgroundImage;
     extern float Width;
     extern float Height;
 }

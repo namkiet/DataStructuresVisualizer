@@ -40,6 +40,7 @@ public:
     float                   getTextSize();
     void                    setTextSize(float textSize);   
     void                    setNote(std::string note);
+    void                    setSize(float size);
 
 protected:
     void                    updateText();
