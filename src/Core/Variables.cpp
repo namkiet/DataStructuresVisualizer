@@ -61,12 +61,13 @@ namespace UI
     }
 }
 
-namespace VIZ
+namespace VIZ    
 {
     namespace DS
     {
         sf::Vector2f Size           = sf::Vector2f(SCREEN::Width - UI::TOOLBOX::Size.x, SCREEN::Height - 2 * UI::TOOLBOX::Position.y);
         sf::Vector2f Position       = sf::Vector2f(UI::TOOLBOX::Size.x, UI::TOOLBOX::Position.y);
+        sf::Vector2f Center         = sf::Vector2f(Position.x + Size.x / 2, Position.y + Size.y / 2); // 750 360
         float RowSpacing            = Size.y / 8;
     }
 

@@ -243,6 +243,7 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
             highlightNode(node, VIZ::NODE::FillColor, 0.3f, false);
             // mActionQueue.pushAction(Action::FadeOutNode(node, 0.3f));
 
+
             if (node->mParent)
             {
                 moveEdge(node->mParent, node, temp, 0.3f);

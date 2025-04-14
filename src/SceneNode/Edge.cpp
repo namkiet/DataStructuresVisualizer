@@ -3,6 +3,8 @@
 #include<iostream>
 #include <Core/Variables.hpp>
 
+
+#include <Core/Variables.hpp>
 Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, bool hasArrow, float thickness): 
     mFrom(from),
     mTo(to),
@@ -69,7 +71,7 @@ int Edge::getWeight(){
 
 
 void Edge::updateEdge()
-{  
+{
     if (!mHasWeight)
     {
         mLine[0].color = mColor;
@@ -158,8 +160,6 @@ void Edge::updateEdge()
         mLine2[1].position = mLine1[3].position;
         mLine2[3].position = mTail - offset + perp;
         mLine2[2].position = mTail - offset - perp;
-
-        return;
 
         // set Arrow
         sf::Color ArrowColor = (mMid != mTail)? mColor : mMarkColor;

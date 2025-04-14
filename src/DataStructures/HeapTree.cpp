@@ -1,6 +1,7 @@
 #include <DataStructures/HeapTree.hpp>
 #include <queue>
 #include <iostream>
+#include <cmath>
 
 HeapTree::HeapTree() {}
 

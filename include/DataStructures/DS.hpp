@@ -30,12 +30,15 @@ private:
     virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 
 
+public:
+    void                            changeNodePosition(int id, sf::Vector2f Pos);
+    sf::Vector2f                    getWorldPosition(int id);
+
 // ==================== DATA STORAGE ====================
 protected:
     ActionQueue                     mActionQueue;
     std::vector<CircleNode::Ptr>    mNodeList;
     std::vector<Edge::Ptr>          mEdgeList;
-
 
 // ==================== ACTION METHODS ====================
 protected:
@@ -44,17 +47,23 @@ protected:
     // Node actions
     void                            addNode(CircleNode* node);
     void                            removeNode(CircleNode* node);
+
     void                            moveNode(CircleNode* node, sf::Vector2f targetPos, float duration);
     void                            highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse = true);
+    void                            changeNodeColor(CircleNode* node, sf::Color highlightColor, float duration);
     void                            swapTwoNodes(CircleNode* a, CircleNode* b, float duration);
     void                            deleteNodeEffect(CircleNode* node, float duration);
     void                            deleteNode(CircleNode* node);
 
     // Edge actions
     void                            addEdge(CircleNode* parent, CircleNode* child, bool hasArrow = false);
+    void                            addEdge(CircleNode* parent, CircleNode* child, int weight = -1, bool hasArrow = false);
+
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
     void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+    void                            changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+
 
 
 // ==================== Step-By-Step ====================

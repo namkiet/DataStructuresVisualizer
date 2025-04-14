@@ -30,6 +30,7 @@ private:
     sf::Vector2f                mMid;
     sf::Vector2f                mTail;
     sf::Color                   mColor;
+
     
     sf::VertexArray             mLine;
     bool                        mHasArrow;
@@ -38,7 +39,6 @@ private:
     sf::VertexArray             mLine1; // mFrom to mMid
     sf::VertexArray             mLine2; // mMid to mTo
     bool                        isReversed;
-
 
 private:
     float                       mArrowSize;

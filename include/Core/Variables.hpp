@@ -22,6 +22,7 @@ namespace UI
         extern sf::Color FillColor;
         extern sf::Vector2f Size;
         extern sf::Vector2f Position;
+
     }
 
     namespace INFOBOX
@@ -64,6 +65,7 @@ namespace VIZ
         extern sf::Vector2f Size;
         extern sf::Vector2f Position;
         extern float RowSpacing;
+        extern sf::Vector2f Center;
     }
 
     namespace NODE

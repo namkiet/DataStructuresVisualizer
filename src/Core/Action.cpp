@@ -71,6 +71,49 @@ namespace Action
         };
     }
 
+    ActionFunc ChangeNodeColor(CircleNode* node, sf::Color highlightColor, float duration) // highlight node and change to the highlight color
+    {
+        return [node, highlightColor, duration, 
+                elapsed = 0.0f, isInit = false,
+                startFillColor = sf::Color(), startOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
+        {   
+            if (!node) return true;
+        
+            if (!isInit)
+            {   
+                startFillColor = node->getFillColor();
+                startOutlineColor = node->getOutlineColor();
+                isInit = true;
+            }
+
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
+            float t = std::sin((elapsed / duration) * 3.14159f / 2); // Biến thiên theo sóng sin
+
+            sf::Color newFillColor(
+                int(startFillColor.r + t * (highlightColor.r - startFillColor.r)),
+                int(startFillColor.g + t * (highlightColor.g - startFillColor.g)),
+                int(startFillColor.b + t * (highlightColor.b - startFillColor.b))
+            );
+
+            sf::Color newOutlineColor(
+                int(startOutlineColor.r + t * (highlightColor.r - startOutlineColor.r)),
+                int(startOutlineColor.g + t * (highlightColor.g - startOutlineColor.g)),
+                int(startOutlineColor.b + t * (highlightColor.b - startOutlineColor.b))
+            );
+
+            node->setFillColor(newFillColor);
+            node->setOutlineColor(newOutlineColor);
+
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
+            {
+                // std::cerr << "Node " << node->mValue << " is highlighted \n";
+                return true;
+            }
+
+            return false;
+        };
+    }
+
     ActionFunc MoveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
     {
         return [node, targetPos, duration,
@@ -300,6 +343,87 @@ namespace Action
         };
     }
 
+    ActionFunc ChangeEdgeColor(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
+    {
+        return [&edgeList, parent, child, highlightColor, duration, 
+            elapsed = 0.0f, isInit = false, 
+            edge = static_cast<Edge*>(nullptr), 
+            startColor = sf::Color()](sf::Time dt) mutable -> bool 
+        {    
+            if (!child) return true;
+
+            if (!isInit)
+            {   
+                edge = Helper::findEdge(edgeList, parent, child);
+                if (!edge) return true;
+    
+                startColor = edge->getColor();
+                isInit = true;
+            }
+    
+            elapsed += dt.asSeconds() * ANIMATION::Speed;
+            float t = std::sin((elapsed / duration) * 3.14159f / 2); // Biến thiên theo sóng sin
+    
+            sf::Color newColor(
+                int(startColor.r + t * (highlightColor.r - startColor.r)),
+                int(startColor.g + t * (highlightColor.g - startColor.g)),
+                int(startColor.b + t * (highlightColor.b - startColor.b))
+            );
+    
+    
+            edge->setColor(newColor);
+    
+            if (elapsed >= duration || ANIMATION::Speed >= 1000)
+            {
+                // std::cerr << "Edge " << parent->mValue << "-" << (child ? child->mValue : -1) << " is traversed \n";
+                edge->setColor(highlightColor);
+                return true;
+            }
+    
+            return false;
+        };
+    }
+
+    Action::ActionFunc MarkEdge(Edge* edge, int direction, float duration)
+{
+    return [edge, duration, 
+            elapsed = 0.f, isInit = false, direction
+            ](sf::Time dt) mutable -> bool
+    {
+        if (!edge) return true;
+
+        if(direction == -1 && isInit == false){
+            // swap mHead and mTail
+            edge->swapEndpoint();
+            isInit = true;
+            edge->mIsChangingTail = true;
+        }
+        sf::Vector2f head = edge->getHead();
+        sf::Vector2f tail = edge->getTail();
+        
+        elapsed += dt.asSeconds() * ANIMATION::Speed;
+        float t = elapsed / duration;
+        t = std::min(t, 1.0f);
+
+        sf::Vector2f mid = head + (tail - head) * t;
+        edge->setMid(mid);
+
+        if (elapsed >= duration || ANIMATION::Speed >= 1000)
+        {
+            if(direction == -1){
+                // swap mHead and mTail again
+                edge->swapEndpoint();
+                edge->mIsChangingTail = false;
+            }
+            edge->resetMid();
+            edge->setColor(edge->getMarkColor());
+
+            return true;
+        }
+
+        return false;
+    };
+}
     namespace Helper
     {
         Edge* findEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child)

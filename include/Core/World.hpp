@@ -14,7 +14,7 @@
 #include <GUI/DeliverTextBox.hpp>
 
 #include <DataStructures/LinkedList.hpp>
-
+#include "DataStructures/Graph.hpp"
 #include <SceneNode/PseudoCode.hpp>
 #include <SceneNode/InfoPanel.hpp>
 #include <SceneNode/ProgressBar.hpp>

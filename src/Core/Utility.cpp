@@ -79,7 +79,7 @@ sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
 
 sf::Vector2f CenterAttraction(sf::Vector2f pos){
 	float k_a = 0.008f;
-	sf::Vector2f center = sf::Vector2f(100, 100);
+	sf::Vector2f center = VIZ::DS::Center - VIZ::DS::Position;
 	sf::Vector2f dist = center - pos;
 	return sf::Vector2f (dist.x * k_a, dist.y * k_a);
 }
