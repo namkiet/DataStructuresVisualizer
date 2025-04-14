@@ -15,17 +15,12 @@ public:
     void                        empty() override;
     void                        InsertAtHead(int value);   
     void                        InsertAtLast(int value);
-
     void                        insertAtIndex(int value, int index);
 
 private:
     LinkedListNode*             mHead;
     void                        align() override { align(mHead); };
     void                        align(LinkedListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));
-    
-private:
-    void                        saveState(std::vector<History> &stack) override;
-    void                        loadState(History history) override;
 
 private:
     int                         maxRowNode;

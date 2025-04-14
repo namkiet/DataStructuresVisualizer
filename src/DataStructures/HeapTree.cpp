@@ -6,7 +6,8 @@ HeapTree::HeapTree() {}
 
 void HeapTree::insert(int value)
 {
-    execute();
+    if (isRunning()) return;
+    resetHistory();
 
     mCode = {
         "A.push_back(x)",
@@ -70,7 +71,8 @@ void HeapTree::insert(int value)
 
 void HeapTree::remove(int value)
 {
-    execute();
+    if (isRunning()) return;
+    resetHistory();
 
     if (mNodeList.size() == 0) return;
 
@@ -119,8 +121,7 @@ void HeapTree::heapifyUp(int index)
 {
     if (index == 0) return;
 
-    execute();
-    int parent = (index - 1) / 2;
+        resetHistory();    resetHistory();    resetHistory();    resetHistory();int parent = (index - 1) / 2;
 
     // createNewActionGroup();
     // mActionQueue.pushAction(Action::Wait(0.1f));
@@ -181,33 +182,4 @@ void HeapTree::heapifyDown(int index)
 void HeapTree::empty()
 {
     DS::empty();
-}
-
-void HeapTree::saveState(std::vector<History> &stack)
-{
-    if (ANIMATION::Speed >= 1000) return;
-
-    std::vector<CircleNode::Ptr> savedNodeList;
-    std::vector<Edge::Ptr> savedEdgeList;
-
-    int n = mNodeList.size();
-
-    for (int i = 0; i < mNodeList.size(); i++)
-    {
-        CircleNode* cur = new CircleNode(*mNodeList[i].get());
-        savedNodeList.push_back(CircleNode::Ptr(cur));
-
-        CircleNode* left = 2 * i + 1 < n ? new CircleNode(*mNodeList[2 * i + 1].get()) : nullptr;
-        CircleNode* right = 2 * i + 2 < n ? new CircleNode(*mNodeList[2 * i + 2].get()) : nullptr;
-        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, cur, left, false, VIZ::EDGE::Thickness));
-        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, cur, right, false, VIZ::EDGE::Thickness));
-    }
-
-    stack.push_back(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr, mInfo, mStep));
-}
-
-void HeapTree::loadState(History history)
-{
-    std::cerr << "LoadHeap \n";
-    DS::loadState(std::move(history));
 }

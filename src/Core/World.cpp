@@ -126,10 +126,10 @@ void World::handleEvent(const sf::Event& event)
 
 	if (mProgressBar->handleEvent(event))
 	{
-		mDataStructure->loadState(mProgressBar->getProgress());	
+		mDataStructure->loadStep(mProgressBar->getProgress());	
 	}
 }
-
+ 
 void World::updateBackRequest()
 {
 	BackRequest = mMainUI->getBackRequest();

@@ -16,8 +16,7 @@ void LinkedList::insert(int value)
 bool LinkedList::search(int value)
 {
     if (isRunning()) return false;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     mCode = {
         "if empty: return NOT_FOUND",
@@ -86,8 +85,7 @@ bool LinkedList::search(int value)
 void LinkedList::remove(int value)
 {
     if (isRunning()) return;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     mCode = {
         "if empty: return",
@@ -172,8 +170,7 @@ void LinkedList::remove(int value)
 void LinkedList::InsertAtHead(int value)
 {
     if (isRunning()) return;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     mCode = {
         "node = new Node(x)",
@@ -225,8 +222,7 @@ void LinkedList::InsertAtLast(int value)
 void LinkedList::insertAtIndex(int value, int index)
 {
     if (isRunning()) return;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     if (index == 0)
     {
@@ -397,51 +393,4 @@ void LinkedList::empty()
 {
     mHead = nullptr;
     DS::empty();
-}
-
-void LinkedList::saveState(std::vector<History> &stack) 
-{
-    if (ANIMATION::Speed >= 1000) return;
-
-    std::vector<CircleNode::Ptr> savedNodeList;
-    std::vector<Edge::Ptr> savedEdgeList;
-
-    if (!mHead)
-    {
-        stack.push_back(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr, mInfo, mStep));
-        return;
-    }
-
-    std::vector<LinkedListNode::Ptr> tempNodeList;
-
-    // Clone root node
-    LinkedListNode* savedHead = new LinkedListNode(*mHead);
-    tempNodeList.push_back(LinkedListNode::Ptr(savedHead));
-
-    LinkedListNode* cur = mHead;
-    LinkedListNode* clone = savedHead;
-
-    while (cur) {
-        LinkedListNode* nextClone = cur->mNext ? new LinkedListNode(*cur->mNext) : nullptr;
-
-        clone->mNext = nextClone;
-        if (nextClone) nextClone->mPrev = clone;
-
-        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, clone, nextClone, true, VIZ::EDGE::Thickness));
-        if (nextClone) tempNodeList.push_back(LinkedListNode::Ptr(nextClone));
-        
-        cur = cur->mNext;
-        clone = nextClone;
-    }
-
-    for (auto& node : tempNodeList)
-        savedNodeList.push_back(std::move(node));
-
-    stack.push_back(History(std::move(savedNodeList), std::move(savedEdgeList), savedHead, mInfo, mStep));
-}
-
-void LinkedList::loadState(History history)
-{
-    DS::loadState(std::move(history));
-    mHead = static_cast<LinkedListNode*>(history.baseNode);
 }

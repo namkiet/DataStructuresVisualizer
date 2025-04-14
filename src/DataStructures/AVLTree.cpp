@@ -7,8 +7,7 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 void AVLTree::insert(int value)
 {
     if (isRunning()) return;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     mCode = {
         "insert x",
@@ -31,8 +30,7 @@ void AVLTree::insert(int value)
 void AVLTree::remove(int value)
 {
     if (isRunning()) return;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     mCode = {
         "remove x",
@@ -57,8 +55,7 @@ void AVLTree::remove(int value)
 bool AVLTree::search(int value)
 {
     if (isRunning()) return false;
-    DS::loadState(1.f);
-    mUndoStack.clear();
+    resetHistory();
 
     mCode = {
         "if this == null: return false",
@@ -289,10 +286,7 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
 
             createNewActionGroup();
             swapTwoNodes(cur, node, 0.3f);
-
-            // mActionQueue.pushInstantAction([=]() {
-                removeHelper(node->mRight, value);
-            // });
+            removeHelper(node->mRight, value);
         }
     }
 
@@ -544,65 +538,4 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
 
     align(curNode->mLeft, leftChildPos, newSpacingX, newSpacingY);
     align(curNode->mRight, rightChildPos, newSpacingX, newSpacingY);
-}
-
-void AVLTree::saveState(std::vector<History> &stack)
-{
-    if (ANIMATION::Speed >= 1000) return;
-
-    std::vector<CircleNode::Ptr> savedNodeList;
-    std::vector<Edge::Ptr> savedEdgeList;
-
-    if (!mRoot)
-    {
-        stack.push_back(History(std::move(savedNodeList), std::move(savedEdgeList), nullptr, mInfo, mStep));
-        return;
-    }
-
-    std::vector<TreeNode::Ptr> tempNodeList;
-
-    // Clone root node
-    TreeNode* savedRoot = new TreeNode(*mRoot);
-    tempNodeList.push_back(TreeNode::Ptr(savedRoot));
-
-    // BFS clone toàn bộ cây
-    std::queue<std::pair<TreeNode*, TreeNode*>> q;
-    q.push({mRoot, savedRoot});
-
-    while (!q.empty()) {
-        auto [oldNode, newNode] = q.front();
-        q.pop();
-
-        TreeNode* newLeft = oldNode->mLeft ? new TreeNode(*oldNode->mLeft) : nullptr;
-        TreeNode* newRight = oldNode->mRight ? new TreeNode(*oldNode->mRight) : nullptr;
-
-        newNode->mLeft = newLeft;
-        newNode->mRight = newRight;
-        if (newLeft) newLeft->mParent = newNode;
-        if (newRight) newRight->mParent = newNode;
-
-        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, newNode, newNode->mLeft, false, VIZ::EDGE::Thickness));
-        savedEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, newNode, newNode->mRight, false, VIZ::EDGE::Thickness));
-
-        if (newLeft) {
-            tempNodeList.push_back(TreeNode::Ptr(newLeft));
-            q.push({oldNode->mLeft, newLeft});
-        }
-        if (newRight) {
-            tempNodeList.push_back(TreeNode::Ptr(newRight));
-            q.push({oldNode->mRight, newRight});
-        }
-    }
-
-    for (auto& node : tempNodeList)
-        savedNodeList.push_back(std::move(node));
-
-    stack.push_back(History(std::move(savedNodeList), std::move(savedEdgeList), savedRoot, mInfo, mStep));
-
-}
-
-void AVLTree::loadState(History history)
-{
-    DS::loadState(std::move(history));
-    mRoot = static_cast<TreeNode*>(history.baseNode);
 }

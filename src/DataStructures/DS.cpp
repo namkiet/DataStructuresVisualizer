@@ -2,6 +2,11 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 
+DS::DS()
+{
+    saveStep();
+}
+
 void DS::empty()
 {
     mEdgeList.clear();
@@ -14,100 +19,107 @@ bool DS::isRunning()
     return !mActionQueue.isEmpty();
 }
 
-void DS::loadState(float progress)
-{
-    if (mUndoStack.empty()) return;
+void DS::saveStep() {
+    if (ANIMATION::Speed >= 1000) return;
 
-    curId = int(progress * (mUndoStack.size() - 1));
-    loadState(mUndoStack[curId]);
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8; 
+
+    sf::RenderTexture rt;
+    rt.create(VIZ::DS::Size.x, VIZ::DS::Size.y, settings);
+    rt.clear(sf::Color::Transparent);
+
+    for (auto &edge: mEdgeList)
+        if (edge) rt.draw(*edge);
+
+    for (auto &node: mNodeList)
+        if (node) rt.draw(*node);
+    rt.display();
+
+    // rt.setSmooth(true);
+    mH.push_back(rt.getTexture());
 }
 
-void DS::loadState(History history)
+void DS::loadStep(float progress)
 {
-    empty();
-    mNodeList = std::move(history.nodeList);
-    mEdgeList = std::move(history.edgeList);
-    mInfo = std::move(history.info);
-    mStep = std::move(history.step);
+    if (mH.empty()) return;
+    cS = int(progress * (mH.size() - 1));
 }
 
 bool DS::canUndo()
 {
-    return curId >= 1;
+    return cS > 0;
 }
 
 bool DS::canRedo()
 {
-    return curId < mUndoStack.size() - 1;
-}
-
-void DS::execute()
-{
-    saveState(mUndoStack);
-    std::cerr << "Undo size: " << mUndoStack.size() << "\n";
+    return cS + 1 < mH.size();
 }
 
 void DS::undo()
 {
-    // if (!canUndo()) return;
-    // loadState(mUndoStack[--curId]);
+    // isReverse = true;
+    if (canUndo()) cS--;
 }
 
 void DS::redo()
 {
-    // if (!canRedo()) return;
-    // loadState(mUndoStack[++curId]);
+    if (canRedo()) cS++;
 }
 
 float DS::getProgress()
 {
-    if (currentHistorySize <= 1) return 1.f;
-
-    float progress = (curId * 1.f) / (currentHistorySize - 1);
-
-    std::cerr << "Cur id: " << curId << "_ " << currentHistorySize << " " << " - Progress: " << progress << "\n";
-
+    if (mH.size() <= 1) return 1.f;
+    float progress = (cS * 1.f) / (mH.size() - 1);
     return progress;
+}
+
+void DS::resetHistory()
+{
+    auto c = mH.back();
+    mH.clear();
+    mH.push_back(c);
+    cS = 0;
 }
 
 void DS::updateCurrent(sf::Time dt)   
 {
-    std::cerr << mNodeList.size() << "\n";
+    if (isReverse)
+    {
+        timer += dt.asSeconds();
+        if (timer >= 20 * dt.asSeconds())
+        {
+            if (cS > 0) cS--;
+            else isReverse = false;
+
+            timer = 0;
+        }
+        return;
+    }
+
     if (mActionQueue.isEmpty())
     {
         mStep = mLastStep;
         if (mLastInfo != "#") mInfo = mLastInfo;
-
-        currentHistorySize = 0;
-        curId = 0;
-
     }
     else 
     {
-        // // timer += dt.asSeconds();
-        // if (currentHistorySize == 0)
-        //     currentHistorySize = mActionQueue.size();
-
-        // execute();
+        timer += dt.asSeconds();
         float t = mActionQueue.update(dt);
-        if (t)
-        {
-            execute();
-        }
-        // //     // timer = t;
 
-        // //     std::cerr << "time: " << t << "\n";
-
-        // //     execute();
-        // //     curId = mUndoStack.size() - 1;
-
-        // //     std::cerr << "???: " << curId << "\n";
-        // // }
-
-        // if (!t) 
+        // if (timer >= 0.1)
         // {
-        //     mUndoStack.pop_back();
+        saveStep();
+        cS++;
+        // timer = 0;
         // }
+        if (!t && timer < 0.1f)
+        {
+            mH.pop_back();
+            cS--;
+        }
+
+        if (timer >= 0.1f) timer = 0;
     }
 
     for (auto &edge: mEdgeList)
@@ -115,18 +127,28 @@ void DS::updateCurrent(sf::Time dt)
 
     for (auto &node: mNodeList)
         if (node) node->update(dt);
-
 }
 
 void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {    
     states.transform *= getTransform();  
-    
-    for (auto &edge: mEdgeList)
-        if (edge) edge->draw(target, states);
 
-    for (auto &node: mNodeList)
-        if (node) node->draw(target, states);
+    if (cS != mH.size() - 1) // not the last step
+    {
+        if (!mH.empty())
+        {
+            sf::Sprite sprite(mH[cS]);
+            target.draw(sprite, states);
+        }
+    }
+    else // last step
+    {   
+        for (auto &edge: mEdgeList)
+            if (edge) edge->draw(target, states);
+
+        for (auto &node: mNodeList)
+            if (node) node->draw(target, states);
+    }
 }
 
 void DS::addNode(CircleNode* node)
@@ -184,13 +206,11 @@ void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duratio
 
 void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from mNodeList and create dissapear effect
 {
-    std::cout<<"start Delete node effect\n";
     mActionQueue.pushAction(Action::DeleteNode(node, duration));
-    std::cout<<"end Delete node effect\n";
 }
 
-void DS::deleteNode(CircleNode* node){
-    std::cout<<"start Delete node\n";
+void DS::deleteNode(CircleNode* node)
+{
     mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
     {
         mNodeList.erase(
@@ -200,16 +220,13 @@ void DS::deleteNode(CircleNode* node){
         }),
         mNodeList.end()
     );
-    std::cout<<"end Node removed\n";
         return true;
     });
-
 }
 
 void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
 {
     if (!node) return;
-    sf::Vector2f prevPos = node->getPosition();
     mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration));
 }
 

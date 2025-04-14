@@ -29,8 +29,4 @@ private:
 private:
     void                        align() override { align(mRoot); };
     void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing), float curSpacingX = VIZ::DS::Size.x / 4, float curSpacingY = VIZ::DS::RowSpacing);        
-
-private:
-    void                        saveState(std::vector<History> &stack) override;
-    void                        loadState(History history) override;
 };

@@ -15,6 +15,8 @@ class DS: public SceneNode
 {
 // ==================== BASIC FUNCTIONS ====================
 public:
+                                    DS();
+    bool                            isRunning();
     virtual void                    insert(int value) = 0;
     virtual void                    remove(int value) = 0;
     virtual bool                    search(int value) = 0;
@@ -55,39 +57,24 @@ protected:
     void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
 
 
-// ==================== UNDO / REDO ====================
-protected:
-    struct History
-    {
-        std::vector<CircleNode::Ptr> nodeList;
-        std::vector<Edge::Ptr> edgeList;
-        CircleNode* baseNode;
-        std::string info;
-        float step;
-
-        History(std::vector<CircleNode::Ptr>&& nodeList, std::vector<Edge::Ptr>&& edgeList, CircleNode* baseNode, std::string info, float step)
-        : nodeList(std::move(nodeList)), edgeList(std::move(edgeList)), baseNode(baseNode), info(info), step(step) {};
-    };
-
-    std::vector<History>            mUndoStack;
-    std::stack<History>             mRedoStack;
-
+// ==================== Step-By-Step ====================
 public:
-    bool                            isRunning();
     bool                            canUndo();
     bool                            canRedo();
     void                            undo();
     void                            redo();
-    void                            loadState(float progress);
+    void                            loadStep(float progress);
     float                           getProgress();
 
-protected:
-    int                             curId = 0;
-    int                             currentHistorySize;
+private:
+    void                            saveStep();
+    bool                            isReverse = false;
+    std::vector<sf::Texture>        mH;
+    int                             cS = 0;
+    float                           timer;
 
-    void                            execute();
-    virtual void                    saveState(std::vector<History> &stack) = 0;
-    virtual void                    loadState(History history);
+protected:
+    void                            resetHistory();
     
 // ==================== INFO / PSEUDOCODE SUPPORT ====================
 protected:
@@ -102,6 +89,4 @@ public:
     std::vector<std::string>        getCode();
     int                             getStep();
 
-private:
-    float                           timer;
 };
