@@ -1,5 +1,6 @@
 #include <Core/Utility.hpp>
-
+#include <iostream>
+#include "Core/Variables.hpp"
 void centerOrigin(sf::Sprite& sprite)
 {
 	sf::FloatRect bounds = sprite.getLocalBounds();
@@ -56,24 +57,46 @@ float angle(sf::Vector2f a, sf::Vector2f b)
     return std::atan2(vec.y, vec.x);
 }
 
-std::string wrapText(const std::string& text, const sf::Font& font, unsigned int charSize, float maxWidth)
+sf::Vector2f NormalUnitVector(sf::Vector2f vec){
+	return sf::Vector2f(vec.y / norm(vec), vec.x * (-1) / norm(vec));
+	
+}
+
+sf::Vector2f Repulsion(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
 {
-    std::istringstream words(text);
-    std::string word, line, wrappedText;
-    sf::Text testText("", font, charSize);
+	float dist = (norm(pos1 - pos2) <= 1)? 1: norm(pos1 - pos2);
+	// if (dist == 0) return sf::Vector2f(0, 0);
+	return (pos2 - pos1)/norm(pos1-pos2) * (coefficient / (dist * dist));
+} // repulsion of pos 1 acting on pos 2
 
-    while (words >> word) {
-        std::string tempLine = line.empty() ? word : line + " " + word;
-        testText.setString(tempLine);
+sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
+{
+	// std::cout<<"Jump to attraction ok"<<std::endl;
+	float dist = (norm(pos1 - pos2) <= 1)? 1: norm(pos1 - pos2);
+	// if (dist == 0) return sf::Vector2f(0, 0);
+	return 3*(pos1 - pos2)/norm(pos1-pos2) * (dist * dist)/ coefficient;
+} // attraction of pos1 acting on pos2
 
-        if (testText.getLocalBounds().width > maxWidth) {
-            wrappedText += line + "\n";
-            line = word;
-        } else {
-            line = tempLine;
-        }
-    }
+sf::Vector2f CenterAttraction(sf::Vector2f pos){
+	float k_a = 0.008f;
+	sf::Vector2f center = sf::Vector2f(100, 100);
+	sf::Vector2f dist = center - pos;
+	return sf::Vector2f (dist.x * k_a, dist.y * k_a);
+}
 
-    wrappedText += line; 
-    return wrappedText;
+bool isValidNodePosition(sf::Vector2f pos)
+{
+	if(pos.x < 0 || pos.x > VIZ::DS::Size.x || pos.y < 0 || pos.y > VIZ::DS::Size.y)
+	{
+		return false;
+	}
+	return true;
+}
+
+void makeValidNodePosition(sf::Vector2f& pos)
+{
+	if(pos.x < 0) pos.x = 0;
+	if(pos.x > VIZ::DS::Size.x) pos.x = VIZ::DS::Size.x;
+	if(pos.y < 0) pos.y = 0;
+	if(pos.y > VIZ::DS::Size.y) pos.y = VIZ::DS::Size.y;
 }

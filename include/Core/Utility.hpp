@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include <sstream>
 
 void centerOrigin(sf::Sprite& sprite);
 void centerOrigin(sf::Text& text);
@@ -17,4 +16,13 @@ float norm(sf::Vector2f a);
 float dist(sf::Vector2f a, sf::Vector2f b);
 float angle(sf::Vector2f a, sf::Vector2f b);
 
-std::string wrapText(const std::string& text, const sf::Font& font, unsigned int charSize, float maxWidth);
+sf::Vector2f NormalUnitVector(sf::Vector2f vec);
+sf::Vector2f Repulsion(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2);
+sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2);
+
+sf::Vector2f CenterAttraction(sf::Vector2f pos);
+
+bool isValidNodePosition(sf::Vector2f pos);
+
+
+void makeValidNodePosition(sf::Vector2f& pos);
