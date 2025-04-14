@@ -50,8 +50,9 @@ Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, int weight, bool h
 
     mWeightText.setPosition(mid + vec);
     mWeightText.setCharacterSize(13);
-    mWeightText.setColor(sf::Color::Black);
+    mWeightText.setColor(sf::Color::White);
     mWeightText.setString(std::to_string(mWeight));
+    centerOrigin(mWeightText);
 
     mArrowSize = 12;
     mArrowHead.setPointCount(3);
@@ -146,8 +147,8 @@ void Edge::updateEdge()
 
         mLine1[0].position = mHead + offset - perp;
         mLine1[1].position = mHead + offset + perp;
-        mLine1[2].position = mMid - offset + perp;
-        mLine1[3].position = mMid - offset - perp;
+        mLine1[2].position = mMid + offset + perp;
+        mLine1[3].position = mMid + offset - perp;
 
         float theta = angle(mHead, mTail);
 
@@ -175,10 +176,8 @@ void Edge::updateEdge()
         });
 
         sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
-        sf::Vector2f vec = NormalUnitVector(mTo->getPosition() - mFrom->getPosition());
-        vec = sf::Vector2f(vec.x * 5.f, vec.y * 5.f);
 
-        mWeightText.setPosition(mid + vec);
+        mWeightText.setPosition(mid + perp * (mWeightText.getCharacterSize() / norm(perp)));
     }
 }
 

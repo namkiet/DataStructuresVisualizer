@@ -15,8 +15,6 @@ class Graph: public DS
             void                        insert(int value) override;
             void                        remove(int value) override;
             bool                        search(int value) override;
-            void                        saveState() override;
-            void                        loadState(History history) override;
 
             int                         EdgeID(int start, int end);
 

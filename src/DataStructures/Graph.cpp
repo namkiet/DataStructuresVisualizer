@@ -17,22 +17,20 @@ Graph::Graph(){
     ForceConstant = VIZ::DS::Size.x * VIZ::DS::Size.y / NumVer;
 
     EdgeList = {
-    {{0, 1}, 4},
-    {{0, 2}, 3},
-    {{0, 6}, 10},
-    {{0, 7}, 1},
-    {{1, 3}, 2},
-    {{1, 4}, 7},
-    {{2, 4}, 1},
-    {{2, 5}, 3},
-    {{3, 5}, 5},
-    {{4, 5}, 2},
-    {{4, 6}, 4},
-    {{5, 7}, 1},
-    {{6, 7}, 6}
-};
-
-
+        {{0, 1}, 4},
+        {{0, 2}, 3},
+        {{0, 6}, 10},
+        {{0, 7}, 1},
+        {{1, 3}, 2},
+        {{1, 4}, 7},
+        {{2, 4}, 1},
+        {{2, 5}, 3},
+        {{3, 5}, 5},
+        {{4, 5}, 2},
+        {{4, 6}, 4},
+        {{5, 7}, 1},
+        {{6, 7}, 6}
+    };
 
     int n = NumVer;
     // temp NodeList
@@ -187,11 +185,12 @@ void Graph::Prim()
         }
 
     //reset color after perform Prim
-    // mActionQueue.pushInstantAction([=](){
-    //     for(auto& Ver: mNodeList){
-    //         Ver->setFillColor(VIZ::NODE::FillColor);
-    //     }
-    // });
+    mActionQueue.pushInstantAction([=](){
+        for(auto& Ver: mNodeList){
+            Ver->setFillColor(VIZ::NODE::FillColor);
+            Ver->setOutlineColor(VIZ::NODE::OutlineColor);
+        }
+    });
     std::cout<<"Prim ok"<<std::endl;
 
 
@@ -209,65 +208,50 @@ bool Graph::search(int value) {
     std::cout << "Search value: " << value << std::endl;
     return true;
 }
-void Graph::saveState() {
-    
-}
-
-void Graph::loadState(History history) {
-
-}
 
 void Graph::updateCurrent(sf::Time dt)
 {
-    // std::cout<<"Update current occur in graph func"<<std::endl;
 
-    //     if(mEdgeList.empty())
-    // {
-    //     std::cout<<"mEdgeList is empty"<<std::endl;
-    // }
-         mActionQueue.update(dt);
-
-    for (auto &edge: mEdgeList)
-        if (edge) edge->update(dt);
-
-    for (auto &node: mNodeList)
-        if (node) node->update(dt);
-
-    // attraction between node
-    for(auto& edge: EdgeList){
-        int start = edge.first.first;
-        int end = edge.first.second;
-        sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
-        velocity[start] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
-        velocity[end] -= sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
-    }
-
-
-    // repulsion between adjacent node
-    for(int i = 0 ; i < NumVer;i++)
+    DS::updateCurrent(dt);
+    
+    if (mActionQueue.isEmpty())
     {
-        for(int j = 0; j < NumVer;j++)
+        // attraction between node
+        for(auto& edge: EdgeList){
+            int start = edge.first.first;
+            int end = edge.first.second;
+            sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
+            velocity[start] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+            velocity[end] -= sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+        }
+
+
+        // repulsion between adjacent node
+        for(int i = 0 ; i < NumVer;i++)
         {
-            if(i == j) continue;
-            sf::Vector2f force = Repulsion(ForceConstant, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
+            for(int j = 0; j < NumVer;j++)
+            {
+                if(i == j) continue;
+                sf::Vector2f force = Repulsion(ForceConstant, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
+                velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+            }
+        }
+
+        // center attraction
+        for(int i = 0 ; i < NumVer;i++){
+            sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
             velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
         }
-    }
 
-    // center attraction
-    for(int i = 0 ; i < NumVer;i++){
-        sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
-        velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
-    }
+        // update position, take into account friction
+        for(int i = 0 ; i < NumVer;i++)
+        {
+            velocity[i] *= 0.999f; // friction
+            sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
+            makeValidNodePosition(newPosition);
+            changeNodePosition(i, newPosition);
 
-    // update position, take into account friction
-    for(int i = 0 ; i < NumVer;i++)
-    {
-        velocity[i] *= 0.999f; // friction
-        sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
-        makeValidNodePosition(newPosition);
-        changeNodePosition(i, newPosition);
-
+        }
     }
 // mActionqueue phu trach viec add vao cac node cac canh
 

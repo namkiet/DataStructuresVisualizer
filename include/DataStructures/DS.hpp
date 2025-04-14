@@ -24,7 +24,7 @@ public:
     virtual void                    empty();
     void                            loadFromVector(std::vector<int> numList);
 
-private:
+protected:
     virtual void                    align() {};
     virtual void                    updateCurrent(sf::Time dt) override;
     virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
@@ -57,7 +57,7 @@ protected:
 
     // Edge actions
     void                            addEdge(CircleNode* parent, CircleNode* child, bool hasArrow = false);
-    void                            addEdge(CircleNode* parent, CircleNode* child, int weight = -1, bool hasArrow = false);
+    void                            addEdge(CircleNode* parent, CircleNode* child, int weight, bool hasArrow);
 
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);

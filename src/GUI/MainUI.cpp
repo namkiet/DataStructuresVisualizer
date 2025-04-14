@@ -478,6 +478,7 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
 
     else if (mode == World::Mode::GraphMode)
 {
+    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
     auto mGraph = static_cast<Graph*>(mDataStructure);
 
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
