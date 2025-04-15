@@ -28,6 +28,7 @@ namespace GUI
         virtual void                                deselect() override;
         int                                         getInputNum();
         void                                        setPlaceholder(const std::string& text);
+        void                                        submit();
 
     private:
         unsigned int                                mCharSize;

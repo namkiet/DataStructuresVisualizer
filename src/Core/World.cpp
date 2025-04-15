@@ -32,7 +32,7 @@ void World::update(sf::Time dt)
 
 	mInfoPanel->setText(mDataStructure->getInfo());
 
-	// mProgressBar->setProgress(mDataStructure->getProgress());
+	mProgressBar->setProgress(mDataStructure->getProgress());
 }
 
 void World::draw()
@@ -132,6 +132,11 @@ void World::handleEvent(const sf::Event& event)
 		}
 		if (event.key.code == sf::Keyboard::R) {
 			mDataStructure->redo();
+		}
+
+		if (event.key.code == sf::Keyboard::S)
+		{
+			mDataStructure->sBs();
 		}
 	}
 

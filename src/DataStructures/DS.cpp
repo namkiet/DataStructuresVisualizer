@@ -2,22 +2,20 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 
-DS::DS()
-{
-    saveStep();
-}
+DS::DS() { resetHistory(); mActionCount = 0; stop = true; }
 
 void DS::empty()
 {
+    mCode.clear();
+    mInfo = "";
+    mLastInfo = "";
+
     mEdgeList.clear();
     mNodeList.clear();
     mActionQueue.empty();
 }
 
-bool DS::isRunning()
-{
-    return !mActionQueue.isEmpty();
-}
+bool DS::isRunning() { return !mActionQueue.isEmpty(); }
 
 void DS::saveStep() {
     if (ANIMATION::Speed >= 1000) return;
@@ -34,8 +32,8 @@ void DS::saveStep() {
 
     for (auto &node: mNodeList)
         if (node) rt.draw(*node);
-    rt.display();
 
+    rt.display();
     // rt.setSmooth(true);
     mH.push_back(rt.getTexture());
 }
@@ -46,29 +44,66 @@ void DS::loadStep(float progress)
     cS = int(progress * (mH.size() - 1));
 }
 
-bool DS::canUndo()
-{
-    return cS > 0;
+bool DS::canUndo() { 
+    return cS > 0; 
 }
 
-bool DS::canRedo()
-{
-    return cS + 1 < mH.size();
+bool DS::canRedo() {
+    return cS + 1 < mH.size(); 
 }
 
 void DS::undo()
 {
-    // isReverse = true;
-    if (canUndo()) cS--;
+    // if (canUndo()) cS--;
+    // if (keyID < 0) return;
+
+    // cS = keyFrames[keyID];
+    // keyID--;
+
+    if (!canUndo()) return;
+
+    for (int i = 1; i < keyFrames.size(); i++)
+    {
+        if (keyFrames[i - 1] < cS && cS <= keyFrames[i])
+        {
+            cS = keyFrames[i - 1];
+            return;
+        }
+    }
 }
 
 void DS::redo()
 {
-    if (canRedo()) cS++;
+    // stop = false;
+    // return;
+    // if (canRedo()) cS++;
+
+    if (!canRedo()) return;
+
+    for (int i = 1; i < keyFrames.size(); i++)
+    {
+        if (keyFrames[i - 1] <= cS && cS < keyFrames[i])
+        {
+            cS = keyFrames[i];
+            return;
+        }
+    }
+}
+
+void DS::sBs()
+{
+    stop = false;
 }
 
 float DS::getProgress()
 {
+    if (isRunning())
+    {
+        if (mActionCount <= 0) return 1.f;
+        float progress = (mCurrentAction * 1.f) / mActionCount;
+        return progress;
+    }
+
     if (mH.size() <= 1) return 1.f;
     float progress = (cS * 1.f) / (mH.size() - 1);
     return progress;
@@ -76,14 +111,58 @@ float DS::getProgress()
 
 void DS::resetHistory()
 {
-    auto c = mH.back();
+    mCode.clear();
+
+    mLastStep = -1;
+    mInfo = "";
+    mLastInfo = "";
+
+    // auto c = mH.back();
     mH.clear();
-    mH.push_back(c);
+    keyFrames.clear();
+
+    saveStep();
+    // mH.push_back(c);
     cS = 0;
+
+    keyFrames.push_back(0);
+
+    keyID = -1;
+
+    stop = true;
 }
 
 void DS::updateCurrent(sf::Time dt)   
-{
+{   
+    if (isStepByStep)
+    { 
+        if (!stop)
+        {
+            float t = mActionQueue.update(dt);
+
+            if (t > 0) stop = true;
+            
+            if (mActionQueue.isEmpty())
+            {
+                mStep = mLastStep;
+                if (mLastInfo != "#") mInfo = mLastInfo;
+                
+                mCurrentAction = 0;
+                mActionCount = 0;
+            }
+        }
+
+        
+
+        for (auto &edge: mEdgeList)
+            if (edge) edge->update(dt);
+
+        for (auto &node: mNodeList)
+            if (node) node->update(dt);
+        
+        return;
+}
+
     if (isReverse)
     {
         timer += dt.asSeconds();
@@ -101,45 +180,70 @@ void DS::updateCurrent(sf::Time dt)
     {
         mStep = mLastStep;
         if (mLastInfo != "#") mInfo = mLastInfo;
+        
+        mCurrentAction = 0;
+        mActionCount = 0;
     }
     else 
     {
-        timer += dt.asSeconds();
+        mActionCount = std::max(mActionCount, mActionQueue.size());
+
+        timer += ANIMATION::Speed / mActionCount;
+
+        // if (t)
+        // {
         float t = mActionQueue.update(dt);
 
-        // if (timer >= 0.1)
+
+        // if (cS == mH.size() - 1) cS++;
+        // saveStep();
+        
+        // keyID++;
+        // keyFrames.push_back(mH.size() - 1);
+
+        // // }
+        // // keyFrames.push_back(cS);
+        // if (t >= 0) 
+        //     mCurrentAction++;
+
+        // if (t <= 0 && timer <= 0.1f) // only update every 0.1s or before important frames
         // {
-        saveStep();
-        cS++;
-        // timer = 0;
+        //     if (cS == mH.size() - 1) cS--;
+        //     mH.pop_back();
         // }
-        if (!t && timer < 0.1f)
-        {
-            mH.pop_back();
-            cS--;
-        }
+
+        // if (t <= 0)
+        // {
+        //     keyID--;
+        //     keyFrames.pop_back();
+        // }
+
+        // if (t) // important frame
+        // {
+        //     saveStep();
+        //     cS++;
+        //     // keyFrames.push_back(cS);
+        //     // keyID++;
+        // }
 
         if (timer >= 0.1f) timer = 0;
     }
-
     for (auto &edge: mEdgeList)
         if (edge) edge->update(dt);
 
     for (auto &node: mNodeList)
         if (node) node->update(dt);
+
 }
 
 void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {    
     states.transform *= getTransform();  
 
-    if (cS != mH.size() - 1) // not the last step
+    if (cS != mH.size() - 1 && !mH.empty()) // not the last step
     {
-        if (!mH.empty())
-        {
-            sf::Sprite sprite(mH[cS]);
-            target.draw(sprite, states);
-        }
+        sf::Sprite sprite(mH[cS]);
+        target.draw(sprite, states);
     }
     else // last step
     {   
@@ -195,8 +299,7 @@ void DS::addEdge(CircleNode* parent, CircleNode* child, int weight, bool hasArro
         mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, weight, hasArrow, VIZ::EDGE::Thickness));
         return true;
     });
-    } // has Weight
-    
+    } // has Weight   
 }
 
 void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
@@ -224,7 +327,14 @@ void DS::createNewActionGroup()
 
 void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duration, bool reverse)
 {
-    mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration, reverse));
+    if (reverse)
+    {
+        mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration / 2, false));
+        createNewActionGroup();
+        mActionQueue.pushAction(Action::HighlightNode(node, VIZ::NODE::FillColor, duration / 2, false));
+    }
+    else
+        mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration, false));
 }
 
 void DS::changeNodeColor(CircleNode* node, sf::Color highlightColor, float duration)
@@ -263,9 +373,12 @@ void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail,
     mActionQueue.pushAction(Action::MoveEdge(mEdgeList, parent, child, targetTail, duration)); 
 }
 
-void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
+void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse)
 {
-    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration));
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration, false));
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, VIZ::EDGE::Color, duration, false));
 }
 void DS::changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
 {

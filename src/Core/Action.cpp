@@ -273,9 +273,9 @@ namespace Action
         };     
     }
 
-    ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
+    ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse)
     {
-        return [&edgeList, parent, child, highlightColor, duration, 
+        return [&edgeList, parent, child, highlightColor, duration, reverse,
             elapsed = 0.0f, isInit = false, 
             edge = static_cast<Edge*>(nullptr), 
             startColor = sf::Color()](sf::Time dt) mutable -> bool 
@@ -292,7 +292,7 @@ namespace Action
             }
     
             elapsed += dt.asSeconds() * ANIMATION::Speed;
-            float t = std::sin((elapsed / duration) * 3.14159f); // Biến thiên theo sóng sin
+            float t = std::sin((elapsed / duration) * 3.14159f * (reverse ? 1.f : 0.5f)); // Biến thiên theo sóng sin
     
             sf::Color newColor(
                 int(startColor.r + t * (highlightColor.r - startColor.r)),
@@ -306,7 +306,7 @@ namespace Action
     
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
-                edge->setColor(startColor);
+                edge->setColor(reverse ? startColor : highlightColor);
                 return true;
             }
     

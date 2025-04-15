@@ -13,6 +13,12 @@
 
 class DS: public SceneNode
 {
+public:
+    bool isStepByStep = false;
+
+    bool stop;
+    void sBs();
+
 // ==================== BASIC FUNCTIONS ====================
 public:
                                     DS();
@@ -29,19 +35,18 @@ protected:
     virtual void                    updateCurrent(sf::Time dt) override;
     virtual void                    drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-
 public:
     void                            changeNodePosition(int id, sf::Vector2f Pos);
     sf::Vector2f                    getWorldPosition(int id);
 
 // ==================== DATA STORAGE ====================
 protected:
-    ActionQueue                     mActionQueue;
     std::vector<CircleNode::Ptr>    mNodeList;
     std::vector<Edge::Ptr>          mEdgeList;
 
 // ==================== ACTION METHODS ====================
 protected:
+    ActionQueue                     mActionQueue;
     void                            createNewActionGroup();
 
     // Node actions
@@ -61,12 +66,10 @@ protected:
 
     void                            removeEdge(CircleNode* parent, CircleNode* child); 
     void                            moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
-    void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
+    void                            traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse = true);
     void                            changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
 
-
-
-// ==================== Step-By-Step ====================
+// ==================== STEP-BY-STEP ====================
 public:
     bool                            canUndo();
     bool                            canRedo();
@@ -79,8 +82,14 @@ private:
     void                            saveStep();
     bool                            isReverse = false;
     std::vector<sf::Texture>        mH;
-    int                             cS = 0;
+    int                             cS = -1;
     float                           timer;
+
+    std::vector<int>                keyFrames;
+    int                             keyID = -1;
+
+    int mActionCount;
+    int mCurrentAction = 0;
 
 protected:
     void                            resetHistory();
@@ -97,5 +106,4 @@ public:
     std::string                     getInfo();
     std::vector<std::string>        getCode();
     int                             getStep();
-
 };

@@ -57,6 +57,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     BackButtons->setSprite(HomeSprite);
 
     mSpeedButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f, 800.f), "1x", sf::Vector2f(100, 100), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Text);
+    mSpeedButton->setToggle(false);
     mSpeedButton->setCallback([=]()
     {
         speedIndex = (speedIndex + 1) % speed.size();
@@ -65,6 +66,12 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
         mSpeedButton->setText(oss.str() + "x");
         ANIMATION::Speed = speed[speedIndex];
     });
+
+    mStepByStepButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(200.f, 50.f), "Run step by step", sf::Vector2f(100, 50), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
+    mStepByStepButton->setToggle(false);
+
+    mAtOnceButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(500.f, 50.f), "Run at once", sf::Vector2f(100, 50), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
+    mAtOnceButton->setToggle(false);
 }
 
 void MainUI::updateCurrent(sf::Time dt)
@@ -78,6 +85,8 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(*OperationButtonsList, states);
     target.draw(*BackButtons, states);
     target.draw(*mSpeedButton, states);
+    target.draw(*mStepByStepButton, states);
+    target.draw(*mAtOnceButton, states);
     
     
     for(auto &lines: mSeperateToolBoxLine)
@@ -207,7 +216,19 @@ void MainUI::initAVLButtons(AVLTree* avl)
         SearchButton->resetSubComponentInfo();
     });
 
-    
+    mStepByStepButton->setCallback([=](){
+        avl->isStepByStep = true;
+        InputBoxInsert->submit();
+        InputBoxDelete->submit();
+        InputBoxSearch->submit();
+    });
+
+    mAtOnceButton->setCallback([=](){
+        avl->isStepByStep = false;
+        InputBoxInsert->submit();
+        InputBoxDelete->submit();
+        InputBoxSearch->submit();
+    });
 
     // Pack all buttons
     OperationButtonsList->pack(CreateButton);
@@ -537,6 +558,8 @@ void MainUI::handleEvent(const sf::Event& event)
     }
 
     mSpeedButton->handleEvent(event);
+    mStepByStepButton->handleEvent(event);
+    mAtOnceButton->handleEvent(event);
     // if (mSpeedButton->isActive())
     // {
 

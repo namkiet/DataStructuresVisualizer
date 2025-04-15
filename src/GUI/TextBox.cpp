@@ -65,18 +65,7 @@ void TextBox::handleEvent(const sf::Event& event) {
     {   
         if (event.key.code == sf::Keyboard::Enter) 
         {   
-            if (!mInput.empty())
-            {
-                InputNum = std::stoi(mInput);
-                if (InputNum != 0)
-                {
-                    if(mCallback){
-                        mCallback();
-                    }
-                }
-                reset();
-                deselect();
-            }
+            submit();
         }
     }
     else if (isSelected() && event.type == sf::Event::TextEntered) 
@@ -146,5 +135,21 @@ void TextBox::setColor(sf::Color color){
 
 int TextBox::getInputNum(){
     return InputNum;
+}
+
+void TextBox::submit()
+{
+    if (!mInput.empty())
+    {
+        InputNum = std::stoi(mInput);
+        if (InputNum != 0)
+        {
+            if(mCallback){
+                mCallback();
+            }
+        }
+        reset();
+        deselect();
+    }
 }
 }

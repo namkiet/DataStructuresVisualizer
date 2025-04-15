@@ -1,5 +1,6 @@
 #include <Core/ActionQueue.hpp>
 #include <Core/Variables.hpp>
+#include <iostream>
 
 void ActionQueue::empty()
 {
@@ -15,6 +16,8 @@ void ActionQueue::pushAction(ActionFunc action, bool withPrevious)
         action(dt);
         return;
     }
+
+    
 
     if (queue.empty() || !withPrevious)
         queue.emplace_back();
@@ -38,7 +41,6 @@ float ActionQueue::update(sf::Time dt)
 {
     if (!queue.empty())
     {
-        timer += dt.asSeconds();
 
         auto &currentBatch = queue.front();
         bool allFinished = true;
@@ -46,27 +48,32 @@ float ActionQueue::update(sf::Time dt)
         for (auto currentBatchIterator = currentBatch.begin(); currentBatchIterator != currentBatch.end(); )
         {
             if ((*currentBatchIterator)(dt))
+            {
                 currentBatchIterator = currentBatch.erase(currentBatchIterator);
+            }
             else
             {
                 ++currentBatchIterator;
                 allFinished = false;
+                timer += dt.asSeconds();
             }
         }
 
         if (allFinished)
         {
             queue.pop_front();
-            // if (timer != dt.asSeconds())
-            // {
-                float t = timer;
-                timer = 0;
-                return 1;
-            // }
-            // return true;
+
+            float t = timer;
+            timer = 0;
+            
+
+            if (t != 0) return t;
+            else return -2; // finish in 0s
         }
+        else return -1; // not finished
     }
-    return 0;
+    mSize = 0;
+    return 0; // empty
 }
 
 void ActionQueue::createNewBatch()
@@ -82,5 +89,14 @@ bool ActionQueue::isEmpty() const
 
 int ActionQueue::size() const
 {
-    return queue.size();
+    // return mSize;
+    auto temp = queue;
+    int cnt = 0;
+    while (!temp.empty())
+    {
+        if (!temp.front().empty()) cnt++;
+        temp.pop_front();
+    }
+    return cnt;
+    // return queue.size();
 }

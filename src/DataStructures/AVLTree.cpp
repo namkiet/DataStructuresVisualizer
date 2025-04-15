@@ -19,7 +19,7 @@ void AVLTree::insert(int value)
         "this is balanced"
     };
 
-    mStep = 0;
+    mActionQueue.pushInstantAction([=](){ mStep = 0; });
     mLastStep = 6;
     mLastInfo = "Insertion is complete.";
 
@@ -101,7 +101,8 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         mActionQueue.pushInstantAction([=]() {
             mInfo = "Location found, inserting " + std::to_string(value) + ".";
         }, false);
-        mActionQueue.pushAction(Action::FadeInNode(node, 0.3f), false);
+        createNewActionGroup();
+        mActionQueue.pushAction(Action::FadeInNode(node, 0.3f));
 
         if (prev) // Not root node
         {

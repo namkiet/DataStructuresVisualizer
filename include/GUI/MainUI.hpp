@@ -30,6 +30,8 @@ private:
     std::vector<float> speed = {0.25f, 0.5f, 1.f, 1.5f, 2.f};
     int speedIndex = 2;
     GUI::Button::Ptr                    mSpeedButton;
+    GUI::Button::Ptr                    mStepByStepButton;
+    GUI::Button::Ptr                    mAtOnceButton;
 
 public:
                                         MainUI(TextureHolder& textures, FontHolder& fonts);

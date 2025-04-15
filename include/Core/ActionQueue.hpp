@@ -11,6 +11,7 @@ public:
 private:
     std::deque<std::vector<ActionFunc>> queue;
     float timer;
+    int mSize = 0;
 
 public:
     void empty();
