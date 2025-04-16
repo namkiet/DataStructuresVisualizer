@@ -19,6 +19,9 @@ public:
     bool stop;
     void sBs();
 
+    enum RunType { UNDO, REDO, NORMAL };
+    RunType playback;
+
 // ==================== BASIC FUNCTIONS ====================
 public:
                                     DS();
@@ -26,9 +29,10 @@ public:
     virtual void                    insert(int value) = 0;
     virtual void                    remove(int value) = 0;
     virtual bool                    search(int value) = 0;
+    virtual void                    updateValue(int value, int newValue) {};
 
     virtual void                    empty();
-    void                            loadFromVector(std::vector<int> numList);
+    virtual void                    loadFromVector(std::vector<int> numList);
 
 protected:
     virtual void                    align() {};
@@ -84,6 +88,7 @@ private:
     std::vector<sf::Texture>        mH;
     int                             cS = -1;
     float                           timer;
+    int                             targetFrame = -1;
 
     std::vector<int>                keyFrames;
     int                             keyID = -1;

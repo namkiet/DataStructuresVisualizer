@@ -198,7 +198,7 @@ namespace Action
             if (!isInit)
             {
                 startTextSize = node->getTextSize();
-                node->mValue = targetValue;
+                // node->mValue = targetValue;
                 isInit = true;
             }
 
@@ -212,6 +212,7 @@ namespace Action
 
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
             {
+                node->setValue(targetValue);
                 node->setTextSize(startTextSize);
                 return true;
             }

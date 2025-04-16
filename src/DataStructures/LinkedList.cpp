@@ -14,8 +14,7 @@ void LinkedList::insert(int value)
 }
 
 bool LinkedList::search(int value)
-{
-    if (isRunning()) return false;
+{;
     resetHistory();
 
     mCode = {
@@ -84,7 +83,6 @@ bool LinkedList::search(int value)
 
 void LinkedList::remove(int value)
 {
-    if (isRunning()) return;
     resetHistory();
 
     mCode = {
@@ -167,9 +165,72 @@ void LinkedList::remove(int value)
     mActionQueue.pushAction(Action::Wait(0.5f));
 }
 
+
+void LinkedList::updateValue(int value, int newValue)
+{
+    resetHistory();
+
+    mCode = {
+        "if empty: return",
+        "index = 0, tmp = head",
+        "while tmp.val != x:",
+        "  tmp = tmp.next",
+        "  if tmp == null: return",
+        "tmp.val = newVal"
+    };
+
+    mLastInfo = "The whole operation is O(N).";
+
+    if (!mHead) {
+        mLastStep = 0;
+        mLastInfo = "The current Linked List is empty, we do nothing.";
+        return;
+    }
+    
+    LinkedListNode* temp = mHead;
+    while (temp)
+    {
+        mActionQueue.pushInstantAction([=]() {
+            mStep = 2;
+            mInfo = "Comparing " + std::to_string(temp->mValue) + " with x = " + std::to_string(value) + ".";
+        });
+        createNewActionGroup();
+        highlightNode(temp, sf::Color::Red, 0.3f);
+
+        if (temp->mValue == value)
+        {
+            mActionQueue.pushInstantAction([=]() {
+                mStep = 5;
+                mInfo = "Update value x = " + std::to_string(value) + "to " + std::to_string(newValue) + ".";
+            });
+            mLastStep = 5;
+
+            createNewActionGroup();
+            mActionQueue.pushAction(Action::ChangeNodeValue(temp, newValue, 0.5f));
+            return;
+        }
+
+        mActionQueue.pushInstantAction([=]() {
+            mStep = 3;
+            mInfo = std::to_string(temp->mValue) + " is not equal to " + std::to_string(value) + " so we have to continue.";
+        });
+        createNewActionGroup();
+        traverseEdge(temp, temp->mNext, sf::Color::Red, 0.3f);
+
+        temp = temp->mNext;
+    }
+    
+    mActionQueue.pushInstantAction([=]() {
+        mStep = 4;
+        mInfo = "Value x = " + std::to_string(value) + " is NOT_FOUND in the Linked List.";
+    });
+    mLastStep = 4;
+    createNewActionGroup();
+    mActionQueue.pushAction(Action::Wait(0.5f));
+}
+
 void LinkedList::InsertAtHead(int value)
 {
-    if (isRunning()) return;
     resetHistory();
 
     mCode = {
@@ -221,7 +282,6 @@ void LinkedList::InsertAtLast(int value)
 
 void LinkedList::insertAtIndex(int value, int index)
 {
-    if (isRunning()) return;
     resetHistory();
 
     if (index == 0)

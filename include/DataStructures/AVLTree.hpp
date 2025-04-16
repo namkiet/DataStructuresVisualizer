@@ -12,6 +12,7 @@ public:
     void                        insert(int value) override;
     void                        remove(int value) override;
     bool                        search(int value) override;
+    void                        updateValue(int value, int newValue) override;
     void                        empty() override;
 
 private:

@@ -13,6 +13,8 @@ public:
     void                        remove(int value) override;
     bool                        search(int value) override;
     void                        empty() override;
+    void                        updateValue(int value, int newValue) override;
+
     void                        InsertAtHead(int value);   
     void                        InsertAtLast(int value);
     void                        insertAtIndex(int value, int index);

@@ -12,6 +12,8 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <unordered_set>
+#include <random>
 
 MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 {
@@ -114,6 +116,8 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     CreateButton->setFunc([CreateButton,avl]()
     {
+        if (avl->isRunning()) return;
+
         int type = CreateButton->getSubComponentInfo().InfoID;
 
         if (type == -1) return;
@@ -258,6 +262,8 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     CreateButton->setFunc([CreateButton, heap]()
     {
+        if (heap->isRunning()) return;
+
         if (CreateButton->getSubComponentInfo().InfoID == -1) 
             return;
 
@@ -318,10 +324,47 @@ void MainUI::initHeapButtons(HeapTree* heap)
         PopButton->resetSubComponentInfo();
     });
 
+    // Add Search Button
+    GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
+    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    InputBoxSearch->setCallback([this,SearchButton, InputBoxSearch]()
+    {
+        SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
+    });
+
+    SearchButton->addSubComponent(InputBoxSearch);
+    SearchButton->setFunc([this,SearchButton, heap]()
+    {
+        int num = SearchButton->getSubComponentInfo().num;
+        int ActionType = SearchButton->getSubComponentInfo().InfoID;
+        if (ActionType == -1) return;
+        else if (ActionType == 0)
+        {
+            heap->search(num);
+        }
+        
+        SearchButton->resetSubComponentInfo();
+    });
+
+    mStepByStepButton->setCallback([=](){
+        heap->isStepByStep = true;
+        InputBoxPush->submit();
+        InputBoxPop->submit();
+        InputBoxSearch->submit();
+    });
+
+    mAtOnceButton->setCallback([=](){
+        heap->isStepByStep = false;
+        InputBoxPush->submit();
+        InputBoxPop->submit();
+        InputBoxSearch->submit();
+    });
+
     // Pack all buttons
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(PushButton);
     OperationButtonsList->pack(PopButton);
+    OperationButtonsList->pack(SearchButton);
 }
 
 void MainUI::initLinkedListButtons(LinkedList* ll)
@@ -345,6 +388,8 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     CreateButton->setFunc([CreateButton, ll]()
     {
+        if (ll->isRunning()) return;
+
         int type = CreateButton->getSubComponentInfo().InfoID;
 
         if (type == -1) return;
@@ -444,7 +489,8 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         if (ActionType == -1) return;
         else if (ActionType == 0)
         {
-            ll->remove(num);
+            // ll->remove(num);
+            ll->updateValue(num, num + 10);
         }
         
         DeleteButton->resetSubComponentInfo();
@@ -469,6 +515,22 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
             ll->search(num);
         }
         SearchButton->resetSubComponentInfo();
+    });
+
+    mStepByStepButton->setCallback([=](){
+        ll->isStepByStep = true;
+        InputBoxInsertAtHead->submit();
+        InputBoxInsertAtLast->submit();
+        InputBoxDelete->submit();
+        InputBoxSearch->submit();
+    });
+
+    mAtOnceButton->setCallback([=](){
+        ll->isStepByStep = false;
+        InputBoxInsertAtHead->submit();
+        InputBoxInsertAtLast->submit();
+        InputBoxDelete->submit();
+        InputBoxSearch->submit();
     });
 
     OperationButtonsList->pack(CreateButton);
@@ -502,27 +564,93 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
     auto mGraph = static_cast<Graph*>(mDataStructure);
 
+    // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
-    GUI::Button::Ptr RandomButton = std::make_shared<GUI::Button>(
-        mFont,
-        sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y),
-        "Random",
-        sf::Vector2f(100.f, 40.f)
-    );
+    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
 
-    RandomButton->setCallback([CreateButton]() {
-        CreateButton->setSubComponentInfo(0);
-    });
+    RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
+    LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
+    EmptyButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(2); });
 
     CreateButton->addSubComponent(RandomButton);
+    CreateButton->addSubComponent(LoadButton);
+    CreateButton->addSubComponent(EmptyButton);
 
-    CreateButton->setFunc([CreateButton, mGraph]() {
-        if (CreateButton->getSubComponentInfo().InfoID == -1) return;
+    CreateButton->setFunc([CreateButton,mGraph]()
+    {
+        if (mGraph->isRunning()) return;
 
-        if (CreateButton->getSubComponentInfo().InfoID == 0) // RANDOM
+        int type = CreateButton->getSubComponentInfo().InfoID;
+
+        if (type == -1) return;
+        else if (type == 0)
         {
+            int nodeCount = 8;
+            int edgeCount = 13;
+            int minWeight = 1;
+            int maxWeight = 10;
+            
+            std::vector<int> edgeData;
+            std::unordered_set<long long> seen;
+
+            std::random_device rd;
+            std::mt19937 rng(rd());
+            std::uniform_int_distribution<int> nodeDist(0, nodeCount - 1);
+            std::uniform_int_distribution<int> weightDist(minWeight, maxWeight);
+
+            auto encode = [](int u, int v) {
+                if (u > v) std::swap(u, v);
+                return (static_cast<long long>(u) << 32) | v;
+            };
+
+            while (edgeData.size() < edgeCount * 3) {
+                int u = nodeDist(rng);
+                int v = nodeDist(rng);
+                if (u == v) continue;
+
+                long long key = encode(u, v);
+                if (seen.count(key)) continue;
+                seen.insert(key);
+
+                int w = weightDist(rng);
+                edgeData.push_back(u);
+                edgeData.push_back(v);
+                edgeData.push_back(w);
+            }
+            mGraph->loadFromVector(edgeData);
         }
+        else if (type == 1)
+        {
+            std::wstring filename = OpenFileDialog();
+            if (!filename.empty()) {
+                std::wcout << L"Selected file: " << filename << std::endl;
+                std::wifstream fin;
+                fin.open(filename);
+                if (!fin.is_open())
+                {
+                    std::cout << "Can't open file!";
+                }
+                else
+                {
+                    std::vector <int> numsFromFile;
+                    int temp;
+                    while (fin >> temp)
+                        numsFromFile.push_back(temp);
+                    for (int i = 0; i < numsFromFile.size(); i++)
+                        std::cout << numsFromFile[i] << " ";
+                    mGraph->loadFromVector(numsFromFile);
+                }
+                fin.close();
+            } 
+            else {
+                std::cerr << "No file selected or an error occurred." << std::endl;
+            }
+        }
+        // else if (type == 2)
+        //     mGraph->empty();
 
         CreateButton->resetSubComponentInfo();
     });
@@ -532,6 +660,9 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
         MSTButton->setSubComponentInfo(0);
     });
     MSTButton->setFunc([MSTButton, mGraph]() {
+
+        if (mGraph->isRunning()) return;
+
             int ActionType = MSTButton->getSubComponentInfo().InfoID;
             if (ActionType == -1) return;
             else if (ActionType == 0)

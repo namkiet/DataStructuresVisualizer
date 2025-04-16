@@ -11,6 +11,7 @@ public:
     void                        remove(int value) override;
     bool                        search(int value) override;
     void                        empty() override;
+    void                        updateValue(int value, int newValue) override;
 
 private:
     void                        align() override { align(0); };

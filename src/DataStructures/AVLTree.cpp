@@ -6,7 +6,6 @@ AVLTree::AVLTree(): mRoot(nullptr) {}
 
 void AVLTree::insert(int value)
 {
-    if (isRunning()) return;
     resetHistory();
 
     mCode = {
@@ -29,7 +28,6 @@ void AVLTree::insert(int value)
 
 void AVLTree::remove(int value)
 {
-    if (isRunning()) return;
     resetHistory();
 
     mCode = {
@@ -47,14 +45,11 @@ void AVLTree::remove(int value)
     mLastInfo = "Deletion is complete.";
 
     removeHelper(mRoot, value);
-    // mActionQueue.pushInstantAction([&]() { align(mRoot); });
-
     align(mRoot);
 }
 
 bool AVLTree::search(int value)
 {
-    if (isRunning()) return false;
     resetHistory();
 
     mCode = {
@@ -77,6 +72,11 @@ bool AVLTree::search(int value)
     return false;
 }
 
+void AVLTree::updateValue(int value, int newValue)
+{
+    
+}
+
 void AVLTree::empty()
 {
     DS::empty();
@@ -91,12 +91,12 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         node->mParent = prev;
         node->setOpacity(0);
 
-        mActionQueue.pushInstantAction([=]()
-        {
+        // mActionQueue.pushInstantAction([=]()
+        // {
             addNode(node);
             addEdge(node, nullptr);
             addEdge(node, nullptr);
-        });
+        // });
 
         mActionQueue.pushInstantAction([=]() {
             mInfo = "Location found, inserting " + std::to_string(value) + ".";
@@ -242,8 +242,7 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
 
             createNewActionGroup();
             highlightNode(node, VIZ::NODE::FillColor, 0.3f, false);
-            // mActionQueue.pushAction(Action::FadeOutNode(node, 0.3f));
-
+            mActionQueue.pushAction(Action::FadeOutNode(node, 0.3f));
 
             if (node->mParent)
             {

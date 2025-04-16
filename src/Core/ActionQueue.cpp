@@ -44,7 +44,7 @@ float ActionQueue::update(sf::Time dt)
 
         auto &currentBatch = queue.front();
         bool allFinished = true;
-
+        
         for (auto currentBatchIterator = currentBatch.begin(); currentBatchIterator != currentBatch.end(); )
         {
             if ((*currentBatchIterator)(dt))
