@@ -70,41 +70,8 @@ void TextBox::handleEvent(const sf::Event& event) {
         {   
             if (!mInput.empty())
             {
-                // check if mInput is a number or a list of num
-                if(mInputType == InputType::Number){
-                    try {
-                        InputNum = std::stoi(mInput);
-                        assert(InputNum > 0 && "Number must be greater than 0.");
-                    } catch (const std::invalid_argument& e) {
-                        assert(false && "Invalid input: not a valid integer.");
-                    } catch (const std::out_of_range& e) {
-                        assert(false && "Invalid input: number out of range.");
-                    }
-
-                } else if(mInputType == InputType::VectorNum){
-                    char seperate = ',';
-                    std::string temp = mInput;
-                    int seperatorIndex = temp.find_first_of(seperate);
-                    assert(seperatorIndex != std::string::npos && "No seperator found in the input string."); // tam thoi dung chuong trinh neu format sai
-                    std::string firstNum = temp.substr(0, seperatorIndex);
-                    std::string secondNum = temp.substr(seperatorIndex + 1, temp.length() - seperatorIndex - 1);
-                    
-                    try {
-                        int num1 = std::stoi(firstNum);
-                        int num2 = std::stoi(secondNum);
-                        assert(num1 > 0 && num2 > 0 && "Numbers must be greater than 0.");
-                        InputNumList.push_back(num1);
-                        InputNumList.push_back(num2);
-                    } catch (const std::invalid_argument& e) {
-                        assert(false && "Invalid input: one of the values is not a number.");
-                    } catch (const std::out_of_range& e) {
-                        assert(false && "Invalid input: one of the values is out of range.");
-                    }
-                    
-
-                }
-
-                if (InputNum != 0 || !InputNumList.empty())
+                InputNum = std::stoi(mInput);
+                if (InputNum != 0)
                 {
                     if(mCallback){
                         mCallback();
@@ -183,6 +150,55 @@ void TextBox::setColor(sf::Color color){
 int TextBox::getInputNum(){
     return InputNum;
 }
+void TextBox::submit()
+{
+    if (!mInput.empty())
+    {
+        // check if mInput is a number or a list of num
+        if(mInputType == InputType::Number){
+            try {
+                InputNum = std::stoi(mInput);
+                assert(InputNum > 0 && "Number must be greater than 0.");
+            } catch (const std::invalid_argument& e) {
+                assert(false && "Invalid input: not a valid integer.");
+            } catch (const std::out_of_range& e) {
+                assert(false && "Invalid input: number out of range.");
+            }
+
+        } else if(mInputType == InputType::VectorNum){
+            char seperate = ',';
+            std::string temp = mInput;
+            int seperatorIndex = temp.find_first_of(seperate);
+            assert(seperatorIndex != std::string::npos && "No seperator found in the input string."); // tam thoi dung chuong trinh neu format sai
+            std::string firstNum = temp.substr(0, seperatorIndex);
+            std::string secondNum = temp.substr(seperatorIndex + 1, temp.length() - seperatorIndex - 1);
+            
+            try {
+                int num1 = std::stoi(firstNum);
+                int num2 = std::stoi(secondNum);
+                assert(num1 > 0 && num2 > 0 && "Numbers must be greater than 0.");
+                InputNumList.push_back(num1);
+                InputNumList.push_back(num2);
+            } catch (const std::invalid_argument& e) {
+                assert(false && "Invalid input: one of the values is not a number.");
+            } catch (const std::out_of_range& e) {
+                assert(false && "Invalid input: one of the values is out of range.");
+            }
+            
+
+        }
+
+        if (InputNum != 0 || !InputNumList.empty())
+        {
+            if(mCallback){
+                mCallback();
+            }
+        }
+        reset();
+        deselect();
+    }
+}
+
 std::vector<int> TextBox::getInputNumList(){
     return InputNumList;
 }

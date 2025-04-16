@@ -35,6 +35,7 @@ namespace GUI
         int                                         getInputNum();
         std::vector<int>                                 getInputNumList();
         void                                        setPlaceholder(const std::string& text);
+        void                                        submit();
 
     private:
         unsigned int                                mCharSize;

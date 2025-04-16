@@ -19,7 +19,7 @@ namespace Action
     ActionFunc FadeOutNode(CircleNode* node, float duration);
     
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration);
-    ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration); // Hightlight edge
+    ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse); // Hightlight edge
     ActionFunc DeleteNode(CircleNode* node, float duration);
     ActionFunc ChangeEdgeColor(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration);
     ActionFunc MarkEdge(Edge* edge, int direction,float duration);
