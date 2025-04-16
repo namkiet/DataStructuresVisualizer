@@ -373,9 +373,10 @@ void DS::highlightNode(CircleNode* node, sf::Color highlightColor, float duratio
 {
     if (reverse)
     {
+        sf::Color oldColor = node->getFillColor();
         mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration / 2, false));
         createNewActionGroup();
-        mActionQueue.pushAction(Action::HighlightNode(node, VIZ::NODE::FillColor, duration / 2, false));
+        mActionQueue.pushAction(Action::HighlightNode(node, oldColor, duration / 2, false));
     }
     else
         mActionQueue.pushAction(Action::HighlightNode(node, highlightColor, duration, false));
