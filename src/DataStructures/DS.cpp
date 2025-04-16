@@ -65,6 +65,18 @@ void DS::undo()
 
     if (!canUndo()) return;
     playback = UNDO;
+
+    for (auto x: keyFrames)
+        std::cerr << x << " - ";
+    std::cerr << cS << "\n";
+
+
+    if (keyFrames.empty() && cS > keyFrames.back())
+    {
+        targetFrame = keyFrames.back();
+        return;
+    }
+
     for (int i = 1; i < keyFrames.size(); i++)
     {
         if (keyFrames[i - 1] < cS && cS <= keyFrames[i])
@@ -79,17 +91,24 @@ void DS::redo()
 {
     // stop = false;
     // return;
-    if (canRedo()) cS++;
-    playback = REDO;
-    return;
+    // if (canRedo()) cS++;
+    // playback = REDO;
+    // return;
 
     if (!canRedo()) return;
+    playback = REDO;
+
+    if (keyFrames.empty() || cS >= keyFrames.back())
+    {
+        targetFrame = mH.size() - 1;
+        return;
+    }
 
     for (int i = 1; i < keyFrames.size(); i++)
     {
         if (keyFrames[i - 1] <= cS && cS < keyFrames[i])
         {
-            cS = keyFrames[i];
+            targetFrame = keyFrames[i];
             return;
         }
     }
@@ -139,19 +158,27 @@ void DS::resetHistory()
 
 void DS::updateCurrent(sf::Time dt)   
 {   
+    std::cerr << mActionQueue.getTotalTime() << " - time \n";
     if (playback == UNDO)
     {
         timer += dt.asSeconds();
         if (timer >= 0.05f)
         {
+            std::cerr << "Target Frame: " << targetFrame << "\n";
             if (cS > targetFrame) cS--;
             timer = 0;
         }
         return;
     }
     else if (playback == REDO)
-    {
-        if (cS == mH.size() - 1) playback = NORMAL;
+    { 
+        timer += dt.asSeconds();
+        if (timer >= 0.05f)
+        {
+            if (cS < targetFrame) cS++;
+            if (cS == mH.size() - 1) playback = NORMAL;
+            timer = 0;
+        }
         return;
     }
     
@@ -178,7 +205,8 @@ void DS::updateCurrent(sf::Time dt)
 
                 if (t > 0 || timer >= 0.1f) // only update every 0.1s or before important frames
                 {
-                    if (cS == mH.size() - 1) cS++;
+                    // if (cS == mH.size() - 1) 
+                    cS++;
                     saveStep();
                 }
 
@@ -200,19 +228,20 @@ void DS::updateCurrent(sf::Time dt)
 
             float t = mActionQueue.update(dt);
 
-            if (t > 0 || timer >= 0.1f)
-            {
-                if (cS == mH.size() - 1) cS++;
-                saveStep();
-            }
+            // if (t > 0 || timer >= 0.1f)
+            // {
+            //     // if (cS == mH.size() - 1) 
+            //     cS++;
+            //     saveStep();
+            // }
 
-            if (timer >= 0.1f) timer = 0;
+            // if (timer >= 0.1f) timer = 0;
             
-            if (t > 0)
-            {
-            // keyID++;
-                keyFrames.push_back(mH.size() - 1);
-            }
+            // if (t > 0)
+            // {
+            // // keyID++;
+            //     keyFrames.push_back(mH.size() - 1);
+            // }
 
             // // }
             // // keyFrames.push_back(cS);
@@ -364,16 +393,15 @@ void DS::deleteNodeEffect(CircleNode* node, float duration) // remove node from 
 
 void DS::deleteNode(CircleNode* node)
 {
-    mActionQueue.pushAction([this, node](sf::Time dt) mutable -> bool
+    mActionQueue.pushInstantAction([=]()
     {
         mNodeList.erase(
-        std::remove_if(mNodeList.begin(), mNodeList.end(),
-        [node](const CircleNode::Ptr& n) {
-            return n.get() == node;
-        }),
-        mNodeList.end()
-    );
-        return true;
+            std::remove_if(mNodeList.begin(), mNodeList.end(),
+            [node](const CircleNode::Ptr& n) {
+                return n.get() == node;
+            }),
+            mNodeList.end()
+        );
     });
 }
 

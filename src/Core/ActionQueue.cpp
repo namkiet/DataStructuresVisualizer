@@ -8,16 +8,38 @@ void ActionQueue::empty()
         queue.pop_back();
 }
 
-void ActionQueue::pushAction(ActionFunc action, bool withPrevious)
+float ActionQueue::getTotalTime()
+{
+    float totalTime = 0;
+    for (const auto& currentBatch: queue)
+    {
+        float batchTime = 0.f;
+        for (auto action: currentBatch)
+            batchTime = std::max(batchTime, action.duration);
+        totalTime += batchTime;
+    }
+    return totalTime;
+}
+
+float ActionQueue::getFrontTime()
+{
+    if (queue.empty()) return 0.f;
+
+    float batchTime = 0.f;
+    for (auto action: queue.front())
+        batchTime = std::max(batchTime, action.duration);
+
+    return batchTime;
+}
+
+void ActionQueue::pushAction(Action::ActionFunc action, bool withPrevious)
 {
     if (ANIMATION::Speed >= 1000)
     {
         sf::Time dt;
-        action(dt);
+        action.action(dt);
         return;
     }
-
-    
 
     if (queue.empty() || !withPrevious)
         queue.emplace_back();
@@ -34,7 +56,7 @@ void ActionQueue::pushInstantAction(std::function<void()> func, bool withPreviou
     
     if (!withPrevious)   
         queue.emplace_back();
-    pushAction([func](sf::Time) { func(); return true; }, true);
+    pushAction({[func](sf::Time) { func(); return true; }, 0.f}, true);
 }
 
 float ActionQueue::update(sf::Time dt)
@@ -47,7 +69,7 @@ float ActionQueue::update(sf::Time dt)
         
         for (auto currentBatchIterator = currentBatch.begin(); currentBatchIterator != currentBatch.end(); )
         {
-            if ((*currentBatchIterator)(dt))
+            if ((*currentBatchIterator).action(dt))
             {
                 currentBatchIterator = currentBatch.erase(currentBatchIterator);
             }

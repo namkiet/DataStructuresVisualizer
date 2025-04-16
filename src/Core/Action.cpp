@@ -7,18 +7,18 @@ namespace Action
 {
     ActionFunc Wait(float duration)
     {
-        return [duration, elapsed = 0.f](sf::Time dt) mutable -> bool
+        return {[duration, elapsed = 0.f](sf::Time dt) mutable -> bool
         {
             elapsed += dt.asSeconds() * ANIMATION::Speed;
             if (elapsed >= duration || ANIMATION::Speed >= 1000)
                 return true;
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc HighlightNode(CircleNode* node, sf::Color highlightFillColor, float duration, bool reverse)
     {
-        return [node, highlightFillColor, duration, reverse,
+        return {[node, highlightFillColor, duration, reverse,
                 elapsed = 0.0f, isInit = false,
                 startFillColor = sf::Color(), startOutlineColor = sf::Color(), highlightOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
         {   
@@ -68,12 +68,12 @@ namespace Action
             }
 
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc ChangeNodeColor(CircleNode* node, sf::Color highlightColor, float duration) // highlight node and change to the highlight color
     {
-        return [node, highlightColor, duration, 
+        return {[node, highlightColor, duration, 
                 elapsed = 0.0f, isInit = false,
                 startFillColor = sf::Color(), startOutlineColor = sf::Color()](sf::Time dt) mutable -> bool
         {   
@@ -111,12 +111,12 @@ namespace Action
             }
 
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc MoveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
     {
-        return [node, targetPos, duration,
+        return {[node, targetPos, duration,
             elapsed = 0.0f, isInit = false, startPos = sf::Vector2f(), speed = sf::Vector2f()] (sf::Time dt) mutable -> bool
         {
             if (!node) return true;
@@ -137,12 +137,12 @@ namespace Action
                 return true;
             }
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc FadeInNode(CircleNode* node, float duration)
     {
-        return [node, duration, 
+        return {[node, duration, 
             elapsed = 0.f, opacity = 0.f, isInit = false](sf::Time dt) mutable->bool 
         {
             if (!isInit)
@@ -162,12 +162,12 @@ namespace Action
                 return true;
             }
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc FadeOutNode(CircleNode* node, float duration)
     {
-        return [node, duration, 
+        return {[node, duration, 
             elapsed = 0.f, opacity = 1.f, isInit = false](sf::Time dt) mutable->bool 
         {
             if (!isInit)
@@ -186,12 +186,12 @@ namespace Action
                 return true;
             }
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration)
     {
-        return [node, targetValue, duration, 
+        return {[node, targetValue, duration, 
             elapsed = 0.f, isInit = false, startTextSize = 0.f]
             (sf::Time dt) mutable ->bool
         {
@@ -218,29 +218,12 @@ namespace Action
             }
 
             return false;
-        };
+        }, duration};
     }
-
-    ActionFunc SwapNodeValues(CircleNode* nodeA, CircleNode* nodeB, float duration)
-    {
-        int valueA = nodeA->mValue;
-        int valueB = nodeB->mValue;
-
-        ActionFunc changeA = ChangeNodeValue(nodeA, valueB, duration);
-        ActionFunc changeB = ChangeNodeValue(nodeB, valueA, duration);
-
-        return [changeA, changeB](sf::Time dt) mutable -> bool
-        {
-            bool doneA = changeA(dt);
-            bool doneB = changeB(dt);
-            return doneA && doneB;
-        };
-    }
-
 
     ActionFunc MoveEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, CircleNode* targetTail, float duration)
     {
-        return [&edgeList, parent, child, targetTail, duration, 
+        return {[&edgeList, parent, child, targetTail, duration, 
             elapsed = 0.0f, isInit = false, 
             edge = static_cast<Edge*>(nullptr),
             startPos = sf::Vector2f(), targetPos = sf::Vector2f(), 
@@ -271,12 +254,12 @@ namespace Action
             }
 
             return false;
-        };     
+        }, duration};     
     }
 
     ActionFunc TraverseEdge(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse)
     {
-        return [&edgeList, parent, child, highlightColor, duration, reverse,
+        return {[&edgeList, parent, child, highlightColor, duration, reverse,
             elapsed = 0.0f, isInit = false, 
             edge = static_cast<Edge*>(nullptr), 
             startColor = sf::Color()](sf::Time dt) mutable -> bool 
@@ -312,12 +295,12 @@ namespace Action
             }
     
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc DeleteNode(CircleNode* node, float duration)
     {
-        return[node, duration, 
+        return {[node, duration, 
             elapsed = 0.0f, isInit = false](sf::Time dt) mutable -> bool
         {
             if (!node) return true;
@@ -341,12 +324,12 @@ namespace Action
             }
 
             return false;
-        };
+        }, duration};
     }
 
     ActionFunc ChangeEdgeColor(std::vector<Edge::Ptr> &edgeList, CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
     {
-        return [&edgeList, parent, child, highlightColor, duration, 
+        return {[&edgeList, parent, child, highlightColor, duration, 
             elapsed = 0.0f, isInit = false, 
             edge = static_cast<Edge*>(nullptr), 
             startColor = sf::Color()](sf::Time dt) mutable -> bool 
@@ -382,12 +365,12 @@ namespace Action
             }
     
             return false;
-        };
+        }, duration};
     }
 
     Action::ActionFunc MarkEdge(Edge* edge, int direction, float duration)
 {
-    return [edge, duration, 
+    return {[edge, duration, 
             elapsed = 0.f, isInit = false, direction
             ](sf::Time dt) mutable -> bool
     {
@@ -423,7 +406,7 @@ namespace Action
         }
 
         return false;
-    };
+    }, duration};
 }
     namespace Helper
     {

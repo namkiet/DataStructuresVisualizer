@@ -423,10 +423,9 @@ void LinkedList::align(LinkedListNode* curNode, sf::Vector2f curPos)
     else
         curNode->mIndex = curNode->mPrev->mIndex + 1;
 
-    mActionQueue.pushAction([=](sf::Time) {
+    mActionQueue.pushInstantAction([=]() {
         curNode->setNote(std::to_string(curNode->mIndex));
-        return true;
-    });
+    }, true);
 
     moveNode(curNode, curPos, 0.5f);
     highlightNode(curNode, color, 0.5f, false);

@@ -5,7 +5,12 @@
 
 namespace Action
 {
-    using ActionFunc = std::function<bool(sf::Time)>;
+    struct ActionFunc
+    {
+        std::function<bool(sf::Time)> action;
+        float duration;
+    };
+    // using ActionFunc = std::function<bool(sf::Time)>;
 
     ActionFunc Wait(float duration);
     
@@ -14,7 +19,6 @@ namespace Action
     ActionFunc ChangeNodeColor(CircleNode* node, sf::Color highlightColor, float duration); 
 
     ActionFunc ChangeNodeValue(CircleNode* node, float targetValue, float duration);
-    ActionFunc SwapNodeValues(CircleNode* nodeA, CircleNode* nodeB, float duration);
     ActionFunc FadeInNode(CircleNode* node, float duration);
     ActionFunc FadeOutNode(CircleNode* node, float duration);
     

@@ -75,12 +75,35 @@ void HeapTree::remove(int value)
 {
     resetHistory();
 
+    mCode = {
+        "A[0] = A[A.length - 1]",
+        "i = 0; A.length--",
+        "while i < A.length:",
+        "  if A[i] > L := argmin(A[left], A[right])",
+        "    swap(A[i], A[L]); i = L",
+        "finish"
+    };
+
+    mLastStep = 5;
+    mLastInfo = "Removed successfully.";
+
     if (mNodeList.size() == 0) return;
 
     int n = mNodeList.size();
     if (n > 1)
+    {
+        mActionQueue.pushInstantAction([=](){
+            mStep = 0;
+            mInfo = "Replace root with the last element.";
+        });
+        createNewActionGroup();
         swapTwoNodes(mNodeList[0].get(), mNodeList[n - 1].get(), 0.5f);
+    }
 
+    mActionQueue.pushInstantAction([=](){
+        mStep = 1;
+        mInfo = "Remove the old root.";
+    });
     createNewActionGroup();
     mActionQueue.pushAction(Action::FadeOutNode(mNodeList[n - 1].get(), 0.5f));
     if (n > 1)
@@ -94,6 +117,8 @@ void HeapTree::remove(int value)
 
 bool HeapTree::search(int value)
 {
+    resetHistory();
+
     mCode = {
         "for i = 0 to A.size - 1:",
         "  if A[i] == value",
@@ -149,6 +174,20 @@ bool HeapTree::search(int value)
 
 void HeapTree::updateValue(int value, int newValue)
 {
+    resetHistory();
+
+    mCode = {
+        "find i that A[i] == val",
+        "if newVal < val: heapifyUp(i)",
+        "else: heapifyDown(i)"
+    };
+
+    mLastInfo = "Updated successfully";
+
+    mActionQueue.pushInstantAction([=](){ 
+        mStep = 0; 
+        mInfo = "Finding the position of val.";
+    });
     for (int i = 0; i < mNodeList.size(); i++)
     {
         createNewActionGroup();
@@ -158,10 +197,23 @@ void HeapTree::updateValue(int value, int newValue)
         {
             createNewActionGroup();
             mActionQueue.pushAction(Action::ChangeNodeValue(mNodeList[i].get(), newValue, 0.5f));
-            break;
+
+            if (newValue < value)
+            {
+                mActionQueue.pushInstantAction([=](){ mStep = 1; });
+                mLastStep = 1;
+                mActionQueue.pushInstantAction([=](){ heapifyUp(i); });
+            }
+            else
+            {
+                mActionQueue.pushInstantAction([=](){ mStep = 2; });
+                mLastStep = 2;
+                mActionQueue.pushInstantAction([=](){ heapifyDown(i); });
+            }
+            
+            return;
         }
     }
-
 }
 
 void HeapTree::align(int index, sf::Vector2f curPos, float curSpacingX, float curSpacingY) // DFS
@@ -197,6 +249,10 @@ void HeapTree::heapifyUp(int index)
     int curValue = mNodeList[index]->mValue;
     int parValue = mNodeList[parent]->mValue;
 
+    mActionQueue.pushInstantAction([=]() { 
+        if (mLastStep == -1) mStep = 2; 
+        mInfo = "Comparing " + std::to_string(curValue) + " with its parent.";
+    });
     createNewActionGroup();
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f / 2, false));
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[parent].get(), sf::Color::Red, 0.5f / 2, false));
@@ -204,15 +260,11 @@ void HeapTree::heapifyUp(int index)
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), VIZ::NODE::FillColor, 0.5f / 2, false));
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[parent].get(), VIZ::NODE::FillColor, 0.5f / 2, false));
 
-    mActionQueue.pushInstantAction([=]() { 
-        mStep = 2; 
-        mInfo = "Comparing " + std::to_string(curValue) + " with its parent.";
-    }, true);
 
     if (curValue < parValue)
     {
         mActionQueue.pushInstantAction([=]() { 
-            mStep = 3; 
+            if (mLastStep == -1) mStep = 3; 
             mInfo = std::to_string(curValue) + " < " + std::to_string(parValue) + " so swap them.";
         });
         swapTwoNodes(mNodeList[index].get(), mNodeList[parent].get(), 0.5f);
@@ -235,13 +287,19 @@ void HeapTree::heapifyDown(int index)
     // createNewActionGroup();
     // mActionQueue.pushAction(Action::Wait(0.1f));
 
+    int curValue = mNodeList[index]->mValue;
+
+    mActionQueue.pushInstantAction([=](){
+        if (mLastStep == -1) mStep = 3;
+        mInfo = "Comparing " + std::to_string(curValue) + " with its children.";
+    });
     createNewActionGroup();
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f / 2, false));
     if (left < n)
         mActionQueue.pushAction(Action::HighlightNode(mNodeList[left].get(), sf::Color::Blue, 0.5f / 2, false));
     if (right < n)
         mActionQueue.pushAction(Action::HighlightNode(mNodeList[right].get(), sf::Color::Blue, 0.5f / 2, false));
-
+        
     createNewActionGroup();
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), VIZ::NODE::FillColor, 0.5f / 2, false));
     if (left < n) 
@@ -254,8 +312,13 @@ void HeapTree::heapifyDown(int index)
     if (right < n && mNodeList[smallest]->mValue > mNodeList[right]->mValue)
         smallest = right;
 
+    int smallestValue = mNodeList[smallest]->mValue;
     if (smallest != index)
     {
+        mActionQueue.pushInstantAction([=]() { 
+            if (mLastStep == -1) mStep = 4; 
+            mInfo = std::to_string(curValue) + " > " + std::to_string(smallestValue) + " so swap them.";
+        });
         createNewActionGroup();
         swapTwoNodes(mNodeList[index].get(), mNodeList[smallest].get(), 0.5f);
 

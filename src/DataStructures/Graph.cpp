@@ -12,6 +12,55 @@ Graph::Graph(){
     isReady = false;
     selectID = -1;
 
+    std::cout<<"success jump to constructor"<<std::endl;
+    NumVer = 8;
+    NumEdge = 13;
+    velocity.resize(NumVer, sf::Vector2f(0,0));
+    ForceConstant = VIZ::DS::Size.x * VIZ::DS::Size.y / NumVer;
+
+    EdgeList = {
+        {{0, 1}, 4},
+        {{0, 2}, 3},
+        {{0, 6}, 10},
+        {{0, 7}, 1},
+        {{1, 3}, 2},
+        {{1, 4}, 7},
+        {{2, 4}, 1},
+        {{2, 5}, 3},
+        {{3, 5}, 5},
+        {{4, 5}, 2},
+        {{4, 6}, 4},
+        {{5, 7}, 1},
+        {{6, 7}, 6}
+    };
+
+    int n = NumVer;
+    // temp NodeList
+    vector<CircleNode*> ListGraphNode;
+    ListGraphNode.resize(n);
+
+    sf::Vector2f Center = VIZ::DS::Center - VIZ::DS::Position; // vi tri tuong doi
+
+    double magnitude = 200;
+    constexpr double PI = 3.14159265358979323846;
+
+    for(int i = 0; i < n;i++){
+        ListGraphNode[i] = new CircleNode(i, 16.f, sf::Color::White, sf::Color::Black);
+        // set position
+        float angle = 2 * PI * i / n;
+        sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
+        ListGraphNode[i]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
+    }
+
+    // add Edge
+    for(int i = 0 ; i < EdgeList.size();i++){
+        addEdge(ListGraphNode[EdgeList[i].first.first], ListGraphNode[EdgeList[i].first.second], EdgeList[i].second, false);
+    }
+
+    // add Node to the original NodeList
+    for(auto& Node: ListGraphNode){
+        addNode(Node);
+    }
 
     isReady = true;
 
@@ -70,6 +119,7 @@ void Graph::MarkEdge(Edge* edge,int direction, float duration){
 }
 void Graph::Prim()
 {
+    if (NumVer == 0) return;
     //     for(int i = 0; i < NumVer ;i++){
     //     std::cout<<"World Postion at"<< i<<" : "<<getWorldPosition(i).x<<" "<<getWorldPosition(i).y<<std::endl;
     // }
@@ -270,25 +320,24 @@ void Graph::loadFromVector(std::vector<int> numList)
     vector<CircleNode*> ListGraphNode;
     ListGraphNode.resize(n);
     
-
-    // for(int i = 0; i < n;i++){
-    //     ListGraphNode[i] = new CircleNode(i, 16.f, sf::Color::White, sf::Color::Black);
-    //     // set position
-    //     float angle = 2 * PI * i / n;
-    //     sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
-    //     ListGraphNode[i]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
-    // }
-
-    int id = 0;
-    for (int x: nodeSet)
-    {
-        ListGraphNode[id] = new CircleNode(x, 16.f, sf::Color::White, sf::Color::Black);
+    for(int i = 0; i < n;i++){
+        ListGraphNode[i] = new CircleNode(i, 16.f, sf::Color::White, sf::Color::Black);
         // set position
-        float angle = 2 * PI * id / n;
+        float angle = 2 * PI * i / n;
         sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
-        ListGraphNode[id]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
-        id++;
+        ListGraphNode[i]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
     }
+
+    // int id = 0;
+    // for (int x: nodeSet)
+    // {
+    //     ListGraphNode[id] = new CircleNode(x, 16.f, sf::Color::White, sf::Color::Black);
+    //     // set position
+    //     float angle = 2 * PI * id / n;
+    //     sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
+    //     ListGraphNode[id]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
+    //     id++;
+    // }
 
     // add Edge
     for(int i = 0 ; i < EdgeList.size();i++){

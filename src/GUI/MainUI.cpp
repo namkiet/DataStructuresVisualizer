@@ -260,14 +260,14 @@ void MainUI::initHeapButtons(HeapTree* heap)
     CreateButton->addSubComponent(LoadButton);
     CreateButton->addSubComponent(EmptyButton);
 
-    CreateButton->setFunc([CreateButton, heap]()
+    CreateButton->setFunc([CreateButton,heap]()
     {
         if (heap->isRunning()) return;
 
-        if (CreateButton->getSubComponentInfo().InfoID == -1) 
-            return;
+        int type = CreateButton->getSubComponentInfo().InfoID;
 
-        if (CreateButton->getSubComponentInfo().InfoID == 0) // RANDOM
+        if (type == -1) return;
+        else if (type == 0)
         {
             std::srand(std::time(nullptr)); 
             std::vector<int> randomList(10);
@@ -275,7 +275,36 @@ void MainUI::initHeapButtons(HeapTree* heap)
                 num = std::rand() % 100; // Random numbers from 0 to 99
             
             heap->loadFromVector(randomList);
-        }   
+        }
+        else if (type == 1)
+        {
+            std::wstring filename = OpenFileDialog();
+            if (!filename.empty()) {
+                std::wcout << L"Selected file: " << filename << std::endl;
+                std::wifstream fin;
+                fin.open(filename);
+                if (!fin.is_open())
+                {
+                    std::cout << "Can't open file!";
+                }
+                else
+                {
+                    std::vector <int> numsFromFile;
+                    int temp;
+                    while (fin >> temp)
+                        numsFromFile.push_back(temp);
+                    for (int i = 0; i < numsFromFile.size(); i++)
+                        std::cout << numsFromFile[i] << " ";
+                    heap->loadFromVector(numsFromFile);
+                }
+                fin.close();
+            } 
+            else {
+                std::cerr << "No file selected or an error occurred." << std::endl;
+            }
+        }
+        else if (type == 2)
+            heap->empty();
 
         CreateButton->resetSubComponentInfo();
     });
@@ -386,7 +415,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
     CreateButton->addSubComponent(LoadButton);
     CreateButton->addSubComponent(EmptyButton);
 
-    CreateButton->setFunc([CreateButton, ll]()
+    CreateButton->setFunc([CreateButton,ll]()
     {
         if (ll->isRunning()) return;
 
@@ -539,30 +568,9 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
     OperationButtonsList->pack(SearchButton);
 }
 
-void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
-{
-    OperationButtonsList->makeEmpty();
-    if (mode == World::Mode::AVLMode)
-    {
-        auto avl = dynamic_cast<AVLTree*>(mDataStructure);
-        initAVLButtons(avl);
-	}
-    else if (mode == World::Mode::LinkedListMode)
-    {
-        auto ll = static_cast<LinkedList*>(mDataStructure);
-        initLinkedListButtons(ll);
-    }
-
-    else if (mode == World::Mode::HeapMode)
-    {
-        auto heap = static_cast<HeapTree*>(mDataStructure);
-        initHeapButtons(heap);
-    }
-
-    else if (mode == World::Mode::GraphMode)
+void MainUI::initGraphButtons(Graph* g)
 {
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
-    auto mGraph = static_cast<Graph*>(mDataStructure);
 
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
@@ -579,9 +587,9 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
     CreateButton->addSubComponent(LoadButton);
     CreateButton->addSubComponent(EmptyButton);
 
-    CreateButton->setFunc([CreateButton,mGraph]()
+    CreateButton->setFunc([CreateButton,g]()
     {
-        if (mGraph->isRunning()) return;
+        if (g->isRunning()) return;
 
         int type = CreateButton->getSubComponentInfo().InfoID;
 
@@ -620,7 +628,7 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
                 edgeData.push_back(v);
                 edgeData.push_back(w);
             }
-            mGraph->loadFromVector(edgeData);
+            g->loadFromVector(edgeData);
         }
         else if (type == 1)
         {
@@ -641,7 +649,7 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
                         numsFromFile.push_back(temp);
                     for (int i = 0; i < numsFromFile.size(); i++)
                         std::cout << numsFromFile[i] << " ";
-                    mGraph->loadFromVector(numsFromFile);
+                    g->loadFromVector(numsFromFile);
                 }
                 fin.close();
             } 
@@ -649,25 +657,26 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
                 std::cerr << "No file selected or an error occurred." << std::endl;
             }
         }
-        // else if (type == 2)
-        //     mGraph->empty();
+        else if (type == 2)
+            g->empty();
 
         CreateButton->resetSubComponentInfo();
     });
 
+    // Add MST Button
     GUI::ExpandableButton::Ptr MSTButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "MST", ButtonSize);
     MSTButton->setCallback([MSTButton]{
         MSTButton->setSubComponentInfo(0);
     });
-    MSTButton->setFunc([MSTButton, mGraph]() {
+    MSTButton->setFunc([MSTButton, g]() {
 
-        if (mGraph->isRunning()) return;
+        if (g->isRunning()) return;
 
             int ActionType = MSTButton->getSubComponentInfo().InfoID;
             if (ActionType == -1) return;
             else if (ActionType == 0)
                 {
-                    mGraph->Prim();
+                    g->Prim();
                 }
                 
             MSTButton->resetSubComponentInfo();
@@ -676,6 +685,30 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(MSTButton);
 }
+
+void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
+{
+    OperationButtonsList->makeEmpty();
+    if (mode == World::Mode::AVLMode)
+    {
+        auto avl = dynamic_cast<AVLTree*>(mDataStructure);
+        initAVLButtons(avl);
+	}
+    else if (mode == World::Mode::LinkedListMode)
+    {
+        auto ll = static_cast<LinkedList*>(mDataStructure);
+        initLinkedListButtons(ll);
+    }
+    else if (mode == World::Mode::HeapMode)
+    {
+        auto heap = static_cast<HeapTree*>(mDataStructure);
+        initHeapButtons(heap);
+    }
+    else if (mode == World::Mode::GraphMode)
+    {
+        auto g = static_cast<Graph*>(mDataStructure);
+        initGraphButtons(g);
+    }
 }
 
 void MainUI::handleEvent(const sf::Event& event)

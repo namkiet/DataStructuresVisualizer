@@ -27,8 +27,8 @@ private:
     GUI::Container::Ptr                 OperationButtonsList;
     GUI::Button::Ptr                    BackButtons;
 
-    std::vector<float> speed = {0.25f, 0.5f, 1.f, 1.5f, 2.f};
-    int speedIndex = 2;
+    std::vector<float>                  speed = {0.25f, 0.5f, 1.f, 1.5f, 2.f};
+    int                                 speedIndex = 2;
     GUI::Button::Ptr                    mSpeedButton;
     GUI::Button::Ptr                    mStepByStepButton;
     GUI::Button::Ptr                    mAtOnceButton;
@@ -44,6 +44,6 @@ public:
     void                                initAVLButtons(AVLTree* avl);
     void                                initHeapButtons(HeapTree* heap);
     void                                initLinkedListButtons(LinkedList* ll);
-    // void                                initAVLButtons(AVLTree* avl);
+    void                                initGraphButtons(Graph* g);
     bool                                getBackRequest();
 };

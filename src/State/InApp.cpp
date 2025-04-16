@@ -33,37 +33,5 @@ bool InApp::handleEvent(const sf::Event& event)
         requestStackPop();
         requestStackPush(States::Menu);
     }
-    // if (event.type == sf::Event::KeyPressed)
-    // {
-    //     if (event.key.code == sf::Keyboard::Escape)
-    //     {   
-    //         requestStackPop();
-    //         requestStackPush(States::Menu);
-    //     }
-
-    //     if (event.key.code == sf::Keyboard::A)
-    //     {
-    //         // int value = std::rand() % 100;
-    //         int value = v[id];
-    //         id++;
-    //         std::cerr << value << "\n";
-    //         mInApp->insert(value);
-    //     }
-
-    //     if (event.key.code == sf::Keyboard::B)
-    //         mInApp->setPosition(mInApp->getPosition() - sf::Vector2f(50, 0));
-
-    //     if (event.key.code == sf::Keyboard::C)
-    //         mInApp->leftRotate();
-
-    //     if (event.key.code == sf::Keyboard::D)
-    //     {
-    //         if (mInApp->search(5))
-    //             std::cerr << "Found \n";
-    //         else 
-    //             std::cerr << "Cannot find \n";
-    //     }
-    // }
-
 	return true;
 }
