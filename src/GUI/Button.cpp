@@ -251,22 +251,23 @@ void GUI::Button::select()
 {
 	Component::select();
     // std::cerr << "Select \n";
-    if (mIsToggle){
+    // if (mIsToggle){
         // std::cerr << "OK\n";
         if (mShapeType == ShapeType::Rectangle)
             mShape.setFillColor(mSelectedColor);
         else if (mShapeType == ShapeType::Circle)
             mCircle.setFillColor(mSelectedColor);
-    }
+    // }
 
-    if (!mIsToggle)
-        deselect();
+    // if (!mIsToggle)
+    //     deselect();
 }
 
 void GUI::Button::deselect()
 {
 	Component::deselect();
-    if(mIsToggle && !isActive())
+    // if(mIsToggle && !isActive())
+    if(!isActive())
     {
         if(mShapeType == ShapeType::Rectangle)
             mShape.setFillColor(mNormalColor);
@@ -288,8 +289,8 @@ void GUI::Button::activate()
 
     if (mCallback) 
         mCallback();
-	// if (!mIsToggle)
-	// 	deactivate();
+	if (!mIsToggle)
+		deactivate();
 }
 
 

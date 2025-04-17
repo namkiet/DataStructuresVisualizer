@@ -18,6 +18,10 @@ namespace SCREEN
     float Height                = 900;
 }
 
+namespace THEME
+{
+    Theme mTheme = Theme::DesertNight;
+}
 namespace UI
 {
     namespace TOOLBOX

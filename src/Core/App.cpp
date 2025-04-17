@@ -24,9 +24,16 @@ void App::loadTextures()
 {
     mTextures.load(Textures::Button, "assets/images/button.jpg");
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
-	mTextures.load(Textures::AppBackground, "assets/images/desert-night.png");
+
+	mTextures.load(Textures::AppBackground1, "assets/images/desert-night.png");
+    mTextures.load(Textures::AppBackground2, "assets/images/sunrise.jpg");
+    mTextures.load(Textures::AppBackground3, "assets/images/forest.jpg");
+
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
     mTextures.load(Textures::SettingIcon, "assets/images/settings.png");
+
+    mTextures.load(Textures::NavigateLeft, "assets/images/navigate_left.png");
+    mTextures.load(Textures::NavigateRight, "assets/images/navigate_right.png");
 }
 
 void App::loadFonts()
@@ -34,7 +41,6 @@ void App::loadFonts()
     mFonts.load(Fonts::Main, "assets/fonts/jetbrains.ttf");
     mFonts.load(Fonts::UI, "assets/fonts/Poppins-Regular.ttf");
 }
-
 
 void App::registerStates()
 {

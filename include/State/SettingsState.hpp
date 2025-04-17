@@ -4,7 +4,7 @@
 
 #include <SceneNode/CircleNode.hpp>
 #include <SceneNode/Edge.hpp>
-
+#include<vector>
 class SettingsState : public State
 {
 public:
@@ -12,10 +12,21 @@ public:
 	virtual void			draw();
 	virtual bool			update(sf::Time dt);
 	virtual bool			handleEvent(const sf::Event& event);
+	void 					resetBackgroundOption();
 
 private:
-	void 					initNodesAndEdge();
-	CircleNode*				node1;
-	CircleNode*				node2;
-	Edge*					edge;
+	Context										context;
+	void 										initNodesAndEdge();
+	std::vector<CircleNode*>					nodes;
+	std::vector<Edge*>							edges;
+	GUI::Button::Ptr        					mHomeButton;
+	sf::Text									mBackgroundText;
+
+	sf::Sprite									mBackgroundSprite;
+	sf::Text									mBackgroundTextOption;
+
+	GUI::Button::Ptr                            BgNavigateLeft;
+	GUI::Button::Ptr                            BgNavigateRight;
+	
+
 };

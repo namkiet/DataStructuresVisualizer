@@ -10,7 +10,7 @@
 #include "GUI/MainUI.hpp"
 #include "DataStructures/LinkedList.hpp"
 #include "DataStructures/Graph.hpp"
-
+#include "Core/Utility.hpp"
 World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts):
     mWindow(window),
     mWorldView(mWindow.getDefaultView()),
@@ -69,7 +69,8 @@ void World::buildScene()
 	mProgressBar = progress.get();
 	mSceneLayers[Progress]->attachChild(std::move(progress));
 
-	sf::Texture &bg = mTextures.get(Textures::AppBackground);
+	Textures::ID currentBackground = getCurrentBackgroundOption();
+	sf::Texture &bg = mTextures.get(currentBackground);
 	background.setTexture(bg);
 	sf::Color bgcolor = background.getColor();
 	bgcolor.a = 240;

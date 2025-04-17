@@ -13,11 +13,15 @@ namespace Textures
 {
 	enum ID
 	{
-		AppBackground,
+		AppBackground1,
+		AppBackground2,
+		AppBackground3,
 		MenuBackground,
 		Button,
 		HomeIcon,
 		SettingIcon,
+		NavigateLeft,
+		NavigateRight,
 	};
 }
 

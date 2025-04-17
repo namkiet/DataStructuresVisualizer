@@ -9,7 +9,8 @@
 MenuState::MenuState(StateStack& stack, Context context): 
 	State(stack, context)
 {
-	mBackground.setTexture(context.textures->get(Textures::AppBackground));
+	Textures::ID currentBackground = getCurrentBackgroundOption();
+	mBackground.setTexture(context.textures->get(currentBackground));
 	sf::Color color = mBackground.getColor();
 	color.a = 0;
 	mBackground.setColor(sf::Color(100, 100, 100));
@@ -31,7 +32,7 @@ MenuState::MenuState(StateStack& stack, Context context):
 	// mCarousel.pushItem(Carousel::Item::GRAPH, 		"graph-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
 
 	// setting button
-	mSettingButton = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), sf::Vector2f(SCREEN::Width - 100.f, 50.f), "", sf::Vector2f(50.f, 50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mSettingButton = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), sf::Vector2f(SCREEN::Width - 80.f, 20.f), "", sf::Vector2f(50.f, 50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
 	mSettingButton->setNormalColor(sf::Color(255, 255, 255, 50));
 	mSettingButton->setSelectedColor(sf::Color(255, 255, 255, 100));
 	mSettingButton->setSprite(sf::Sprite(context.textures->get(Textures::SettingIcon)));

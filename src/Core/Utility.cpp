@@ -1,6 +1,7 @@
 #include <Core/Utility.hpp>
 #include <iostream>
 #include "Core/Variables.hpp"
+#include "Core/ResourceIdentifiers.hpp"
 void centerOrigin(sf::Sprite& sprite)
 {
 	sf::FloatRect bounds = sprite.getLocalBounds();
@@ -99,4 +100,18 @@ void makeValidNodePosition(sf::Vector2f& pos)
 	if(pos.x > VIZ::DS::Size.x) pos.x = VIZ::DS::Size.x;
 	if(pos.y < 0) pos.y = 0;
 	if(pos.y > VIZ::DS::Size.y) pos.y = VIZ::DS::Size.y;
+}
+
+Textures::ID getCurrentBackgroundOption(){
+	switch(THEME::mTheme)
+	{
+		case THEME::Theme::DesertNight:
+			return Textures::ID::AppBackground1;
+		case THEME::Theme::Sunrise:
+			return Textures::ID::AppBackground2;
+		case THEME::Theme::Forest:
+			return Textures::ID::AppBackground3;
+		default:
+			return Textures::ID::AppBackground1;
+	}
 }

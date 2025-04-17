@@ -6,6 +6,16 @@ namespace ANIMATION
     extern float Speed;
 }
 
+namespace THEME
+{
+    enum Theme
+    {
+        DesertNight,
+        Sunrise,
+        Forest
+    };
+    extern Theme mTheme;
+}
 namespace SCREEN
 {
     extern sf::Color BackgroundColor;
