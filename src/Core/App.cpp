@@ -26,6 +26,7 @@ void App::loadTextures()
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
 	mTextures.load(Textures::AppBackground, "assets/images/desert-night.png");
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
+    mTextures.load(Textures::SettingIcon, "assets/images/settings.png");
 }
 
 void App::loadFonts()

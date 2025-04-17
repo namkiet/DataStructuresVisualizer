@@ -17,6 +17,7 @@ namespace Textures
 		MenuBackground,
 		Button,
 		HomeIcon,
+		SettingIcon,
 	};
 }
 

@@ -75,7 +75,9 @@ class Button: public Component
     public:
         void                    setSize(sf::Vector2f size);
         void                    setPosition(sf::Vector2f position);
-    
+        void                    setNormalColor(sf::Color color);
+        void                    setSelectedColor(sf::Color color);
+        void                    setActivatedColor(sf::Color color);
     private:
         void                    updateSpriteSize();
         void                    updateSpritePosition();

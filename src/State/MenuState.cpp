@@ -29,6 +29,17 @@ MenuState::MenuState(StateStack& stack, Context context):
 	// mCarousel.pushItem(Carousel::Item::HEAP, 		"heap-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
 	// mCarousel.pushItem(Carousel::Item::LINKED_LIST, "ll-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
 	// mCarousel.pushItem(Carousel::Item::GRAPH, 		"graph-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
+
+	// setting button
+	mSettingButton = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), sf::Vector2f(SCREEN::Width - 100.f, 50.f), "", sf::Vector2f(50.f, 50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mSettingButton->setNormalColor(sf::Color(255, 255, 255, 50));
+	mSettingButton->setSelectedColor(sf::Color(255, 255, 255, 100));
+	mSettingButton->setSprite(sf::Sprite(context.textures->get(Textures::SettingIcon)));
+	mSettingButton->setCallback([this](){
+		requestStackPop();
+		requestStackPush(States::Settings);
+	});
+
 }
 
 void MenuState::draw()
@@ -38,6 +49,7 @@ void MenuState::draw()
 
 	window.draw(mBackground);
 	mCarousel.draw(window);
+	window.draw(*mSettingButton);
 }
 
 bool MenuState::update(sf::Time dt)
@@ -54,14 +66,8 @@ bool MenuState::handleEvent(const sf::Event& event)
 			mCarousel.prev();
 		if (event.key.code == sf::Keyboard::Right)
 			mCarousel.next();
-
-
-		if (event.key.code == sf::Keyboard::A)
-		{
-            requestStackPop();
-			requestStackPush(States::Settings);
-		}
 	}
+	mSettingButton->handleEvent(event);
 	mCarousel.handleEvent(event);
 	return true;
 }

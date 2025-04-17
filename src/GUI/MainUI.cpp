@@ -132,7 +132,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;
                 std::wifstream fin;
-                fin.open(filename);
+                fin.open(filename.c_str());
                 if (!fin.is_open())
                 {
                     std::cout << "Can't open file!";
@@ -363,7 +363,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;
                 std::wifstream fin;
-                fin.open(filename);
+                fin.open(filename.c_str());
                 if (!fin.is_open())
                 {
                     std::cout << "Can't open file!";
