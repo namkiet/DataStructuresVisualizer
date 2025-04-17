@@ -174,8 +174,6 @@ void GUI::Button::setCallback(Callback callback){
 }
 
 void GUI::Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    if (isActive())
-        std::cerr << mText.getString().toAnsiString() << "\n";
 
     if(mShapeType == ShapeType::Rectangle)
         target.draw(mShape, states);
@@ -190,6 +188,8 @@ void GUI::Button::draw(sf::RenderTarget& target, sf::RenderStates states) const 
 
 void GUI::Button::handleEvent(const sf::Event& event)
 {
+    if (mIsDisabled) return;
+
     if (event.type == sf::Event::MouseButtonPressed) 
     {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
@@ -287,4 +287,16 @@ void GUI::Button::deactivate()
         else if(mShapeType == ShapeType::Circle)
             mCircle.setFillColor(mNormalColor);
     }
+}
+
+void GUI::Button::disable()
+{
+    mIsDisabled = true;
+    mSprite.setColor(sf::Color(200, 200, 200, 200));
+}
+
+void GUI::Button::enable()
+{
+    mIsDisabled = false;
+    mSprite.setColor(sf::Color(255, 255, 255, 255));
 }

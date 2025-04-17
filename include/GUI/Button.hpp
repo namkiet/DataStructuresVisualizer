@@ -48,6 +48,9 @@ class Button: public Component
         virtual void			deselect();
         void                    activate() override;
         void                    deactivate() override;
+
+        void                    disable();
+        void                    enable();
     
     
         void                    setSprite(sf::Sprite sprite);
@@ -57,6 +60,7 @@ class Button: public Component
         void					setCallback(Callback callback);
 
     private:
+        bool                    mIsDisabled = false;
         bool                    mIsToggle;
         sf::Color               mNormalColor;
         sf::Color               mSelectedColor;

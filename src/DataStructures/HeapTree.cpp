@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cmath>
 
-HeapTree::HeapTree() {}
+HeapTree::HeapTree() { mHeapSize = 0; }
 
 void HeapTree::insert(int value)
 {
@@ -20,13 +20,16 @@ void HeapTree::insert(int value)
     mLastStep = 4;
     mLastInfo = "Inserted successfully.";
 
-    TreeNode* newNode = new TreeNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+    mHeapSize++;
+
+    CircleNode* newNode = new CircleNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     newNode->setOpacity(0);
 
     // createNewActionGroup();
     addNode(newNode);
     addEdge(newNode, nullptr);
     addEdge(newNode, nullptr);
+
     
     if (ANIMATION::Speed < 1000)
     {
@@ -45,14 +48,15 @@ void HeapTree::insert(int value)
         int level = floor(log2(n + 1));
         newNode->setPosition(par->getPosition());
 
+        sf::Vector2f curPos = par->mTargetPosition;
         if (n % 2 == 1)
-            newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(-VIZ::DS::Size.x / (1 << (level + 1)), VIZ::DS::RowSpacing);
+            curPos += sf::Vector2f(-VIZ::DS::Size.x / (1 << (level + 1)), VIZ::DS::RowSpacing);
         else
-            newNode->mTargetPosition = par->mTargetPosition + sf::Vector2f(VIZ::DS::Size.x / (1 << (level + 1)), VIZ::DS::RowSpacing);
+            curPos += sf::Vector2f(VIZ::DS::Size.x / (1 << (level + 1)), VIZ::DS::RowSpacing);
 
         if (ANIMATION::Speed < 1000)
         {
-            moveNode(newNode, newNode->mTargetPosition, 0.5f);
+            moveNode(newNode, curPos, 0.5f);
         }
 
         createNewActionGroup();
@@ -66,14 +70,21 @@ void HeapTree::insert(int value)
         newNode->setPosition(newNode->mTargetPosition);
     }
 
-    mActionQueue.pushInstantAction([=]() { 
+    // mActionQueue.pushInstantAction([=]() { 
         heapifyUp(n); 
-    });
+    // });
 }
 
 void HeapTree::remove(int value)
 {
     resetHistory();
+
+    if (mNodeList.size() == 0) 
+    {
+        mLastInfo = "The heap is empty.";
+        return;
+    }
+    
 
     mCode = {
         "A[0] = A[A.length - 1]",
@@ -87,7 +98,7 @@ void HeapTree::remove(int value)
     mLastStep = 5;
     mLastInfo = "Removed successfully.";
 
-    if (mNodeList.size() == 0) return;
+    mHeapSize--;
 
     int n = mNodeList.size();
     if (n > 1)
@@ -112,7 +123,9 @@ void HeapTree::remove(int value)
     createNewActionGroup();
     removeNode(mNodeList[n - 1].get());
 
-    mActionQueue.pushInstantAction([=]() { heapifyDown(0); });
+    // mActionQueue.pushInstantAction([=]() { 
+        heapifyDown(0); 
+    // });
 }
 
 bool HeapTree::search(int value)
@@ -269,15 +282,15 @@ void HeapTree::heapifyUp(int index)
         });
         swapTwoNodes(mNodeList[index].get(), mNodeList[parent].get(), 0.5f);
 
-        mActionQueue.pushInstantAction([=]() { 
+        // mActionQueue.pushInstantAction([=]() { 
             heapifyUp(parent); 
-        });
+        // });
     }
 }
 
 void HeapTree::heapifyDown(int index)
 {
-    if (index >= mNodeList.size()) return;
+    if (index >= mHeapSize) return;
 
     int smallest = index;
     int left = 2 * index + 1;
@@ -295,21 +308,21 @@ void HeapTree::heapifyDown(int index)
     });
     createNewActionGroup();
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), sf::Color::Red, 0.5f / 2, false));
-    if (left < n)
+    if (left < mHeapSize)
         mActionQueue.pushAction(Action::HighlightNode(mNodeList[left].get(), sf::Color::Blue, 0.5f / 2, false));
-    if (right < n)
+    if (right < mHeapSize)
         mActionQueue.pushAction(Action::HighlightNode(mNodeList[right].get(), sf::Color::Blue, 0.5f / 2, false));
         
     createNewActionGroup();
     mActionQueue.pushAction(Action::HighlightNode(mNodeList[index].get(), VIZ::NODE::FillColor, 0.5f / 2, false));
-    if (left < n) 
+    if (left < mHeapSize) 
         mActionQueue.pushAction(Action::HighlightNode(mNodeList[left].get(), VIZ::NODE::FillColor, 0.5f / 2, false));
-    if (right < n)
+    if (right < mHeapSize)
         mActionQueue.pushAction(Action::HighlightNode(mNodeList[right].get(), VIZ::NODE::FillColor, 0.5f / 2, false));
 
-    if (left < n && mNodeList[smallest]->mValue > mNodeList[left]->mValue)
+    if (left < mHeapSize && mNodeList[smallest]->mValue > mNodeList[left]->mValue)
         smallest = left;
-    if (right < n && mNodeList[smallest]->mValue > mNodeList[right]->mValue)
+    if (right < mHeapSize && mNodeList[smallest]->mValue > mNodeList[right]->mValue)
         smallest = right;
 
     int smallestValue = mNodeList[smallest]->mValue;
@@ -322,13 +335,14 @@ void HeapTree::heapifyDown(int index)
         createNewActionGroup();
         swapTwoNodes(mNodeList[index].get(), mNodeList[smallest].get(), 0.5f);
 
-        mActionQueue.pushInstantAction([=]() { 
+        // mActionQueue.pushInstantAction([=]() { 
             heapifyDown(smallest); 
-        });
+        // });
     }
 }
 
 void HeapTree::empty()
 {
     DS::empty();
+    mHeapSize = 0;
 }

@@ -88,6 +88,8 @@ private:
     std::vector<sf::Texture>        mH;
     int                             cS = -1;
     float                           timer;
+    float                           elapsedTimer = 0;
+    float                           totalTimer = 0;
     int                             targetFrame = -1;
 
     std::vector<int>                keyFrames;

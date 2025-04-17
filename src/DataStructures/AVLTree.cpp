@@ -52,6 +52,9 @@ bool AVLTree::search(int value)
 {
     resetHistory();
 
+    updateValue(value, value + 1);
+    return false;
+
     mCode = {
         "if this == null: return false",
         "else if search value < this.key",
@@ -74,7 +77,8 @@ bool AVLTree::search(int value)
 
 void AVLTree::updateValue(int value, int newValue)
 {
-    
+    remove(value);
+    insert(newValue);
 }
 
 void AVLTree::empty()
@@ -91,12 +95,9 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         node->mParent = prev;
         node->setOpacity(0);
 
-        // mActionQueue.pushInstantAction([=]()
-        // {
-            addNode(node);
-            addEdge(node, nullptr);
-            addEdge(node, nullptr);
-        // });
+        addNode(node);
+        addEdge(node, nullptr);
+        addEdge(node, nullptr);
 
         mActionQueue.pushInstantAction([=]() {
             mInfo = "Location found, inserting " + std::to_string(value) + ".";
@@ -106,19 +107,21 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
 
         if (prev) // Not root node
         {
-            node->setPosition(prev->getPosition());
+            node->setPosition(ANIMATION::Speed < 1000 ? prev->mTargetPosition : prev->getPosition());
             node->mLevel = prev->mLevel + 1;
 
             // Calculate current position
-            sf::Vector2f curPos = prev->getPosition();
+            sf::Vector2f curPos = prev->mTargetPosition;
             if (value < prev->mValue) // is left child
                 curPos += sf::Vector2f(-VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             else // is right child
                 curPos += sf::Vector2f(VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             
-            if (ANIMATION::Speed < 1000) {
+            // node->mTargetPosition = curPos;
+            if (ANIMATION::Speed < 1000) 
                 moveNode(node, curPos, 0.3f);
-            }
+            // else
+            //     node->mTargetPosition = curPos;
 
             createNewActionGroup();
             moveEdge(prev, nullptr, node, 0.3f);
@@ -126,7 +129,8 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         else
         {
             node->mLevel = 0;
-            node->setPosition(sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing));
+            node->mTargetPosition = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing);
+            node->setPosition(node->mTargetPosition);
         }
 
         mActionQueue.pushInstantAction([=]() {
@@ -147,8 +151,11 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         mActionQueue.pushInstantAction([=]() {
             mInfo = std::to_string(value) + " is less than " + std::to_string(node->mValue) + ", go left.";
         });
-        createNewActionGroup();
-        traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
+        if (node->mLeft)
+        {
+            createNewActionGroup();
+            traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
+        }
         insertHelper(node->mLeft, node, value);
     }
     else if (value > node->mValue) // Right traversal
@@ -156,8 +163,11 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         mActionQueue.pushInstantAction([=]() {
             mInfo = std::to_string(value) + " is greater than " + std::to_string(node->mValue) + ", go right.";
         });
-        createNewActionGroup();
-        traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
+        if (node->mLeft)
+        {
+            createNewActionGroup();
+            traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
+        }
         insertHelper(node->mRight, node, value);
     }
     else // value == node->mValue
@@ -201,7 +211,11 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
             mInfo = std::to_string(value) + " is less than " + std::to_string(node->mValue) + ", go left.";
         });
         createNewActionGroup();
-        traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
+        if (node->mLeft)
+        {
+            createNewActionGroup();
+            traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
+        }
         removeHelper(node->mLeft, value);
     }
 
@@ -210,8 +224,11 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
         mActionQueue.pushInstantAction([=]() {
             mInfo = std::to_string(value) + " is greater than " + std::to_string(node->mValue) + ", go right.";
         });
-        createNewActionGroup();
-        traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
+        if (node->mLeft)
+        {
+            createNewActionGroup();
+            traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
+        }
         removeHelper(node->mRight, value);
     }
     else 
@@ -291,18 +308,8 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
         }
     }
 
-    // createNewActionGroup();
-    // highlightNode(node, VIZ::NODE::FillColor, 0.3f, false);
-    // mActionQueue.pushInstantAction([=]() {
-    //     mInfo = "Check the parent.";
-    // }, true);
-
-    // mActionQueue.pushInstantAction([&]()
-    // {
-        // highlightNode(node, VIZ::NODE::FillColor, 0.3f, false);
-        node = updateHeight(node);
-        balance(node);
-    // });
+    node = updateHeight(node);
+    balance(node);
 }
 
 bool AVLTree::searchHelper(TreeNode* node, int value)
@@ -327,7 +334,11 @@ bool AVLTree::searchHelper(TreeNode* node, int value)
             mStep = 2; 
             mInfo = std::to_string(value) + " is less than " + std::to_string(node->mValue) + ", go left.";
         });
-        traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
+        if (node->mLeft)
+        {
+            createNewActionGroup();
+            traverseEdge(node, node->mLeft, sf::Color::Red, 0.3f);
+        }
         return searchHelper(node->mLeft, value);
     }
     else if (value > node->mValue)
@@ -338,7 +349,11 @@ bool AVLTree::searchHelper(TreeNode* node, int value)
             mStep = 4;
             mInfo = std::to_string(value) + " is greater than " + std::to_string(node->mValue) + ", go right.";
         });
-        traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
+        if (node->mLeft)
+        {
+            createNewActionGroup();
+            traverseEdge(node, node->mRight, sf::Color::Red, 0.3f);
+        }
         return searchHelper(node->mRight, value);
     }
     else
@@ -516,7 +531,7 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
 
 void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, float curSpacingY) // DFS
 {
-    if (!curNode || ANIMATION::Speed >= 100) return;
+    if (!curNode || ANIMATION::Speed >= 1000) return;
 
     if (!curNode->mParent)
     {
@@ -528,7 +543,11 @@ void AVLTree::align(TreeNode* curNode, sf::Vector2f curPos, float curSpacingX, f
         curNode->mLevel = curNode->mParent->mLevel + 1;
     }
 
-    moveNode(curNode, sf::Vector2f(int(curPos.x), int(curPos.y)), 0.3f);
+    if (curNode->mTargetPosition != curPos) 
+    {
+        std::cerr << curNode->mValue << ": " << curNode->getPosition().x << " " << curNode->getPosition().y << " " << curPos.x << " " << curPos.y  << "\n";
+        moveNode(curNode, curPos, 0.3f);
+    }
     
     // DFS down to its children
     sf::Vector2f leftChildPos = curPos + sf::Vector2f(-curSpacingX, curSpacingY);

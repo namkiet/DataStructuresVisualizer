@@ -21,11 +21,9 @@ public:
         sf::Vector2f            mInitialPosition;
         std::function<void()>   mCallback;
     
-        Item(ItemType type, std::string imageName)
-            : mType(type), mIsSelected(false), mCallback(nullptr)
+        Item(ItemType type, sf::Texture &texture)
+            : mType(type), mIsSelected(false), mCallback(nullptr), mTexture(texture)
         {
-            if (!mTexture.loadFromFile("assets/images/" + imageName))
-                exit(0);
             mTexture.setSmooth(true);
     
             mSprite.setTexture(mTexture);
@@ -103,7 +101,7 @@ private:
     std::vector<Item*>      items;
 
 public:
-    void                    pushItem(Item::ItemType type, std::string imageName, std::function<void()> callback);
+    void                    pushItem(Item::ItemType type, sf::Texture &texture, std::function<void()> callback);
     void                    next();
     void                    prev();
     void                    update(sf::Time dt);

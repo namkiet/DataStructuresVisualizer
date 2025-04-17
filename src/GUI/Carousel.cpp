@@ -1,8 +1,8 @@
 #include <GUI/Carousel.hpp>
 
-void Carousel::pushItem(Item::ItemType type, std::string imageName, std::function<void()> callback)
+void Carousel::pushItem(Item::ItemType type, sf::Texture &texture, std::function<void()> callback)
 {
-    items.push_back(new Item(type, imageName));
+    items.push_back(new Item(type, texture));
     items.back()->setCallback(callback);
 
     for (int i = 0; i < items.size(); i++)

@@ -1,6 +1,6 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/TreeNode.hpp>
+#include <SceneNode/CircleNode.hpp>
 #include <DataStructures/DS.hpp>
 
 class HeapTree: public DS
@@ -14,6 +14,7 @@ public:
     void                        updateValue(int value, int newValue) override;
 
 private:
+    int                         mHeapSize;
     void                        align() override { align(0); };
     void                        align(int index, sf::Vector2f curPos = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing), float curSpacingX = VIZ::DS::Size.x / 4, float curSpacingY = VIZ::DS::RowSpacing); 
     void                        heapifyUp(int index); 

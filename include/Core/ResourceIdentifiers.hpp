@@ -15,8 +15,17 @@ namespace Textures
 	{
 		AppBackground,
 		MenuBackground,
-		Button,
 		HomeIcon,
+		AVLThumbnail,
+		HeapThumbnail,
+		LLThumbnail,
+		GraphThumbnail,
+		Prev,
+		Next,
+		First,
+		Last,
+		Pause,
+		Play
 	};
 }
 

@@ -13,22 +13,11 @@ MenuState::MenuState(StateStack& stack, Context context):
 	sf::Color color = mBackground.getColor();
 	color.a = 0;
 	mBackground.setColor(sf::Color(100, 100, 100));
-	// mBackground.setColor(sf::Color::Red);
 
-	if (!mShader.loadFromFile("shader/colormode.frag", sf::Shader::Fragment)){
-		// exit(0);
-	}
-
-
-	mCarousel.pushItem(Carousel::Item::AVL, 		"AVLL-modified.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppAVL); });
-	mCarousel.pushItem(Carousel::Item::HEAP, 		"AVLL-modified.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
-	mCarousel.pushItem(Carousel::Item::LINKED_LIST, "AVLL-modified.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
-	mCarousel.pushItem(Carousel::Item::GRAPH, 		"AVLL-modified.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
-
-	// mCarousel.pushItem(Carousel::Item::AVL, 		"avl-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppAVL); });
-	// mCarousel.pushItem(Carousel::Item::HEAP, 		"heap-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
-	// mCarousel.pushItem(Carousel::Item::LINKED_LIST, "ll-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
-	// mCarousel.pushItem(Carousel::Item::GRAPH, 		"graph-thumbnail.png", 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
+	mCarousel.pushItem(Carousel::Item::AVL, 		context.textures->get(Textures::AVLThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppAVL); });
+	mCarousel.pushItem(Carousel::Item::HEAP, 		context.textures->get(Textures::HeapThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
+	mCarousel.pushItem(Carousel::Item::LINKED_LIST, context.textures->get(Textures::LLThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
+	mCarousel.pushItem(Carousel::Item::GRAPH, 		context.textures->get(Textures::GraphThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
 }
 
 void MenuState::draw()

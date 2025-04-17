@@ -358,7 +358,7 @@ void LinkedList::insertAtIndex(int value, int index)
 
     if ((newNode->mIndex + 1) % maxRowNode == 0) // last node in a row
     {
-        pos = cur->getPosition() + sf::Vector2f(0, 150);
+        pos = cur->mTargetPosition + sf::Vector2f(0, 150);
     }
     else
     {

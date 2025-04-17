@@ -73,6 +73,13 @@ private:
     InfoPanel*                          mInfoPanel;
     MainUI*                             mMainUI;
     ProgressBar*                        mProgressBar;
+    GUI::Button::Ptr                    mFirstButton;
+    GUI::Button::Ptr                    mLastButton;
+    GUI::Button::Ptr                    mPrevButton;
+    GUI::Button::Ptr                    mNextButton;
+    GUI::Button::Ptr                    mPauseButton;
+    sf::Sprite                          mPause;
+    sf::Sprite                          mPlay;
 
 public:
     void                                handleEvent(const sf::Event& event);

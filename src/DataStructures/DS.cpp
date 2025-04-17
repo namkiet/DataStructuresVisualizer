@@ -2,13 +2,19 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 
-DS::DS() { resetHistory(); mActionCount = 0; stop = true; playback = NORMAL; }
+DS::DS() { empty(); mActionCount = 0; stop = false; playback = NORMAL; }
 
 void DS::empty()
 {
     mCode.clear();
+    mLastStep = -1;
     mInfo = "";
     mLastInfo = "";
+
+    mH.clear();
+    keyFrames.clear();
+    cS = -1;
+    stop = isStepByStep;
 
     mEdgeList.clear();
     mNodeList.clear();
@@ -20,6 +26,8 @@ bool DS::isRunning() { return !mActionQueue.isEmpty(); }
 void DS::saveStep()
 {
     if (ANIMATION::Speed >= 1000) return;
+
+    cS++;
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8; 
@@ -55,23 +63,11 @@ bool DS::canRedo() {
 
 void DS::undo()
 {
-    // if (canUndo()) cS--;
-    // playback = UNDO;
-    // return;
-    // if (keyID < 0) return;
-
-    // cS = keyFrames[keyID];
-    // keyID--;
-
     if (!canUndo()) return;
     playback = UNDO;
+    stop = true;
 
-    for (auto x: keyFrames)
-        std::cerr << x << " - ";
-    std::cerr << cS << "\n";
-
-
-    if (keyFrames.empty() && cS > keyFrames.back())
+    if (!keyFrames.empty() && cS > keyFrames.back())
     {
         targetFrame = keyFrames.back();
         return;
@@ -89,14 +85,9 @@ void DS::undo()
 
 void DS::redo()
 {
-    // stop = false;
-    // return;
-    // if (canRedo()) cS++;
-    // playback = REDO;
-    // return;
-
     if (!canRedo()) return;
     playback = REDO;
+    stop = true;
 
     if (keyFrames.empty() || cS >= keyFrames.back())
     {
@@ -116,72 +107,77 @@ void DS::redo()
 
 void DS::sBs()
 {
-    stop = false;
+    stop = !stop;
 }
 
 float DS::getProgress()
 {
-    if (isRunning())
-    {
-        if (mActionCount <= 0) return 1.f;
-        float progress = (mCurrentAction * 1.f) / mActionCount;
-        return progress;
-    }
+    if (isRunning() && playback == NORMAL) return elapsedTimer / totalTimer;
 
     if (mH.size() <= 1) return 1.f;
-    float progress = (cS * 1.f) / (mH.size() - 1);
+    float progress = (cS * 1.f) / (mH.size() - 1) * (elapsedTimer == 0 ? 1 : elapsedTimer / totalTimer);
     return progress;
 }
 
 void DS::resetHistory()
 {
     mCode.clear();
-
     mLastStep = -1;
     mInfo = "";
     mLastInfo = "";
 
-    // auto c = mH.back();
     mH.clear();
     keyFrames.clear();
+    cS = -1;
+
+    stop = isStepByStep;
 
     saveStep();
-    // mH.push_back(c);
-    cS = 0;
 
     keyFrames.push_back(0);
 
-    keyID = -1;
-
-    stop = true;
 }
 
 void DS::updateCurrent(sf::Time dt)   
 {   
-    std::cerr << mActionQueue.getTotalTime() << " - time \n";
     if (playback == UNDO)
     {
         timer += dt.asSeconds();
-        if (timer >= 0.05f)
+        if (timer >= 0.08f)
         {
-            std::cerr << "Target Frame: " << targetFrame << "\n";
+            std::cerr << cS << " " << targetFrame << "\n";
             if (cS > targetFrame) cS--;
-            timer = 0;
-        }
-        return;
-    }
-    else if (playback == REDO)
-    { 
-        timer += dt.asSeconds();
-        if (timer >= 0.05f)
-        {
-            if (cS < targetFrame) cS++;
-            if (cS == mH.size() - 1) playback = NORMAL;
+            if (!stop) 
+            {
+                redo();
+                stop = false;
+            }
             timer = 0;
         }
         return;
     }
     
+    if (playback == REDO)
+    { 
+        timer += dt.asSeconds();
+        if (timer >= 0.08f)
+        {
+            if (cS < targetFrame) cS++;
+            if (cS == mH.size() - 1) playback = NORMAL;
+            if (!stop) 
+            {
+                redo();
+                stop = false;
+            }
+            timer = 0;
+        }
+        return;
+    }
+    
+    // if (totalTimer)
+    // else
+    //     elapsedTimer = 0;
+
     if (mActionQueue.isEmpty())
     {
         mStep = mLastStep;
@@ -189,86 +185,34 @@ void DS::updateCurrent(sf::Time dt)
         
         mCurrentAction = 0;
         mActionCount = 0;
+
+        totalTimer = 0;
+        elapsedTimer = 0;
     }
     else
     {
-        if (isStepByStep)
-        { 
-            if (!stop)
-            {
-                timer += dt.asSeconds();
+        if (stop) return;
 
-                float t = mActionQueue.update(dt);
+        totalTimer = std::max(totalTimer, mActionQueue.getTotalTime());
 
-                std::cerr << mActionCount << "\n";
-                mActionCount = std::max(mActionCount, mActionQueue.size());
+        float t = mActionQueue.update(dt);
+        timer += dt.asSeconds();
 
-                if (t > 0 || timer >= 0.1f) // only update every 0.1s or before important frames
-                {
-                    // if (cS == mH.size() - 1) 
-                    cS++;
-                    saveStep();
-                }
+        if (t > 0 || timer >= std::max(0.1f, totalTimer / 100))
+            saveStep();
 
-                if (t > 0)
-                {
-                    keyFrames.push_back(mH.size() - 1);
-                    stop = true;
-                }
-
-                if (timer >= 0.1f) timer = 0;
-            }
-        }
-        else
+        if (t > 0)
         {
-            std::cerr << mActionCount << "\n";
-            mActionCount = std::max(mActionCount, mActionQueue.size());
-
-            timer += dt.asSeconds();
-
-            float t = mActionQueue.update(dt);
-
-            // if (t > 0 || timer >= 0.1f)
-            // {
-            //     // if (cS == mH.size() - 1) 
-            //     cS++;
-            //     saveStep();
-            // }
-
-            // if (timer >= 0.1f) timer = 0;
-            
-            // if (t > 0)
-            // {
-            // // keyID++;
-            //     keyFrames.push_back(mH.size() - 1);
-            // }
-
-            // // }
-            // // keyFrames.push_back(cS);
-            // if (t >= 0) 
-            //     mCurrentAction++;
-
-            // if (t <= 0) // only update every 0.1s or before important frames
-            // {
-            //     if (cS == mH.size() - 1) cS--;
-            //     mH.pop_back();
-            // }
-
-            // if (t <= 0)
-            // {
-            //     keyID--;
-            //     keyFrames.pop_back();
-            // }
-
-            // if (t) // important frame
-            // {
-            //     saveStep();
-            //     cS++;
-            //     // keyFrames.push_back(cS);
-            //     // keyID++;
-            // }
-
+            keyFrames.push_back(mH.size() - 1);
+            if (isStepByStep) stop = true;
         }
+
+        if (t == -1)
+        {
+            elapsedTimer += dt.asSeconds();
+        }
+
+        if (timer >= std::max(0.1f, totalTimer / 100)) timer = 0;
     }
 
     for (auto &edge: mEdgeList)
@@ -325,25 +269,10 @@ void DS::removeNode(CircleNode* node)
 }
 void DS::addEdge(CircleNode* parent, CircleNode* child, int weight, bool hasArrow) 
 {
-    if(weight == -1)
-    {
-        // mActionQueue.pushAction([this, parent, child, hasArrow](sf::Time dt) mutable -> bool
-        // {
-            mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
-        //     return true;
-        // });
-    }
-    //no Weight
-
-    else
-    {
-        std::cout<<"Go here ok"<<std::endl;
-        // mActionQueue.pushAction([this, parent, child, hasArrow,weight](sf::Time dt) mutable -> bool
-        // {
-            mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, weight, hasArrow, VIZ::EDGE::Thickness));
-        //     return true;
-        // });
-    } // has Weight   
+    if (weight == -1) // unweighted
+        mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, hasArrow, VIZ::EDGE::Thickness));
+    else // weighted
+        mEdgeList.push_back(std::make_unique<Edge>(VIZ::EDGE::Color, parent, child, weight, hasArrow, VIZ::EDGE::Thickness));
 }
 
 void DS::addEdge(CircleNode* parent, CircleNode* child, bool hasArrow) 
@@ -409,6 +338,7 @@ void DS::deleteNode(CircleNode* node)
 void DS::moveNode(CircleNode* node, sf::Vector2f targetPos, float duration)
 {
     if (!node) return;
+    node->mTargetPosition = targetPos;
     mActionQueue.pushAction(Action::MoveNode(node, targetPos, duration));
 }
 
@@ -420,9 +350,9 @@ void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail,
 void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse)
 {
     createNewActionGroup();
-    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration, false));
+    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration / 2, false));
     createNewActionGroup();
-    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, VIZ::EDGE::Color, duration, false));
+    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, VIZ::EDGE::Color, duration / 2, false));
 }
 void DS::changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
 {
@@ -439,16 +369,13 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
     a->mValue = bVal;
     b->mValue = aVal;
 
-    int aOpa = a->getOpacity();
-    int bOpa = b->getOpacity();
-
     // Create 2 fake nodes
     TreeNode* fakeA = new TreeNode(aVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     TreeNode* fakeB = new TreeNode(bVal, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     fakeA->setOpacity(0);
     fakeB->setOpacity(0);
-    fakeA->setPosition(a->getPosition());
-    fakeB->setPosition(b->getPosition());
+    fakeA->setPosition(a->mTargetPosition);
+    fakeB->setPosition(b->mTargetPosition);
     addNode(fakeA);
     addNode(fakeB);
 
@@ -456,14 +383,14 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
     mActionQueue.pushInstantAction([=]() {
         a->setOpacity(0);
         b->setOpacity(0);
-        fakeA->setOpacity(aOpa);
-        fakeB->setOpacity(bOpa);
+        fakeA->setOpacity(1);
+        fakeB->setOpacity(1);
     });
 
     // Swap the 2 fake nodes
     createNewActionGroup();
-    moveNode(fakeA, b->getPosition(), duration);
-    moveNode(fakeB, a->getPosition(), duration);
+    moveNode(fakeA, b->mTargetPosition, duration);
+    moveNode(fakeB, a->mTargetPosition, duration);
 
     // Remove the 2 fake nodes
     createNewActionGroup();
@@ -472,8 +399,8 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 
     // Make the real nodes appear again
     mActionQueue.pushInstantAction([=]() {
-        a->setOpacity(aOpa);
-        b->setOpacity(bOpa);
+        a->setOpacity(1);
+        b->setOpacity(1);
         a->setValue(bVal);
         b->setValue(aVal);
     });
@@ -481,6 +408,7 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 
 void DS::loadFromVector(std::vector<int> numList)
 {
+    isStepByStep = false;
     empty();
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;

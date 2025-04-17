@@ -222,6 +222,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     mStepByStepButton->setCallback([=](){
         avl->isStepByStep = true;
+        avl->stop = true;
         InputBoxInsert->submit();
         InputBoxDelete->submit();
         InputBoxSearch->submit();
@@ -229,6 +230,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     mAtOnceButton->setCallback([=](){
         avl->isStepByStep = false;
+        avl->stop = false;
         InputBoxInsert->submit();
         InputBoxDelete->submit();
         InputBoxSearch->submit();
@@ -377,6 +379,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     mStepByStepButton->setCallback([=](){
         heap->isStepByStep = true;
+        heap->stop = true;
         InputBoxPush->submit();
         InputBoxPop->submit();
         InputBoxSearch->submit();
@@ -384,6 +387,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     mAtOnceButton->setCallback([=](){
         heap->isStepByStep = false;
+        heap->stop = false;
         InputBoxPush->submit();
         InputBoxPop->submit();
         InputBoxSearch->submit();
@@ -548,6 +552,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     mStepByStepButton->setCallback([=](){
         ll->isStepByStep = true;
+        ll->stop = true;
         InputBoxInsertAtHead->submit();
         InputBoxInsertAtLast->submit();
         InputBoxDelete->submit();
@@ -556,6 +561,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     mAtOnceButton->setCallback([=](){
         ll->isStepByStep = false;
+        ll->stop = false;
         InputBoxInsertAtHead->submit();
         InputBoxInsertAtLast->submit();
         InputBoxDelete->submit();

@@ -19,6 +19,11 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	mTextures(textures),
 	mFonts(fonts)
 {
+	textures.get(Textures::Pause).setSmooth(true);
+	mPause.setTexture(textures.get(Textures::Pause));
+	textures.get(Textures::Play).setSmooth(true);
+	mPlay.setTexture(textures.get(Textures::Play));
+
     buildScene();
 	// mShader.loadFromFile("shader/colormode.frag", sf::Shader::Fragment);
 }
@@ -33,12 +38,45 @@ void World::update(sf::Time dt)
 	mInfoPanel->setText(mDataStructure->getInfo());
 
 	mProgressBar->setProgress(mDataStructure->getProgress());
+
+	if (mDataStructure->stop)
+		mPauseButton->setSprite(mPlay);
+	else
+		mPauseButton->setSprite(mPause);
+
+	if (mDataStructure->canUndo())
+	{
+		mFirstButton->enable();
+		mPrevButton->enable();
+	}
+	else
+	{
+		mFirstButton->disable();
+		mPrevButton->disable();
+	}
+
+	if (mDataStructure->canRedo())
+	{
+		mLastButton->enable();
+		mNextButton->enable();
+	}
+	else
+	{
+		mLastButton->disable();
+		mNextButton->disable();
+	}
 }
 
 void World::draw()
 {
 	mWindow.draw(background);
 	mWindow.draw(mSceneGraph);
+
+	mWindow.draw(*mFirstButton);
+	mWindow.draw(*mLastButton);
+	mWindow.draw(*mPrevButton);
+	mWindow.draw(*mNextButton);
+	mWindow.draw(*mPauseButton);
 }
 
 void World::buildScene()
@@ -65,9 +103,39 @@ void World::buildScene()
 	mMainUI = mainUI.get();
 	mSceneLayers[SidePanel]->attachChild(std::move(mainUI));
 
-	ProgressBar::Ptr progress(new ProgressBar(100, 100, 100, 20));
+	ProgressBar::Ptr progress(new ProgressBar(SCREEN::Width - 700, SCREEN::Height - 35, 500, 20));
 	mProgressBar = progress.get();
 	mSceneLayers[Progress]->attachChild(std::move(progress));
+
+	sf::Font emptyFont;
+
+	mTextures.get(Textures::First).setSmooth(true);
+	sf::Sprite firstSprite(mTextures.get(Textures::First));
+	mFirstButton = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 870, SCREEN::Height - 35), "", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mFirstButton->setSprite(firstSprite);
+	mFirstButton->setToggle(false);
+
+	mTextures.get(Textures::Last).setSmooth(true);
+	sf::Sprite lastSprite(mTextures.get(Textures::Last));
+	mLastButton = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 750, SCREEN::Height - 35), "", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mLastButton->setSprite(lastSprite);
+	mLastButton->setToggle(false);
+
+	mTextures.get(Textures::Prev).setSmooth(true);
+	sf::Sprite prevSprite(mTextures.get(Textures::Prev));
+	mPrevButton = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 840, SCREEN::Height - 35), "", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mPrevButton->setSprite(prevSprite);
+
+	mTextures.get(Textures::Next).setSmooth(true);
+	sf::Sprite nextSprite(mTextures.get(Textures::Next));
+	mNextButton = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 780, SCREEN::Height - 35), "", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mNextButton->setSprite(nextSprite);
+	mNextButton->setToggle(false);
+	
+	mPauseButton = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 810, SCREEN::Height - 35), "", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mPauseButton->setSprite(mPause);	
+	mPauseButton->setToggle(false);
+
 
 	sf::Texture &bg = mTextures.get(Textures::AppBackground);
 	background.setTexture(bg);
@@ -106,10 +174,22 @@ void World::setMode(World::Mode mode)
 
 	mSceneLayers[DataStructure]->setPosition(VIZ::DS::Position);
 	mMainUI->createButtonList(mode, mDataStructure);
+
+
+	mPrevButton->setCallback([=](){ mDataStructure->undo(); });
+	mNextButton->setCallback([=](){ mDataStructure->redo(); });
+	mPauseButton->setCallback([=]() { mDataStructure->sBs(); });
+	mFirstButton->setCallback([=](){ mDataStructure->redo(); });
+	mLastButton->setCallback([=](){ mDataStructure->redo(); });
 }
 
 void World::handleEvent(const sf::Event& event)
 {
+	mFirstButton->handleEvent(event);
+	mLastButton->handleEvent(event);
+	mPrevButton->handleEvent(event);
+	mNextButton->handleEvent(event);
+	mPauseButton->handleEvent(event);
 
 	mMainUI->handleEvent(event);
 

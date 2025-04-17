@@ -22,10 +22,21 @@ App::App():
 
 void App::loadTextures()
 {
-    mTextures.load(Textures::Button, "assets/images/button.jpg");
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
 	mTextures.load(Textures::AppBackground, "assets/images/desert-night.png");
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
+    mTextures.load(Textures::AVLThumbnail, "assets/images/avl-thumbnail.png");
+    mTextures.load(Textures::HeapThumbnail, "assets/images/heap-thumbnail.png");
+    mTextures.load(Textures::LLThumbnail, "assets/images/ll-thumbnail.png");
+    mTextures.load(Textures::GraphThumbnail, "assets/images/graph-thumbnail.png");
+
+;
+    mTextures.load(Textures::Prev, "assets/images/prevFrame.png");
+    mTextures.load(Textures::Next, "assets/images/nextFrame.png");
+    mTextures.load(Textures::First, "assets/images/beginning.png");
+    mTextures.load(Textures::Last, "assets/images/end.png");
+    mTextures.load(Textures::Pause, "assets/images/pause.png");
+    mTextures.load(Textures::Play, "assets/images/play.png");
 }
 
 void App::loadFonts()
