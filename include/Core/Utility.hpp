@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include "Core/ResourceIdentifiers.hpp"
 
 void centerOrigin(sf::Sprite& sprite);
 void centerOrigin(sf::Text& text);
@@ -26,3 +27,5 @@ bool isValidNodePosition(sf::Vector2f pos);
 
 
 void makeValidNodePosition(sf::Vector2f& pos);
+
+Textures::ID getCurrentBackgroundOption();

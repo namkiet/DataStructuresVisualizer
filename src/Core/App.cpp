@@ -23,20 +23,29 @@ App::App():
 void App::loadTextures()
 {
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
-	mTextures.load(Textures::AppBackground, "assets/images/desert-night.png");
+
+	mTextures.load(Textures::AppBackground1, "assets/images/desert-night.png");
+    mTextures.load(Textures::AppBackground2, "assets/images/sunrise.jpg");
+    mTextures.load(Textures::AppBackground3, "assets/images/forest.jpg");
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
+
     mTextures.load(Textures::AVLThumbnail, "assets/images/avl-thumbnail.png");
     mTextures.load(Textures::HeapThumbnail, "assets/images/heap-thumbnail.png");
     mTextures.load(Textures::LLThumbnail, "assets/images/ll-thumbnail.png");
     mTextures.load(Textures::GraphThumbnail, "assets/images/graph-thumbnail.png");
 
-;
     mTextures.load(Textures::Prev, "assets/images/prevFrame.png");
     mTextures.load(Textures::Next, "assets/images/nextFrame.png");
     mTextures.load(Textures::First, "assets/images/beginning.png");
     mTextures.load(Textures::Last, "assets/images/end.png");
     mTextures.load(Textures::Pause, "assets/images/pause.png");
     mTextures.load(Textures::Play, "assets/images/play.png");
+
+    mTextures.load(Textures::SettingIcon, "assets/images/settings.png");
+    mTextures.load(Textures::NavigateLeft, "assets/images/navigate_left.png");
+    mTextures.load(Textures::NavigateRight, "assets/images/navigate_right.png");
+    mTextures.load(Textures::ID::Minus, "assets/images/minus.jpg");
+    mTextures.load(Textures::ID::Plus, "assets/images/plus.jpg");
 }
 
 void App::loadFonts()
@@ -44,7 +53,6 @@ void App::loadFonts()
     mFonts.load(Fonts::Main, "assets/fonts/jetbrains.ttf");
     mFonts.load(Fonts::UI, "assets/fonts/Poppins-Regular.ttf");
 }
-
 
 void App::registerStates()
 {

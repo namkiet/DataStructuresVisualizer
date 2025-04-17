@@ -9,7 +9,8 @@
 MenuState::MenuState(StateStack& stack, Context context): 
 	State(stack, context)
 {
-	mBackground.setTexture(context.textures->get(Textures::AppBackground));
+	Textures::ID currentBackground = getCurrentBackgroundOption();
+	mBackground.setTexture(context.textures->get(currentBackground));
 	sf::Color color = mBackground.getColor();
 	color.a = 0;
 	mBackground.setColor(sf::Color(100, 100, 100));
@@ -18,6 +19,13 @@ MenuState::MenuState(StateStack& stack, Context context):
 	mCarousel.pushItem(Carousel::Item::HEAP, 		context.textures->get(Textures::HeapThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
 	mCarousel.pushItem(Carousel::Item::LINKED_LIST, context.textures->get(Textures::LLThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
 	mCarousel.pushItem(Carousel::Item::GRAPH, 		context.textures->get(Textures::GraphThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
+
+	// setting button
+	mSettingButton = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), sf::Vector2f(SCREEN::Width - 80.f, 20.f), "", sf::Vector2f(50.f, 50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mSettingButton->setNormalColor(sf::Color(255, 255, 255, 50));
+	mSettingButton->setSelectedColor(sf::Color(255, 255, 255, 100));
+	mSettingButton->setSprite(sf::Sprite(context.textures->get(Textures::SettingIcon)));
+	mSettingButton->setCallback([this](){ requestStackPop(); requestStackPush(States::Settings); });
 }
 
 void MenuState::draw()
@@ -27,6 +35,7 @@ void MenuState::draw()
 
 	window.draw(mBackground);
 	mCarousel.draw(window);
+	window.draw(*mSettingButton);
 }
 
 bool MenuState::update(sf::Time dt)
@@ -43,14 +52,8 @@ bool MenuState::handleEvent(const sf::Event& event)
 			mCarousel.prev();
 		if (event.key.code == sf::Keyboard::Right)
 			mCarousel.next();
-
-
-		if (event.key.code == sf::Keyboard::A)
-		{
-            requestStackPop();
-			requestStackPush(States::Settings);
-		}
 	}
+	mSettingButton->handleEvent(event);
 	mCarousel.handleEvent(event);
 	return true;
 }

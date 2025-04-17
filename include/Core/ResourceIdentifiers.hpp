@@ -13,7 +13,9 @@ namespace Textures
 {
 	enum ID
 	{
-		AppBackground,
+		AppBackground1,
+		AppBackground2,
+		AppBackground3,
 		MenuBackground,
 		HomeIcon,
 		AVLThumbnail,
@@ -25,7 +27,11 @@ namespace Textures
 		First,
 		Last,
 		Pause,
-		Play
+		SettingIcon,
+		NavigateLeft,
+		NavigateRight,
+		Minus,
+		Plus
 	};
 }
 

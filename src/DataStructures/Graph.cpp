@@ -45,7 +45,7 @@ Graph::Graph(){
     constexpr double PI = 3.14159265358979323846;
 
     for(int i = 0; i < n;i++){
-        ListGraphNode[i] = new CircleNode(i, 16.f, sf::Color::White, sf::Color::Black);
+        ListGraphNode[i] = new CircleNode(i, VIZ::NODE::Radius, sf::Color::White, sf::Color::Black);
         // set position
         float angle = 2 * PI * i / n;
         sf::Vector2f unitVec(std::cos(angle), std::sin(angle));

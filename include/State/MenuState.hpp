@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <State/StateStack.hpp>
 #include <GUI/Carousel.hpp>
-
+#include<GUI/Button.hpp>
 
 class MenuState : public State
 {
@@ -16,4 +16,5 @@ private:
 	sf::Shader				mShader;
 	sf::Sprite				mBackground;
 	Carousel				mCarousel;
+	GUI::Button::Ptr		mSettingButton;	
 };
