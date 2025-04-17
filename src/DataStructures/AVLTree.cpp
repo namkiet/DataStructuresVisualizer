@@ -52,8 +52,8 @@ bool AVLTree::search(int value)
 {
     resetHistory();
 
-    updateValue(value, value + 1);
-    return false;
+    // updateValue(value, value + 1);
+    // return false;
 
     mCode = {
         "if this == null: return false",
