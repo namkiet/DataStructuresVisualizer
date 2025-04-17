@@ -81,12 +81,20 @@ namespace VIZ
         float Thickness             = 2.f;
         sf::Color FillColor         = sf::Color::Transparent;
         sf::Color OutlineColor      = sf::Color::White;
+
+        float MaxRadius             = 26.f;
+        float MinRadius             = 10.f;
+        float ChangeStep            = 2.f;
     }
 
     namespace EDGE
     {
         float Thickness             = 2.f;
-        sf::Color Color             = sf::Color::White;   
+        sf::Color Color             = sf::Color::White;
+
+        float MinThickness          = 1.f;
+        float MaxThickness          = 3.f;
+        float ChangeStep            = 0.2f;
     }
 
     sf::Color TextColor             = sf::Color::White;         

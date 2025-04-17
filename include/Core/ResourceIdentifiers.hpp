@@ -22,6 +22,8 @@ namespace Textures
 		SettingIcon,
 		NavigateLeft,
 		NavigateRight,
+		Minus,
+		Plus,
 	};
 }
 

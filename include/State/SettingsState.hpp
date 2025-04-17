@@ -12,7 +12,7 @@ public:
 	virtual void			draw();
 	virtual bool			update(sf::Time dt);
 	virtual bool			handleEvent(const sf::Event& event);
-	void 					resetBackgroundOption();
+	void 					updateStatDisplay();
 
 private:
 	Context										context;
@@ -20,13 +20,24 @@ private:
 	std::vector<CircleNode*>					nodes;
 	std::vector<Edge*>							edges;
 	GUI::Button::Ptr        					mHomeButton;
-	sf::Text									mBackgroundText;
 
 	sf::Sprite									mBackgroundSprite;
 	sf::Text									mBackgroundTextOption;
 
 	GUI::Button::Ptr                            BgNavigateLeft;
 	GUI::Button::Ptr                            BgNavigateRight;
+	GUI::Button::Ptr							DecreaseNodeSize;
+	GUI::Button::Ptr							IncreaseNodeSize;
+	GUI::Button::Ptr							DecreaseEdgeThickness;
+	GUI::Button::Ptr							IncreaseEdgeThickness;
+
+	sf::Text									NodeSize;
+	sf::Text									EdgeThickness;
+
+	sf::Text									mBackgroundText;
+	sf::Text									mNodeSizeText;
+	sf::Text 									mEdgeThicknessText;
+
 	
 
 };

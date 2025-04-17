@@ -84,12 +84,19 @@ namespace VIZ
         extern float Thickness;
         extern sf::Color FillColor;
         extern sf::Color OutlineColor;
+        extern float MaxRadius;
+        extern float MinRadius;
+        extern float ChangeStep;
     }
 
     namespace EDGE
     {
         extern float Thickness;
         extern sf::Color Color;
+
+        extern float MaxThickness;
+        extern float MinThickness;
+        extern float ChangeStep;
     }
     
     extern sf::Color TextColor;
