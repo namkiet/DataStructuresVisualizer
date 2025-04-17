@@ -75,7 +75,7 @@ sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2)
 	// std::cout<<"Jump to attraction ok"<<std::endl;
 	float dist = (norm(pos1 - pos2) <= 1)? 1: norm(pos1 - pos2);
 	// if (dist == 0) return sf::Vector2f(0, 0);
-	return 3*(pos1 - pos2)/norm(pos1-pos2) * (dist * dist)/ coefficient;
+	return (pos1 - pos2)/norm(pos1 - pos2) * (coefficient / (dist * dist));
 } // attraction of pos1 acting on pos2
 
 sf::Vector2f CenterAttraction(sf::Vector2f pos){

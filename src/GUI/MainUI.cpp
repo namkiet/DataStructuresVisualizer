@@ -263,19 +263,19 @@ void MainUI::initAVLButtons(AVLTree* avl)
     mStepByStepButton->setCallback([=](){
         avl->isStepByStep = true;
         avl->stop = true;
-        InputBoxInsert->submit();
-        InputBoxDelete->submit();
-        InputBoxSearch->submit();
-        InputBoxUpdate->submit();
+        // InputBoxInsert->submit();
+        // InputBoxDelete->submit();
+        // InputBoxSearch->submit();
+        // InputBoxUpdate->submit();
     });
 
     mAtOnceButton->setCallback([=](){
         avl->isStepByStep = false;
         avl->stop = false;
-        InputBoxInsert->submit();
-        InputBoxDelete->submit();
-        InputBoxSearch->submit();
-        InputBoxUpdate->submit();
+        // InputBoxInsert->submit();
+        // InputBoxDelete->submit();
+        // InputBoxSearch->submit();
+        // InputBoxUpdate->submit();
     });
 
 
@@ -451,19 +451,19 @@ void MainUI::initHeapButtons(HeapTree* heap)
     mStepByStepButton->setCallback([=](){
         heap->isStepByStep = true;
         heap->stop = true;
-        InputBoxPush->submit();
-        // InputBoxPop->submit();
-        InputBoxSearch->submit();
-        InputBoxUpdate->submit();
+        // InputBoxPush->submit();
+        // // InputBoxPop->submit();
+        // InputBoxSearch->submit();
+        // InputBoxUpdate->submit();
     });
 
     mAtOnceButton->setCallback([=](){
         heap->isStepByStep = false;
         heap->stop = false;
-        InputBoxPush->submit();
-        // InputBoxPop->submit();
-        InputBoxSearch->submit();
-        InputBoxUpdate->submit();   
+        // InputBoxPush->submit();
+        // // InputBoxPop->submit();
+        // InputBoxSearch->submit();
+        // InputBoxUpdate->submit();   
     });
 
     // Pack all buttons
@@ -655,21 +655,21 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
     mStepByStepButton->setCallback([=](){
         ll->isStepByStep = true;
         ll->stop = true;
-        InputBoxInsertAtHead->submit();
-        InputBoxInsertAtLast->submit();
-        InputBoxDelete->submit();
-        InputBoxSearch->submit();
-        InputBoxUpdate->submit();
+        // InputBoxInsertAtHead->submit();
+        // InputBoxInsertAtLast->submit();
+        // InputBoxDelete->submit();
+        // InputBoxSearch->submit();
+        // InputBoxUpdate->submit();
     });
 
     mAtOnceButton->setCallback([=](){
         ll->isStepByStep = false;
         ll->stop = false;
-        InputBoxInsertAtHead->submit();
-        InputBoxInsertAtLast->submit();
-        InputBoxDelete->submit();
-        InputBoxSearch->submit();
-        InputBoxUpdate->submit();
+        // InputBoxInsertAtHead->submit();
+        // InputBoxInsertAtLast->submit();
+        // InputBoxDelete->submit();
+        // InputBoxSearch->submit();
+        // InputBoxUpdate->submit();
     });
 
     OperationButtonsList->pack(CreateButton);
@@ -709,7 +709,7 @@ void MainUI::initGraphButtons(Graph* g)
             int edgeCount = 13;
             int minWeight = 1;
             int maxWeight = 10;
-            
+
             std::vector<int> edgeData;
             std::unordered_set<long long> seen;
 
@@ -723,6 +723,21 @@ void MainUI::initGraphButtons(Graph* g)
                 return (static_cast<long long>(u) << 32) | v;
             };
 
+            // Đảm bảo mỗi node xuất hiện ít nhất một lần
+            for (int u = 0; u < nodeCount; ++u) {
+                int v;
+                do {
+                    v = nodeDist(rng);
+                } while (v == u || seen.count(encode(u, v)));
+
+                seen.insert(encode(u, v));
+                int w = weightDist(rng);
+                edgeData.push_back(u);
+                edgeData.push_back(v);
+                edgeData.push_back(w);
+            }
+
+            // Tiếp tục sinh các cạnh còn lại cho đủ số lượng
             while (edgeData.size() < edgeCount * 3) {
                 int u = nodeDist(rng);
                 int v = nodeDist(rng);
@@ -737,7 +752,9 @@ void MainUI::initGraphButtons(Graph* g)
                 edgeData.push_back(v);
                 edgeData.push_back(w);
             }
+
             g->loadFromVector(edgeData);
+
         }
         else if (type == 1)
         {

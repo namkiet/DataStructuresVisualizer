@@ -10,6 +10,7 @@ Carousel::Carousel(TextureHolder* textures)
     leftArrow->setSprite(leftSprite);
     leftArrow->setCallback([=]() { prev(); });
     leftArrow->setToggle(false);
+    leftArrow->setFillColor(sf::Color(255, 255, 255, 5));
 
     sf::Sprite rightSprite(textures->get(Textures::NavigateRight));
     centerOrigin(rightSprite);
@@ -17,6 +18,7 @@ Carousel::Carousel(TextureHolder* textures)
     rightArrow->setSprite(rightSprite);
     rightArrow->setCallback([=]() { next(); });
     rightArrow->setToggle(false);
+    rightArrow->setFillColor(sf::Color(255, 255, 255, 5));
 }
 
 void Carousel::pushItem(Item::ItemType type, sf::Texture &texture, std::function<void()> callback)

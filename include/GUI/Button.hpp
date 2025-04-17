@@ -51,6 +51,8 @@ class Button: public Component
 
         void                    disable();
         void                    enable();
+
+        void                    setFillColor(sf::Color color);
     
     
         void                    setSprite(sf::Sprite sprite);

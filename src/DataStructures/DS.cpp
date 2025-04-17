@@ -362,10 +362,17 @@ void DS::moveEdge(CircleNode* parent, CircleNode* child, CircleNode* targetTail,
 
 void DS::traverseEdge(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration, bool reverse)
 {
-    createNewActionGroup();
-    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration / 2, false));
-    createNewActionGroup();
-    mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, VIZ::EDGE::Color, duration / 2, false));
+    if (reverse)
+    {
+    // createNewActionGroup();
+        mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration / 2, false));
+        createNewActionGroup();
+        mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, VIZ::EDGE::Color, duration / 2, false));
+    }
+    else
+    {
+        mActionQueue.pushAction(Action::TraverseEdge(mEdgeList, parent, child, highlightColor, duration, false));
+    }
 }
 void DS::changeEdgeColor(CircleNode* parent, CircleNode* child, sf::Color highlightColor, float duration)
 {

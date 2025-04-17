@@ -317,3 +317,12 @@ void GUI::Button::enable()
     mIsDisabled = false;
     mSprite.setColor(sf::Color(255, 255, 255, 255));
 }
+
+void GUI::Button::setFillColor(sf::Color color)
+{
+    mNormalColor = color;
+    if(mShapeType == ShapeType::Rectangle)
+        mShape.setFillColor(mNormalColor);
+    else if(mShapeType == ShapeType::Circle)
+        mCircle.setFillColor(mNormalColor);
+}

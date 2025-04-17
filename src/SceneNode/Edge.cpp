@@ -61,6 +61,8 @@ Edge::Edge(sf::Color color, CircleNode* from, CircleNode* to, int weight, bool h
     mMid = mHead;
     mTail = (mTo ? mTo->getPosition() : mFrom->getPosition());
 
+    mMarkColor = sf::Color::Red;
+
     updateEdge();
 }
 
@@ -152,10 +154,10 @@ void Edge::updateEdge()
 
         float theta = angle(mHead, mTail);
 
-        mLine2[0].color =mColor;
-        mLine2[1].color =mColor;
-        mLine2[2].color =mColor;   
-        mLine2[3].color =mColor;
+        mLine2[0].color = mColor;
+        mLine2[1].color = mColor;
+        mLine2[2].color = mColor;   
+        mLine2[3].color = mColor;
         
         mLine2[0].position = mLine1[2].position;
         mLine2[1].position = mLine1[3].position;
@@ -177,7 +179,7 @@ void Edge::updateEdge()
 
         sf::Vector2f mid = (mFrom->getPosition() + mTo->getPosition())/2.f;
 
-        mWeightText.setPosition(mid + perp * (mWeightText.getCharacterSize() / norm(perp)));
+        mWeightText.setPosition(mid + perp * (mWeightText.getCharacterSize() / norm(perp)) * (isReversed ? 1 : -1));
     }
 }
 

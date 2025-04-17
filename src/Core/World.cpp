@@ -39,7 +39,7 @@ void World::update(sf::Time dt)
 
 	mProgressBar->setProgress(mDataStructure->getProgress());
 
-	if (mDataStructure->stop && !mDataStructure->isRunning())
+	if (mDataStructure->stop && mDataStructure->isRunning())
 		mPauseButton->setSprite(mPlay);
 	else
 		mPauseButton->setSprite(mPause);

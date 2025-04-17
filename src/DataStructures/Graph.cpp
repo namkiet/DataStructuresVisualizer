@@ -117,6 +117,7 @@ int Graph::EdgeID(int start, int end){
 void Graph::MarkEdge(Edge* edge,int direction, float duration){
     mActionQueue.pushAction(Action::MarkEdge(edge,direction, duration));
 }
+
 void Graph::Prim()
 {
     if (NumVer == 0) return;
@@ -129,7 +130,7 @@ void Graph::Prim()
     (*marked)[0] = true;
 
     createNewActionGroup();
-    changeNodeColor(mNodeList[0].get(), sf::Color::Green,1.0f);
+    highlightNode(mNodeList[0].get(), sf::Color::Red, 0.5f, false);
     
     int count = NumVer - 1;
 
@@ -144,14 +145,14 @@ void Graph::Prim()
             // std::cout<<"source : "<<sourceID<<"dest : "<<destID<<std::endl;
             if((*marked)[sourceID] ^ (*marked)[destID])
             {
-                if(mEdgeList[j]->getColor() != sf::Color::Red)
+                if(mEdgeList[j]->getColor() != sf::Color::Blue)
             {
                 // std::cout<<"source : "<<sourceID<<"dest : "<<destID<<" inside the if statement" <<std::endl;
                 if(minEdgeID == -1 || mEdgeList[j]->getWeight() < minEdge){
                     minEdgeID = j; minEdge = mEdgeList[j]->getWeight();
                 }
                 // std::cout<<"MINEDGEID = "<<minEdgeID<<std::endl;
-                changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Red, 0.5f);
+                changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Blue, 0.5f);
             }
             }
             else if(!(*markedEdge)[j]){
@@ -167,36 +168,29 @@ void Graph::Prim()
         (*marked)[ToMark] = true;
         (*markedEdge)[minEdgeID] = true;
         createNewActionGroup();
-        changeNodeColor(mNodeList[ToMark].get(), sf::Color::Green, 0.5f);
-        // changeEdgeColor(mEdgeList[minEdgeID]->mFrom, mEdgeList[minEdgeID]->mTo, sf::Color::Blue, 0.5f);
+        highlightNode(mNodeList[ToMark].get(), sf::Color::Red, 0.5f, false);
         MarkEdge(mEdgeList[minEdgeID].get(), direction, 1.0f);
     }
 
-        createNewActionGroup();
-        for(int j = 0; j < mEdgeList.size();j++){
-            if(!(*markedEdge)[j]){
-                std::cout<<"original color"<<std::endl;
-                changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color(187, 195, 204), 0.5f);
-            }
+    createNewActionGroup();
+    for(int j = 0; j < mEdgeList.size();j++){
+        if(!(*markedEdge)[j]){
+            std::cout<<"original color"<<std::endl;
+            changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, VIZ::EDGE::Color, 0.5f);
         }
-        createNewActionGroup();
-        for(int j = 0; j < mEdgeList.size();j++){
-            if((*markedEdge)[j]){
-                std::cout<<"Highlight Edge"<<std::endl;
-                traverseEdge(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Green, 5.0f);
-            }
+    }
+    createNewActionGroup();
+    for(int j = 0; j < mEdgeList.size();j++){
+        if((*markedEdge)[j]){
+            std::cout<<"Highlight Edge"<<std::endl;
+            traverseEdge(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Green, 0.5f, false);
         }
+    }
 
-    //reset color after perform Prim
-    mActionQueue.pushInstantAction([=](){
-        for(auto& Ver: mNodeList){
-            Ver->setFillColor(VIZ::NODE::FillColor);
-            Ver->setOutlineColor(VIZ::NODE::OutlineColor);
-        }
-    });
-    std::cout<<"Prim ok"<<std::endl;
-
-
+    
+    createNewActionGroup();
+    for (auto &node: mNodeList)
+        if (node) highlightNode(node.get(), VIZ::NODE::FillColor, 0.3f, false);
 }
 
 void Graph::remove(int value){
@@ -215,41 +209,42 @@ bool Graph::search(int value) {
 void Graph::updateCurrent(sf::Time dt)
 {
 
-    DS::updateCurrent(dt);
+    // DS::updateCurrent(dt);
+    mActionQueue.update(dt);
     
     if (mActionQueue.isEmpty())
     {
-        // attraction between node
+        // attraction between adjacent node
         for(auto& edge: EdgeList){
             int start = edge.first.first;
             int end = edge.first.second;
-            sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
-            velocity[start] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
-            velocity[end] -= sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+            sf::Vector2f force = Attraction(ForceConstant * 2, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
+            velocity[start] += force * dt.asSeconds();
+            velocity[end] -= force * dt.asSeconds();
         }
 
 
-        // repulsion between adjacent node
+        // repulsion between node
         for(int i = 0 ; i < NumVer;i++)
         {
             for(int j = 0; j < NumVer;j++)
             {
                 if(i == j) continue;
                 sf::Vector2f force = Repulsion(ForceConstant, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
-                velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+                velocity[i] += force * dt.asSeconds();
             }
         }
 
         // center attraction
         for(int i = 0 ; i < NumVer;i++){
             sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
-            velocity[i] += sf::Vector2f(force.x * dt.asSeconds(), force.y * dt.asSeconds());
+            velocity[i] += force*dt.asSeconds();
         }
 
         // update position, take into account friction
         for(int i = 0 ; i < NumVer;i++)
         {
-            velocity[i] *= 0.999f; // friction
+            velocity[i] *= 0.9f; // friction
             sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
             makeValidNodePosition(newPosition);
             changeNodePosition(i, newPosition);
@@ -321,7 +316,7 @@ void Graph::loadFromVector(std::vector<int> numList)
     ListGraphNode.resize(n);
     
     for(int i = 0; i < n;i++){
-        ListGraphNode[i] = new CircleNode(i, 16.f, sf::Color::White, sf::Color::Black);
+        ListGraphNode[i] = new CircleNode(i, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
         // set position
         float angle = 2 * PI * i / n;
         sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
