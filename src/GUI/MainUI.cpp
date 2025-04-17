@@ -47,11 +47,13 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     OperationBox.setPosition(UI::OPERATIONBOX::Position);
     OperationBox.setFillColor(sf::Color::Transparent);
 
-    OperationButtonPosition.resize(4);
+    OperationButtonPosition.resize(5);
     OperationButtonPosition[0] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.0);
-    OperationButtonPosition[1] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.25);
-    OperationButtonPosition[2] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.5);
-    OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.75);
+    OperationButtonPosition[1] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.2);
+    OperationButtonPosition[2] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.4);
+    OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
+    OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
+
 
     sf::Sprite HomeSprite;
     HomeSprite.setTexture(textures.get(Textures::HomeIcon));
@@ -136,7 +138,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;
                 std::wifstream fin;
-                fin.open(filename);
+                fin.open(filename.c_str());
                 if (!fin.is_open())
                 {
                     std::cout << "Can't open file!";
@@ -220,12 +222,41 @@ void MainUI::initAVLButtons(AVLTree* avl)
         SearchButton->resetSubComponentInfo();
     });
 
+    // add update button
+    GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[4], "Update", ButtonSize);
+    GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "Update a to b", GUI::TextBox::InputType::VectorNum);
+    InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
+     {
+         UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
+     });
+
+    UpdateButton->addSubComponent(InputBoxUpdate);
+
+    UpdateButton->setFunc([this,UpdateButton,avl]()
+    {
+        std::vector<int> nums = UpdateButton->getSubComponentInfo().VecNum;
+        int ActionType = UpdateButton->getSubComponentInfo().InfoID;
+        if (ActionType == -1) return;
+        if (ActionType == 0)
+        {
+            if (nums.size() == 2)
+            {
+                avl->updateValue(nums[0], nums[1]);
+                std::cout<<"Here we can update the value "<<nums[0]<<" to "<<nums[1]<<"!"<<std::endl;
+            }
+        }
+        UpdateButton->resetSubComponentInfo();
+
+    });
+
+    
     mStepByStepButton->setCallback([=](){
         avl->isStepByStep = true;
         avl->stop = true;
         InputBoxInsert->submit();
         InputBoxDelete->submit();
         InputBoxSearch->submit();
+        InputBoxUpdate->submit();
     });
 
     mAtOnceButton->setCallback([=](){
@@ -234,13 +265,16 @@ void MainUI::initAVLButtons(AVLTree* avl)
         InputBoxInsert->submit();
         InputBoxDelete->submit();
         InputBoxSearch->submit();
+        InputBoxUpdate->submit();
     });
+
 
     // Pack all buttons
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(InsertButton);
     OperationButtonsList->pack(DeleteButton);
     OperationButtonsList->pack(SearchButton);
+    OperationButtonsList->pack(UpdateButton);
 }
 
 void MainUI::initHeapButtons(HeapTree* heap)
@@ -377,12 +411,40 @@ void MainUI::initHeapButtons(HeapTree* heap)
         SearchButton->resetSubComponentInfo();
     });
 
+    // add update button
+    GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Update", ButtonSize);
+    GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "Update a to b", GUI::TextBox::InputType::VectorNum);
+    InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
+        {
+            UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
+        });
+
+    UpdateButton->addSubComponent(InputBoxUpdate);
+
+    UpdateButton->setFunc([this,UpdateButton,heap]()
+    {
+        std::vector<int> nums = UpdateButton->getSubComponentInfo().VecNum;
+        int ActionType = UpdateButton->getSubComponentInfo().InfoID;
+        if (ActionType == -1) return;
+        if (ActionType == 0)
+        {
+            if (nums.size() == 2)
+            {
+                heap->updateValue(nums[0], nums[1]);
+                std::cout<<"Here we can update the value "<<nums[0]<<" to "<<nums[1]<<"!"<<std::endl;
+            }
+        }
+        UpdateButton->resetSubComponentInfo();
+
+    });
+
     mStepByStepButton->setCallback([=](){
         heap->isStepByStep = true;
         heap->stop = true;
         InputBoxPush->submit();
         InputBoxPop->submit();
         InputBoxSearch->submit();
+        InputBoxUpdate->submit();
     });
 
     mAtOnceButton->setCallback([=](){
@@ -391,6 +453,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
         InputBoxPush->submit();
         InputBoxPop->submit();
         InputBoxSearch->submit();
+        InputBoxUpdate->submit();   
     });
 
     // Pack all buttons
@@ -398,6 +461,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
     OperationButtonsList->pack(PushButton);
     OperationButtonsList->pack(PopButton);
     OperationButtonsList->pack(SearchButton);
+    OperationButtonsList->pack(UpdateButton);
 }
 
 void MainUI::initLinkedListButtons(LinkedList* ll)
@@ -441,7 +505,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;
                 std::wifstream fin;
-                fin.open(filename);
+                fin.open(filename.c_str());
                 if (!fin.is_open())
                 {
                     std::cout << "Can't open file!";
@@ -522,8 +586,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         if (ActionType == -1) return;
         else if (ActionType == 0)
         {
-            // ll->remove(num);
-            ll->updateValue(num, num + 10);
+            ll->remove(num);
         }
         
         DeleteButton->resetSubComponentInfo();
@@ -550,6 +613,33 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         SearchButton->resetSubComponentInfo();
     });
 
+    // add update button
+    GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[4], "Update", ButtonSize);
+    GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "Update a to b", GUI::TextBox::InputType::VectorNum);
+    InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
+     {
+         UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
+     });
+
+    UpdateButton->addSubComponent(InputBoxUpdate);
+
+    UpdateButton->setFunc([this,UpdateButton,ll]()
+    {
+        std::vector<int> nums = UpdateButton->getSubComponentInfo().VecNum;
+        int ActionType = UpdateButton->getSubComponentInfo().InfoID;
+        if (ActionType == -1) return;
+        if (ActionType == 0)
+        {
+            if (nums.size() == 2)
+            {
+                ll->updateValue(nums[0], nums[1]);
+                std::cout<<"Here we can update the value "<<nums[0]<<" to "<<nums[1]<<"!"<<std::endl;
+            }
+        }
+        UpdateButton->resetSubComponentInfo();
+
+    });
+
     mStepByStepButton->setCallback([=](){
         ll->isStepByStep = true;
         ll->stop = true;
@@ -557,6 +647,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         InputBoxInsertAtLast->submit();
         InputBoxDelete->submit();
         InputBoxSearch->submit();
+        InputBoxUpdate->submit();
     });
 
     mAtOnceButton->setCallback([=](){
@@ -566,12 +657,14 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         InputBoxInsertAtLast->submit();
         InputBoxDelete->submit();
         InputBoxSearch->submit();
+        InputBoxUpdate->submit();
     });
 
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(InsertButton);
     OperationButtonsList->pack(DeleteButton);
     OperationButtonsList->pack(SearchButton);
+    OperationButtonsList->pack(UpdateButton);
 }
 
 void MainUI::initGraphButtons(Graph* g)
