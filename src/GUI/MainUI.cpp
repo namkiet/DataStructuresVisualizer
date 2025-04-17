@@ -30,7 +30,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     sf::Vector2f ToolboxPosition = ToolBox.getPosition();
     sf::Vector2f ToolBoxSize = ToolBox.getSize();
 
-    mSeperateToolBoxLine.resize(3);
+    mSeperateToolBoxLine.resize(4);
     mSeperateToolBoxLine[0] = sf::VertexArray(sf::Lines, 2);
     mSeperateToolBoxLine[0][0].position = UI::INFOBOX::Position;
     mSeperateToolBoxLine[0][1].position = UI::INFOBOX::Position + sf::Vector2f(UI::INFOBOX::Size.x, 0);
@@ -43,6 +43,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     mSeperateToolBoxLine[2][0].position = UI::CONTROLBOX::Position;
     mSeperateToolBoxLine[2][1].position = UI::CONTROLBOX::Position + sf::Vector2f(UI::CONTROLBOX::Size.x, 0);
 
+
     OperationBox.setSize(sf::Vector2f(UI::OPERATIONBOX::Size.x * 0.4, UI::OPERATIONBOX::Size.y));
     OperationBox.setPosition(UI::OPERATIONBOX::Position);
     OperationBox.setFillColor(sf::Color::Transparent);
@@ -53,6 +54,12 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     OperationButtonPosition[2] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.4);
     OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
     OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
+
+
+    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
+    mSeperateToolBoxLine[3] = sf::VertexArray(sf::Lines, 2);
+    mSeperateToolBoxLine[3][0].position = UI::OPERATIONBOX::Position + sf::Vector2f(ButtonSize.x, 0);
+    mSeperateToolBoxLine[3][1].position = UI::CONTROLBOX::Position + sf::Vector2f(ButtonSize.x, 0);
 
 
     sf::Sprite HomeSprite;
@@ -80,6 +87,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 
 void MainUI::updateCurrent(sf::Time dt)
 {
+    // do nothing
 }
 
 void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -99,14 +107,14 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
 
 void MainUI::initAVLButtons(AVLTree* avl)
 {
-    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.25);
+    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
 
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
     GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
     GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[4].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
 
     RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
     LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
@@ -118,8 +126,6 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     CreateButton->setFunc([CreateButton,avl]()
     {
-        if (avl->isRunning()) return;
-
         int type = CreateButton->getSubComponentInfo().InfoID;
 
         if (type == -1) return;
@@ -174,6 +180,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
     InsertButton->addSubComponent(InputBoxInsert);
     InsertButton->setFunc([this,InsertButton, avl]()
     {
+        if (avl->isRunning()) return;
         int ActionType = InsertButton->getSubComponentInfo().InfoID;
         int num = InsertButton->getSubComponentInfo().num;
         if (ActionType == -1) return;
@@ -186,7 +193,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     // Add Delete button
     GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Delete",ButtonSize);
-    GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
     InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete]()
     {
         DeleteButton->setSubComponentInfo(InputBoxDelete->getInputNum(),0);
@@ -194,6 +201,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
     DeleteButton->addSubComponent(InputBoxDelete);
     DeleteButton->setFunc([this,DeleteButton, avl]()
     {
+        if (avl->isRunning()) return;
         int num = DeleteButton->getSubComponentInfo().num;
         int ActionType = DeleteButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -205,13 +213,14 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     // Add Search button
     GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
-    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x =");
     InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch]() {
         SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
     });
     SearchButton->addSubComponent(InputBoxSearch);
     SearchButton->setFunc([this,SearchButton,avl]()
     {
+        if (avl->isRunning()) return;
         int num = SearchButton->getSubComponentInfo().num;
         int ActionType = SearchButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -224,16 +233,17 @@ void MainUI::initAVLButtons(AVLTree* avl)
 
     // add update button
     GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[4], "Update", ButtonSize);
-    GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "Update a to b", GUI::TextBox::InputType::VectorNum);
+    GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "old =, new =", GUI::TextBox::InputType::VectorNum);
     InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
-     {
-         UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
-     });
+    {
+        UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
+    });
 
     UpdateButton->addSubComponent(InputBoxUpdate);
 
     UpdateButton->setFunc([this,UpdateButton,avl]()
     {
+        if (avl->isRunning()) return;
         std::vector<int> nums = UpdateButton->getSubComponentInfo().VecNum;
         int ActionType = UpdateButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -283,10 +293,10 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
-    
+
     GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
     GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[4].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
 
     RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
     LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
@@ -298,7 +308,6 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     CreateButton->setFunc([CreateButton,heap]()
     {
-        if (heap->isRunning()) return;
 
         int type = CreateButton->getSubComponentInfo().InfoID;
 
@@ -347,7 +356,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     // Add Push button
     GUI::ExpandableButton::Ptr PushButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Push",ButtonSize);
-    GUI::TextBox::Ptr InputBoxPush = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxPush = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
     InputBoxPush->setCallback([PushButton, InputBoxPush]()
     {
         PushButton->setSubComponentInfo(InputBoxPush->getInputNum(),0);
@@ -356,6 +365,8 @@ void MainUI::initHeapButtons(HeapTree* heap)
     PushButton->addSubComponent(InputBoxPush);
     PushButton->setFunc([this,PushButton, heap]()
     {
+        if (heap->isRunning()) return;
+
         int ActionType = PushButton->getSubComponentInfo().InfoID;
         int num = PushButton->getSubComponentInfo().num;
         if (ActionType == -1) return;
@@ -369,21 +380,18 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     // Add Pop button
     GUI::ExpandableButton::Ptr PopButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Pop",ButtonSize);
-    GUI::TextBox::Ptr InputBoxPop = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
-    InputBoxPop->setCallback([this,PopButton, InputBoxPop]()
-    {
-        PopButton->setSubComponentInfo(InputBoxPop->getInputNum(),0);
-    });
-
-    PopButton->addSubComponent(InputBoxPop);
+    GUI::Button::Ptr SubmitButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Extract Top", sf::Vector2f(100.f,40.f));
+    SubmitButton->setCallback([this,PopButton, SubmitButton]() { PopButton->setSubComponentInfo(0); });
+    PopButton->addSubComponent(SubmitButton);
     PopButton->setFunc([this,PopButton, heap]()
     {
-        int num = PopButton->getSubComponentInfo().num;
+        if (heap->isRunning()) return;
+        // int num = PopButton->getSubComponentInfo().num;
         int ActionType = PopButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
         else if (ActionType == 0)
         {
-            heap->remove(num);
+            heap->remove(0);
         }
         
         PopButton->resetSubComponentInfo();
@@ -400,6 +408,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
     SearchButton->addSubComponent(InputBoxSearch);
     SearchButton->setFunc([this,SearchButton, heap]()
     {
+        if (heap->isRunning()) return;
         int num = SearchButton->getSubComponentInfo().num;
         int ActionType = SearchButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -412,7 +421,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
     });
 
     // add update button
-    GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Update", ButtonSize);
+    GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[4], "Update", ButtonSize);
     GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "Update a to b", GUI::TextBox::InputType::VectorNum);
     InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
         {
@@ -423,6 +432,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
 
     UpdateButton->setFunc([this,UpdateButton,heap]()
     {
+        if (heap->isRunning()) return;
         std::vector<int> nums = UpdateButton->getSubComponentInfo().VecNum;
         int ActionType = UpdateButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -442,7 +452,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
         heap->isStepByStep = true;
         heap->stop = true;
         InputBoxPush->submit();
-        InputBoxPop->submit();
+        // InputBoxPop->submit();
         InputBoxSearch->submit();
         InputBoxUpdate->submit();
     });
@@ -451,7 +461,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
         heap->isStepByStep = false;
         heap->stop = false;
         InputBoxPush->submit();
-        InputBoxPop->submit();
+        // InputBoxPop->submit();
         InputBoxSearch->submit();
         InputBoxUpdate->submit();   
     });
@@ -470,10 +480,10 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
-    
+
     GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
     GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[4].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
 
     RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
     LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
@@ -485,8 +495,6 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     CreateButton->setFunc([CreateButton,ll]()
     {
-        if (ll->isRunning()) return;
-
         int type = CreateButton->getSubComponentInfo().InfoID;
 
         if (type == -1) return;
@@ -556,6 +564,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     InsertButton->setFunc([this,InsertButton, ll]()
     {
+        if (ll->isRunning()) return;
         int ActionType = InsertButton->getSubComponentInfo().InfoID;
         int num = InsertButton->getSubComponentInfo().num;
         if (ActionType == -1) return;
@@ -581,6 +590,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
     });
     DeleteButton->setFunc([this,DeleteButton, ll]()
     {
+        if (ll->isRunning()) return;
         int num = DeleteButton->getSubComponentInfo().num;
         int ActionType = DeleteButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -603,6 +613,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     SearchButton->setFunc([this,SearchButton,ll]()
     {
+        if (ll->isRunning()) return;
         int num = SearchButton->getSubComponentInfo().num;
         int ActionType = SearchButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -625,6 +636,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     UpdateButton->setFunc([this,UpdateButton,ll]()
     {
+        if (ll->isRunning()) return;
         std::vector<int> nums = UpdateButton->getSubComponentInfo().VecNum;
         int ActionType = UpdateButton->getSubComponentInfo().InfoID;
         if (ActionType == -1) return;
@@ -688,8 +700,6 @@ void MainUI::initGraphButtons(Graph* g)
 
     CreateButton->setFunc([CreateButton,g]()
     {
-        if (g->isRunning()) return;
-
         int type = CreateButton->getSubComponentInfo().InfoID;
 
         if (type == -1) return;

@@ -14,14 +14,6 @@
 class DS: public SceneNode
 {
 public:
-    bool isStepByStep = false;
-
-    bool stop;
-    void sBs();
-
-    enum RunType { UNDO, REDO, NORMAL };
-    RunType playback;
-
 // ==================== BASIC FUNCTIONS ====================
 public:
                                     DS();
@@ -79,8 +71,14 @@ public:
     bool                            canRedo();
     void                            undo();
     void                            redo();
+    void                            toFirst();
+    void                            toLast();
     void                            loadStep(float progress);
     float                           getProgress();
+
+    bool                            isStepByStep = false;
+    bool                            stop;
+    void                            run();
 
 private:
     void                            saveStep();
@@ -91,12 +89,10 @@ private:
     float                           elapsedTimer = 0;
     float                           totalTimer = 0;
     int                             targetFrame = -1;
-
     std::vector<int>                keyFrames;
-    int                             keyID = -1;
 
-    int mActionCount;
-    int mCurrentAction = 0;
+    enum                            RunType { UNDO, REDO, NORMAL };
+    RunType                         playback;
 
 protected:
     void                            resetHistory();

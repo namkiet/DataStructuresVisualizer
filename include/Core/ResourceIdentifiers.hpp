@@ -51,6 +51,6 @@ template <typename Resource, typename Identifier>
 class ResourceHolder;
 
 typedef ResourceHolder<sf::Texture, Textures::ID>	TextureHolder;
-typedef ResourceHolder<sf::Font, 	Fonts::ID>			FontHolder;
+typedef ResourceHolder<sf::Font, 	Fonts::ID>		FontHolder;
 
 #endif // BOOK_RESOURCEIDENTIFIERS_HPP

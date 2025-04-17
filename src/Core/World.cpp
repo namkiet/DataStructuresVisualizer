@@ -39,7 +39,7 @@ void World::update(sf::Time dt)
 
 	mProgressBar->setProgress(mDataStructure->getProgress());
 
-	if (mDataStructure->stop)
+	if (mDataStructure->stop && !mDataStructure->isRunning())
 		mPauseButton->setSprite(mPlay);
 	else
 		mPauseButton->setSprite(mPause);
@@ -125,6 +125,7 @@ void World::buildScene()
 	sf::Sprite prevSprite(mTextures.get(Textures::Prev));
 	mPrevButton = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 840, SCREEN::Height - 35), "", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
 	mPrevButton->setSprite(prevSprite);
+	mPrevButton->setToggle(false);
 
 	mTextures.get(Textures::Next).setSmooth(true);
 	sf::Sprite nextSprite(mTextures.get(Textures::Next));
@@ -178,9 +179,9 @@ void World::setMode(World::Mode mode)
 
 	mPrevButton->setCallback([=](){ mDataStructure->undo(); });
 	mNextButton->setCallback([=](){ mDataStructure->redo(); });
-	mPauseButton->setCallback([=]() { mDataStructure->sBs(); });
-	mFirstButton->setCallback([=](){ mDataStructure->redo(); });
-	mLastButton->setCallback([=](){ mDataStructure->redo(); });
+	mPauseButton->setCallback([=]() { mDataStructure->run(); });
+	mFirstButton->setCallback([=](){ mDataStructure->toFirst(); });
+	mLastButton->setCallback([=](){ mDataStructure->toLast(); });
 }
 
 void World::handleEvent(const sf::Event& event)
@@ -216,7 +217,7 @@ void World::handleEvent(const sf::Event& event)
 
 		if (event.key.code == sf::Keyboard::S)
 		{
-			mDataStructure->sBs();
+			mDataStructure->run();
 		}
 	}
 

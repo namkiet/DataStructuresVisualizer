@@ -2,7 +2,7 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 
-DS::DS() { empty(); mActionCount = 0; stop = false; playback = NORMAL; }
+DS::DS() { empty(); stop = false; playback = NORMAL; }
 
 void DS::empty()
 {
@@ -105,7 +105,23 @@ void DS::redo()
     }
 }
 
-void DS::sBs()
+void DS::toFirst()
+{
+    if (!canUndo()) return;
+    playback = UNDO;
+    stop = true;
+    cS = 0;
+}
+
+void DS::toLast()
+{
+    if (!canRedo()) return;
+    playback = REDO;
+    stop = true;
+    cS = mH.size() - 1;
+}
+
+void DS::run()
 {
     stop = !stop;
 }
@@ -114,7 +130,7 @@ float DS::getProgress()
 {
     if (isRunning() && playback == NORMAL) return elapsedTimer / totalTimer;
 
-    if (mH.size() <= 1) return 1.f;
+    if (mH.size() <= 1) return mH.size();
     float progress = (cS * 1.f) / (mH.size() - 1) * (elapsedTimer == 0 ? 1 : elapsedTimer / totalTimer);
     return progress;
 }
@@ -182,9 +198,6 @@ void DS::updateCurrent(sf::Time dt)
     {
         mStep = mLastStep;
         if (mLastInfo != "#") mInfo = mLastInfo;
-        
-        mCurrentAction = 0;
-        mActionCount = 0;
 
         totalTimer = 0;
         elapsedTimer = 0;
@@ -413,7 +426,7 @@ void DS::loadFromVector(std::vector<int> numList)
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; align(); });
+    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; resetHistory(); align(); });
 }    
 
 std::string DS::getInfo()
