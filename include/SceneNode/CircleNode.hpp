@@ -42,6 +42,10 @@ public:
     void                    setNote(std::string note);
     void                    setSize(float size);
 
+public:
+    enum                    NoteAlignment { CENTER, RIGHT };
+    void                    setNoteAlignment(NoteAlignment alignment);
+
 protected:
     void                    updateText();
 };

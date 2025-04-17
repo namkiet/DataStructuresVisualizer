@@ -1,6 +1,6 @@
 #include "GUI/MainUI.hpp"
 #include "Core/World.hpp"
-#include "GUI/FileReader.hpp"
+#include "Core/FileReader.hpp"
 #include <memory>
 #include <DataStructures/LinkedList.hpp>
 #include <DataStructures/Graph.hpp>

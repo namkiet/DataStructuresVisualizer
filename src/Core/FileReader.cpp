@@ -1,9 +1,9 @@
-#include "GUI/FileReader.hpp"
+#include "Core/FileReader.hpp"
 #include <iostream>
 #include <string>
 #include <locale>
 #include <cstdlib> // For mbstowcs
-#include "GUI/tinyfiledialogs.h"
+#include "Core/tinyfiledialogs.h"
 
 std::wstring OpenFileDialog() {
     const char* filePath = tinyfd_openFileDialog(

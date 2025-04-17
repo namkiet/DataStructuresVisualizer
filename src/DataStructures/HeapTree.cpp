@@ -29,7 +29,6 @@ void HeapTree::insert(int value)
     addNode(newNode);
     addEdge(newNode, nullptr);
     addEdge(newNode, nullptr);
-
     
     if (ANIMATION::Speed < 1000)
     {

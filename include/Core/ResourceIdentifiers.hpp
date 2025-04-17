@@ -27,6 +27,7 @@ namespace Textures
 		First,
 		Last,
 		Pause,
+		Play,
 		SettingIcon,
 		NavigateLeft,
 		NavigateRight,
@@ -42,7 +43,6 @@ namespace Fonts
 		Main,
 		UI,
 		Node
-		
 	};
 }
 

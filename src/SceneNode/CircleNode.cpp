@@ -34,8 +34,9 @@ CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color o
 
     mNote.setFont(mFont);
     mNote.setColor(VIZ::TextColor);
-    mNote.setPosition(mShape.getPosition() + sf::Vector2f(mTextSize, radius + 10));
+    // mNote.setPosition(mShape.getPosition() + sf::Vector2f(0, radius + mTextSize + 5))
     mNote.setCharacterSize(mTextSize);
+    setNoteAlignment(RIGHT);
     setNote("");
 }
 
@@ -147,4 +148,16 @@ void CircleNode::setSize(float size)
     mShape.setRadius(size);
     mShape.setOrigin(sf::Vector2f(size, size));
     mText.setPosition(mShape.getPosition());
+}
+
+void CircleNode::setNoteAlignment(NoteAlignment alignment)
+{
+    if (alignment == CENTER)
+    {
+        mNote.setPosition(mShape.getPosition() + sf::Vector2f(0, mShape.getRadius() + mTextSize + 2));
+    }
+    else
+    {
+        mNote.setPosition(mShape.getPosition() + sf::Vector2f(mShape.getRadius(), mShape.getRadius() + mTextSize + 2));
+    }
 }
