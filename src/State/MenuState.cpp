@@ -7,7 +7,7 @@
 #include <iostream>
 
 MenuState::MenuState(StateStack& stack, Context context): 
-	State(stack, context)
+	State(stack, context), mCarousel(context.textures)
 {
 	Textures::ID currentBackground = getCurrentBackgroundOption();
 	mBackground.setTexture(context.textures->get(currentBackground));
@@ -46,13 +46,6 @@ bool MenuState::update(sf::Time dt)
 
 bool MenuState::handleEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::KeyPressed)
-	{
-		if (event.key.code == sf::Keyboard::Left)
-			mCarousel.prev();
-		if (event.key.code == sf::Keyboard::Right)
-			mCarousel.next();
-	}
 	mSettingButton->handleEvent(event);
 	mCarousel.handleEvent(event);
 	return true;

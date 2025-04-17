@@ -1,5 +1,24 @@
 #include <GUI/Carousel.hpp>
 
+Carousel::Carousel(TextureHolder* textures)
+{
+    sf::Font emptyFont;
+
+    sf::Sprite leftSprite(textures->get(Textures::NavigateLeft));
+    centerOrigin(leftSprite);
+    leftArrow = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(50, SCREEN::Height / 2 - 120 / 2), "", sf::Vector2f(120, 120), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+    leftArrow->setSprite(leftSprite);
+    leftArrow->setCallback([=]() { prev(); });
+    leftArrow->setToggle(false);
+
+    sf::Sprite rightSprite(textures->get(Textures::NavigateRight));
+    centerOrigin(rightSprite);
+    rightArrow = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 50 - 120, SCREEN::Height / 2 - 120 / 2), "", sf::Vector2f(120, 120), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+    rightArrow->setSprite(rightSprite);
+    rightArrow->setCallback([=]() { next(); });
+    rightArrow->setToggle(false);
+}
+
 void Carousel::pushItem(Item::ItemType type, sf::Texture &texture, std::function<void()> callback)
 {
     items.push_back(new Item(type, texture));
@@ -8,7 +27,7 @@ void Carousel::pushItem(Item::ItemType type, sf::Texture &texture, std::function
     for (int i = 0; i < items.size(); i++)
     {
         items[i]->mInitialPosition = sf::Vector2f(SCREEN::Width / 2 + i * 350, SCREEN::Height / 2);
-        items[i]->setDotPosition(sf::Vector2f(SCREEN::Width / 2 + i * 20 - 20, SCREEN::Height / 2 + 250));
+        items[i]->setDotPosition(sf::Vector2f(SCREEN::Width / 2 + i * 20 - 30, SCREEN::Height / 2 + 250));
         items[i]->setScale(defaultScale);
     }
 
@@ -59,11 +78,25 @@ void Carousel::update(sf::Time dt)
 
 void Carousel::handleEvent(sf::Event event)
 {  
+    leftArrow->handleEvent(event);
+    rightArrow->handleEvent(event);
+
     if (event.type == sf::Event::MouseButtonPressed) 
     {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
         if (items[currentIndex]->isClicked(mousePos))
             items[currentIndex]->mCallback();
+    }
+    if (event.type == sf::Event::KeyPressed)
+    {
+        if (event.key.code == sf::Keyboard::Enter)
+            items[currentIndex]->mCallback();
+
+        if (event.key.code == sf::Keyboard::Left)
+            prev();
+        
+        if (event.key.code == sf::Keyboard::Right)
+            next();
     }
 }
 
@@ -79,4 +112,7 @@ void Carousel::draw(sf::RenderWindow& window)
     }
 
     items[currentIndex]->draw(window);
+
+    window.draw(*leftArrow);
+    window.draw(*rightArrow);
 }

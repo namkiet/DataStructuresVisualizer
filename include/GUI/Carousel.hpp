@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <Core/ResourceHolder.hpp>
+#include <Core/ResourceIdentifiers.hpp>
+#include <GUI/Button.hpp>
 
 class Carousel
 {
@@ -99,11 +102,14 @@ private:
 
 private:
     std::vector<Item*>      items;
-
-public:
-    void                    pushItem(Item::ItemType type, sf::Texture &texture, std::function<void()> callback);
+    GUI::Button::Ptr        leftArrow;
+    GUI::Button::Ptr        rightArrow;
     void                    next();
     void                    prev();
+
+public:
+                            Carousel(TextureHolder* textures);
+    void                    pushItem(Item::ItemType type, sf::Texture &texture, std::function<void()> callback);
     void                    update(sf::Time dt);
     void                    draw(sf::RenderWindow& window);
     void                    handleEvent(sf::Event event);
