@@ -186,8 +186,10 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
         int num = InsertButton->getSubComponentInfo().num;
         if (ActionType == -1) return;
 
-        if (ActionType == 0)
+        if (ActionType == 0){
             avl->insert(num);
+        }
+
 
         InsertButton->resetSubComponentInfo();
     });
@@ -331,7 +333,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;
                 std::wifstream fin;
-                fin.open(filename);
+                fin.open(filename.c_str());
                 if (!fin.is_open())
                 {
                     std::cout << "Can't open file!";
@@ -766,7 +768,7 @@ void MainUI::initGraphButtons(Graph* g)
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;
                 std::wifstream fin;
-                fin.open(filename);
+                fin.open(filename.c_str());
                 if (!fin.is_open())
                 {
                     std::cout << "Can't open file!";

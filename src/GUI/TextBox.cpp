@@ -57,7 +57,7 @@ void TextBox::deselect(){
 }
 
 void TextBox::reset(){
-    InputNum = 0;
+    InputNum = -1;
     InputNumList.clear();
     mInput = "";
     mText.setString(mInput);
@@ -68,18 +68,7 @@ void TextBox::handleEvent(const sf::Event& event) {
     {   
         if (event.key.code == sf::Keyboard::Enter) 
         {   
-            if (!mInput.empty())
-            {
-                InputNum = std::stoi(mInput);
-                if (InputNum != 0)
-                {
-                    if(mCallback){
-                        mCallback();
-                    }
-                }
-                reset();
-                deselect();
-            }
+            submit();
         }
     }
     else if (isSelected() && event.type == sf::Event::TextEntered) 
@@ -152,13 +141,14 @@ int TextBox::getInputNum(){
 }
 void TextBox::submit()
 {
+    std::cout<<"mInput at textbox"<<mInput<<" "<<std::endl;
     if (!mInput.empty())
     {
         // check if mInput is a number or a list of num
         if(mInputType == InputType::Number){
             try {
                 InputNum = std::stoi(mInput);
-                assert(InputNum > 0 && "Number must be greater than 0.");
+                assert(InputNum >= 0 && "Number must be greater than or equal to 0.");
             } catch (const std::invalid_argument& e) {
                 assert(false && "Invalid input: not a valid integer.");
             } catch (const std::out_of_range& e) {
@@ -176,7 +166,7 @@ void TextBox::submit()
             try {
                 int num1 = std::stoi(firstNum);
                 int num2 = std::stoi(secondNum);
-                assert(num1 > 0 && num2 > 0 && "Numbers must be greater than 0.");
+                assert(num1 >= 0 && num2 >= 0 && "Numbers must be greater than 0.");
                 InputNumList.push_back(num1);
                 InputNumList.push_back(num2);
             } catch (const std::invalid_argument& e) {
@@ -188,7 +178,7 @@ void TextBox::submit()
 
         }
 
-        if (InputNum != 0 || !InputNumList.empty())
+        if (InputNum != -1 || !InputNumList.empty())
         {
             if(mCallback){
                 mCallback();
