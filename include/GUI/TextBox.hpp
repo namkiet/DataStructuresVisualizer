@@ -36,7 +36,11 @@ namespace GUI
         std::vector<int>                                 getInputNumList();
         void                                        setPlaceholder(const std::string& text);
         void                                        submit();
+        sf::FloatRect                               getGlobalBounds() const;
+        void                                        setMessage(std::string message);
 
+    public:
+        InputType                                   mInputType;
     private:
         unsigned int                                mCharSize;
         sf::RectangleShape                          mBox;
@@ -45,7 +49,9 @@ namespace GUI
         std::string                                 mInput;
         int                                         InputNum;
         std::vector<int>                            InputNumList;
-        InputType                                   mInputType;
+        sf::Text                                    mMessage;
+        bool                                        showMessage;
+
 
     private:
         sf::Color                                   mSelectOutlineColor;

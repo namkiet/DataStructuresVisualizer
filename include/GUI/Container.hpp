@@ -24,6 +24,7 @@ class Container : public Component
         void                            ChangeActivateChild(std::size_t index);
         // virtual void                    setCallback(Callback Callback);
         void                            deselectAll();
+        Component::Ptr                  getActivateChild();
 
     private:
         virtual void		            draw(sf::RenderTarget& target, sf::RenderStates states) const;

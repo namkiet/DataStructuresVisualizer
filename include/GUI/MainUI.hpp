@@ -8,6 +8,7 @@
 #include <GUI/ExpandableButton.hpp>
 #include <Core/World.hpp>
 #include "DataStructures/DS.hpp"
+#include<string>
 
 class MainUI: public SceneNode
 {   
@@ -32,6 +33,7 @@ private:
     GUI::Button::Ptr                    mSpeedButton;
     GUI::Button::Ptr                    mStepByStepButton;
     GUI::Button::Ptr                    mAtOnceButton;
+
 
 public:
                                         MainUI(TextureHolder& textures, FontHolder& fonts);

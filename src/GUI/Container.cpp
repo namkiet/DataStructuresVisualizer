@@ -24,6 +24,12 @@ void Container::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(*child, states);
 }
 
+Component::Ptr Container::getActivateChild(){
+    if(mActivateChild != -1){
+        return mChildren[mActivateChild];
+    }
+    return NULL;
+}
 
 
 void Container::pack(Component::Ptr component)

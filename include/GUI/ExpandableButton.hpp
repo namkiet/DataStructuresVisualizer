@@ -32,12 +32,12 @@ public:
     void resetSubComponentInfo();
     void setFunc(std::function<void()> func);
 
+public: 
+    std::vector<GUI::Component::Ptr> mSubComponents;
 private:
     subComponentInfo                Info;
-    std::vector<GUI::Component::Ptr> mSubComponents;
     bool isExpanded;
     std::function<void()>           mFunc;
-
 
     int inputNum;
 };

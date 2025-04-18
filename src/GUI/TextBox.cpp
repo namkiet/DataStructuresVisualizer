@@ -12,7 +12,8 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
     mInputType(inputType), // just 1 number by default
     mCharSize(14),
     mDefaultOutlineColor(sf::Color(255, 255, 255, 50)),
-    mSelectOutlineColor(sf::Color::White)
+    mSelectOutlineColor(sf::Color::White),
+    showMessage(false)
 {
     // mDefaultOutlineColor = UI::TEXTBOX::DefaultBorder;
     // mSelectOutlineColor = UI::TEXTBOX::SelectedBorder;
@@ -32,6 +33,18 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
     mText.setPosition(position.x + 5.f, position.y + int((size.y - mCharSize) / 2.f));
     mText.setString("");
 
+    mMessage.setFont(font);
+    mMessage.setCharacterSize(14);
+    mMessage.setFillColor(sf::Color::White);
+    if(mInputType == GUI::TextBox::InputType::Number)
+    {
+        mMessage.setString("Input a number from 0 to 99");
+    }
+    else if(mInputType == GUI::TextBox::InputType::VectorNum)
+    {
+        mMessage.setString("Input 2 number from 0 to 99 seperated by ','");
+    }
+
     mPlaceholder.setFont(font);
     mPlaceholder.setCharacterSize(mCharSize);
     mPlaceholder.setFillColor(sf::Color(150, 150, 150));
@@ -41,6 +54,13 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
 
 void TextBox::setPlaceholder(const std::string& text) {
     mPlaceholder.setString(text);
+}
+sf::FloatRect GUI::TextBox::getGlobalBounds() const {
+    return mBox.getGlobalBounds();
+}
+
+void GUI::TextBox::setMessage(std::string message){
+    mMessage.setString(message);
 }
 
 void TextBox::select(){
@@ -64,6 +84,19 @@ void TextBox::reset(){
 }
 
 void TextBox::handleEvent(const sf::Event& event) {
+    if (event.type == sf::Event::MouseMoved)
+    {
+        sf::Vector2f mousePos(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y));
+        if (mBox.getGlobalBounds().contains(mousePos))
+        {
+            showMessage = true;
+            mMessage.setPosition(mousePos.x + 10.f, mousePos.y + 20.f);
+        } 
+        else 
+        {
+            showMessage = false;
+        }
+    }
     if (event.type == sf::Event::KeyPressed)
     {   
         if (event.key.code == sf::Keyboard::Enter) 
@@ -114,6 +147,10 @@ void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         target.draw(mText, states);
     }
 
+    if(showMessage){
+        target.draw(mMessage,states);
+    }
+
     // if (showCursor && isSelected() && (cursorTimer.getElapsedTime().asSeconds() > 0.5f)) {
     //     sf::RectangleShape cursor(sf::Vector2f(2.f, mText.getCharacterSize()));
     //     cursor.setFillColor(sf::Color::White);
@@ -146,42 +183,57 @@ void TextBox::submit()
     std::cout<<"mInput at textbox"<<mInput<<" "<<std::endl;
     if (!mInput.empty())
     {
-        // check if mInput is a number or a list of num
-        if(mInputType == InputType::Number){
+        if (mInputType == InputType::Number) {
             try {
                 InputNum = std::stoi(mInput);
-                assert(InputNum >= 0 && "Number must be greater than or equal to 0.");
+        
+                // Nếu nằm ngoài vùng [0,99], không làm gì cả
+                if (InputNum < 0 || InputNum > 99) {
+                    InputNum = -1; // Reset về mặc định
+                    return;
+                }
             } catch (const std::invalid_argument& e) {
-                std::cout<<"Invalid input: not a valid integer.";
+                std::cout << "Invalid input: not a valid integer.";
+                InputNum = -1;
+                return;
             } catch (const std::out_of_range& e) {
-                std::cout<<"Invalid input: number out of range.";
+                std::cout << "Invalid input: number out of range.";
+                InputNum = -1;
+                return;
             }
+        }
 
-        } else if(mInputType == InputType::VectorNum){
-            char seperate = ',';
+        else if (mInputType == InputType::VectorNum) {
+            char separator = ',';
             std::string temp = mInput;
-            int seperatorIndex = temp.find_first_of(seperate);
-            if(seperatorIndex != std::string::npos) std::cout<<"No seperator found in the input string."<<std::endl; // tam thoi dung chuong trinh neu format sai
-            std::string firstNum;
-            std::string secondNum;
-            if(seperatorIndex != std::string::npos){
-            firstNum = temp.substr(0, seperatorIndex);
-            secondNum = temp.substr(seperatorIndex + 1, temp.length() - seperatorIndex - 1);
+            int separatorIndex = temp.find_first_of(separator);
+        
+            if (separatorIndex == std::string::npos) {
+                std::cout << "No separator found in the input string." << std::endl;
+                return; // Ngưng nếu không có dấu phẩy
             }
-            
+        
+            std::string firstNum = temp.substr(0, separatorIndex);
+            std::string secondNum = temp.substr(separatorIndex + 1);
+        
             try {
                 int num1 = std::stoi(firstNum);
                 int num2 = std::stoi(secondNum);
-                assert(num1 >= 0 && num2 >= 0 && "Numbers must be greater than 0.");
+        
+                // Nếu ngoài vùng [0,99], không làm gì
+                if (num1 < 0 || num1 > 99 || num2 < 0 || num2 > 99) {
+                    return;
+                }
+        
                 InputNumList.push_back(num1);
                 InputNumList.push_back(num2);
             } catch (const std::invalid_argument& e) {
-                std::cout<<"Invalid input: one of the values is not a number.";
+                std::cout << "Invalid input: one of the values is not a number." << std::endl;
+                return;
             } catch (const std::out_of_range& e) {
-                std::cout<<"Invalid input: one of the values is out of range.";
+                std::cout << "Invalid input: one of the values is out of range." << std::endl;
+                return;
             }
-            
-
         }
 
         if (InputNum != -1 || !InputNumList.empty())

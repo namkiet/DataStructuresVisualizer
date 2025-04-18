@@ -14,6 +14,7 @@
 #include <sstream>
 #include <unordered_set>
 #include <random>
+#include <Core/Utility.hpp>
 
 MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 {
@@ -54,7 +55,6 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     OperationButtonPosition[2] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.4);
     OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
     OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
-
 
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
     mSeperateToolBoxLine[3] = sf::VertexArray(sf::Lines, 2);
@@ -99,7 +99,7 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(*mSpeedButton, states);
     target.draw(*mStepByStepButton, states);
     target.draw(*mAtOnceButton, states);
-    
+
     
     for(auto &lines: mSeperateToolBoxLine)
         target.draw(lines, states);
@@ -176,7 +176,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
     InputBoxInsert->setCallback([InsertButton, InputBoxInsert, info]() {
         InsertButton->setSubComponentInfo(InputBoxInsert->getInputNum(),0);
-        info->setText("Type a number from 1 to 99");
+        info->setText("Type a number from 0 to 99");
     });
     InsertButton->addSubComponent(InputBoxInsert);
     InsertButton->setFunc([this,InsertButton, avl]()
@@ -200,7 +200,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete, info]()
     {
         DeleteButton->setSubComponentInfo(InputBoxDelete->getInputNum(),0);
-        info->setText("Type a number from 1 to 99");
+        info->setText("Type a number from 0 to 99");
     });
     DeleteButton->addSubComponent(InputBoxDelete);
     DeleteButton->setFunc([this,DeleteButton, avl]()
@@ -846,6 +846,34 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
 void MainUI::handleEvent(const sf::Event& event)
 {
     OperationButtonsList->handleEvent(event);
+
+    // mInstructText.setString("");
+    // GUI::Component::Ptr ActivateChild = OperationButtonsList->getActivateChild();
+    // if(ActivateChild != NULL)
+    // {
+    //     auto activateChild = std::dynamic_pointer_cast<GUI::ExpandableButton>(ActivateChild);
+    //     if (activateChild) {
+    //         for (auto& sub : activateChild->mSubComponents) 
+    //         {
+    //             if(!sub->isSelected()) continue;
+    //             auto textbox = std::dynamic_pointer_cast<GUI::TextBox>(sub);
+    //             if(textbox) // it is textbox type 
+    //             {
+    //                 if(textbox->mInputType == GUI::TextBox::InputType::Number)
+    //                 {
+    //                     mInstructText.setString(instructNumInput);
+    //                 }
+    //                 else if(textbox->mInputType == GUI::TextBox::InputType::VectorNum)
+    //                 {
+    //                     mInstructText.setString(instructVecNumInput);
+    //                 }
+    //                 mInstructText.setPosition(sf::Vector2f(OperationBox.getSize().x + 350.f, textbox->getGlobalBounds().top + 25.f));
+    //                 centerOrigin(mInstructText);
+    //             }
+    //         }
+    //     }
+    // }
+
     BackButtons->handleEvent(event);
     if (BackButtons->isActive())
     {
