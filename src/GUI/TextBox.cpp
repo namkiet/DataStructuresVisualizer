@@ -161,9 +161,13 @@ void TextBox::submit()
             char seperate = ',';
             std::string temp = mInput;
             int seperatorIndex = temp.find_first_of(seperate);
-            assert(seperatorIndex != std::string::npos && "No seperator found in the input string."); // tam thoi dung chuong trinh neu format sai
-            std::string firstNum = temp.substr(0, seperatorIndex);
-            std::string secondNum = temp.substr(seperatorIndex + 1, temp.length() - seperatorIndex - 1);
+            if(seperatorIndex != std::string::npos) std::cout<<"No seperator found in the input string."<<std::endl; // tam thoi dung chuong trinh neu format sai
+            std::string firstNum;
+            std::string secondNum;
+            if(seperatorIndex != std::string::npos){
+            firstNum = temp.substr(0, seperatorIndex);
+            secondNum = temp.substr(seperatorIndex + 1, temp.length() - seperatorIndex - 1);
+            }
             
             try {
                 int num1 = std::stoi(firstNum);
