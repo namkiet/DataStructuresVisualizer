@@ -40,11 +40,11 @@ GUI::Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf:
         mShape.setOutlineColor(UI::BUTTON::OutlineColor);
         mShape.setOutlineThickness(2.f);
 
-        if(content == ContentType::Text)
-        {
+        // if(content == ContentType::Text)
+        // {
             centerOrigin(mText);
             mText.setPosition(mShape.getPosition() + ButtonSize / 2.f);
-        }
+        // }
     }
     else if (mShapeType == ShapeType::Circle)
     {
@@ -52,11 +52,11 @@ GUI::Button::Button(sf::Font& font, sf::Vector2f Position, std::string text, sf:
         mCircle.setRadius(radius);
         mCircle.setPosition(Position);
         mCircle.setFillColor(mNormalColor);
-        if(content == ContentType::Text)
-        {
+        // if(content == ContentType::Text)
+        // {
             centerOrigin(mText);
             mText.setPosition(mCircle.getPosition() + sf::Vector2f(radius, radius));
-        }
+        // }
 
     }
 }
@@ -200,6 +200,11 @@ void GUI::Button::draw(sf::RenderTarget& target, sf::RenderStates states) const 
         target.draw(mText, states);
     else if (mContentType == ContentType::Image)
         target.draw(mSprite, states);
+    else if (mContentType == ContentType::Both)
+    {
+        target.draw(mText, states);
+        target.draw(mSprite, states);
+    }
 }
 
 void GUI::Button::handleEvent(const sf::Event& event)

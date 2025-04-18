@@ -26,6 +26,11 @@ MenuState::MenuState(StateStack& stack, Context context):
 	mSettingButton->setSelectedColor(sf::Color(255, 255, 255, 100));
 	mSettingButton->setSprite(sf::Sprite(context.textures->get(Textures::SettingIcon)));
 	mSettingButton->setCallback([this](){ requestStackPop(); requestStackPush(States::Settings); });
+
+	context.textures->get(Textures::Title).setSmooth(true);
+	mTitle.setTexture(context.textures->get(Textures::Title));
+	centerOrigin(mTitle);
+	mTitle.setPosition(sf::Vector2f(SCREEN::Width / 2.f, 100));
 }
 
 void MenuState::draw()
@@ -36,6 +41,7 @@ void MenuState::draw()
 	window.draw(mBackground);
 	mCarousel.draw(window);
 	window.draw(*mSettingButton);
+	window.draw(mTitle);
 }
 
 bool MenuState::update(sf::Time dt)

@@ -29,7 +29,8 @@ class Button: public Component
         
         enum class ContentType{
             Text,
-            Image
+            Image,
+            Both
         };
     
     public:

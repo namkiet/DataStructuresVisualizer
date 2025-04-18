@@ -4,6 +4,7 @@ Carousel::Carousel(TextureHolder* textures)
 {
     sf::Font emptyFont;
 
+    textures->get(Textures::NavigateLeft).setSmooth(true);
     sf::Sprite leftSprite(textures->get(Textures::NavigateLeft));
     centerOrigin(leftSprite);
     leftArrow = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(50, SCREEN::Height / 2 - 120 / 2), "", sf::Vector2f(120, 120), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
@@ -12,6 +13,7 @@ Carousel::Carousel(TextureHolder* textures)
     leftArrow->setToggle(false);
     leftArrow->setFillColor(sf::Color(255, 255, 255, 5));
 
+    textures->get(Textures::NavigateRight).setSmooth(true);
     sf::Sprite rightSprite(textures->get(Textures::NavigateRight));
     centerOrigin(rightSprite);
     rightArrow = std::make_shared<GUI::Button>(emptyFont, sf::Vector2f(SCREEN::Width - 50 - 120, SCREEN::Height / 2 - 120 / 2), "", sf::Vector2f(120, 120), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
@@ -29,6 +31,7 @@ void Carousel::pushItem(Item::ItemType type, sf::Texture &texture, std::function
     for (int i = 0; i < items.size(); i++)
     {
         items[i]->mInitialPosition = sf::Vector2f(SCREEN::Width / 2 + i * 350, SCREEN::Height / 2);
+        items[i]->setOffset(sf::Vector2f(0, 0));
         items[i]->setDotPosition(sf::Vector2f(SCREEN::Width / 2 + i * 20 - 30, SCREEN::Height / 2 + 250));
         items[i]->setScale(defaultScale);
     }

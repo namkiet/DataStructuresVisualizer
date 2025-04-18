@@ -17,11 +17,12 @@ App::App():
     loadTextures();
     loadFonts();
     registerStates();
-    mStateStack.pushState(States::Title);
+    mStateStack.pushState(States::Menu);
 }
 
 void App::loadTextures()
 {
+    mTextures.load(Textures::Title, "assets/images/title.png");
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
 
 	mTextures.load(Textures::AppBackground1, "assets/images/desert-night.png");
@@ -44,8 +45,11 @@ void App::loadTextures()
     mTextures.load(Textures::SettingIcon, "assets/images/settings.png");
     mTextures.load(Textures::NavigateLeft, "assets/images/navigate_left.png");
     mTextures.load(Textures::NavigateRight, "assets/images/navigate_right.png");
-    mTextures.load(Textures::ID::Minus, "assets/images/minus.png");
-    mTextures.load(Textures::ID::Plus, "assets/images/plus.png");
+    mTextures.load(Textures::Minus, "assets/images/minus.png");
+    mTextures.load(Textures::Plus, "assets/images/plus.png");
+
+    mTextures.load(Textures::SelectedRadioButton, "assets/images/selected-radio-button.png");
+    mTextures.load(Textures::UnselectedRadioButton, "assets/images/unselected-radio-button.png");
 }
 
 void App::loadFonts()

@@ -152,6 +152,8 @@ void DS::resetHistory()
 
     keyFrames.push_back(0);
 
+    playback = NORMAL;
+
 }
 
 void DS::updateCurrent(sf::Time dt)   
@@ -213,7 +215,7 @@ void DS::updateCurrent(sf::Time dt)
         totalTimer = std::max(totalTimer, mActionQueue.getTotalTime());
 
         float t = mActionQueue.update(dt);
-        timer += dt.asSeconds();
+        timer += ANIMATION::Speed * dt.asSeconds();
 
         if (t > 0 || timer >= std::max(0.1f, totalTimer / 100))
             saveStep();
@@ -226,7 +228,7 @@ void DS::updateCurrent(sf::Time dt)
 
         if (t == -1)
         {
-            elapsedTimer += dt.asSeconds();
+            elapsedTimer += ANIMATION::Speed * dt.asSeconds();
         }
 
         if (timer >= std::max(0.1f, totalTimer / 100)) timer = 0;
@@ -432,8 +434,9 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 
 void DS::loadFromVector(std::vector<int> numList)
 {
-    // isStepByStep = false;
     empty();
+    bool oldStepByStep = isStepByStep;
+    isStepByStep = stop = false;
     playback = NORMAL;
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
@@ -442,7 +445,7 @@ void DS::loadFromVector(std::vector<int> numList)
     { 
         ANIMATION::Speed = curSpeed; 
         align(); 
-        mActionQueue.pushInstantAction([=]() { resetHistory(); }); 
+        mActionQueue.pushInstantAction([=]() { resetHistory(); isStepByStep = stop = oldStepByStep; }); 
     });
 }    
 

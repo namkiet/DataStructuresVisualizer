@@ -93,8 +93,8 @@ namespace VIZ
         sf::Color Color             = sf::Color::White;
 
         float MinThickness          = 1.f;
-        float MaxThickness          = 3.f;
-        float ChangeStep            = 0.2f;
+        float MaxThickness          = 7.f;
+        float ChangeStep            = 1.f;
     }
 
     sf::Color TextColor             = sf::Color::White;         
