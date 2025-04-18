@@ -4,6 +4,8 @@
 #include <functional>
 #include <iostream>
 #include "GUI/ExpandableButton.hpp"
+#include <sstream>      
+#include <vector>   
 namespace GUI {
 
 const std::string TextBox::mAllowedChars = "0123456789,";
@@ -187,18 +189,20 @@ void TextBox::submit()
             try {
                 InputNum = std::stoi(mInput);
         
-                // Nếu nằm ngoài vùng [0,99], không làm gì cả
                 if (InputNum < 0 || InputNum > 99) {
-                    InputNum = -1; // Reset về mặc định
+                    reset();
+                    deselect();
                     return;
                 }
             } catch (const std::invalid_argument& e) {
                 std::cout << "Invalid input: not a valid integer.";
-                InputNum = -1;
+                reset();
+                deselect();
                 return;
             } catch (const std::out_of_range& e) {
                 std::cout << "Invalid input: number out of range.";
-                InputNum = -1;
+                reset();
+                deselect();
                 return;
             }
         }
@@ -206,35 +210,35 @@ void TextBox::submit()
         else if (mInputType == InputType::VectorNum) {
             char separator = ',';
             std::string temp = mInput;
-            int separatorIndex = temp.find_first_of(separator);
+            std::stringstream ss(temp);
+            std::string tempString;
         
-            if (separatorIndex == std::string::npos) {
-                std::cout << "No separator found in the input string." << std::endl;
-                return; // Ngưng nếu không có dấu phẩy
-            }
+            while (std::getline(ss, tempString, separator)) {
+                try {
+                    int num = std::stoi(tempString);
         
-            std::string firstNum = temp.substr(0, separatorIndex);
-            std::string secondNum = temp.substr(separatorIndex + 1);
+                    if (num < 0 || num > 99) {
+                        reset();
+                        deselect();
+                        std::cout << "Invalid input: number out of range [0,99]." << std::endl;
+                        return;
+                    }
         
-            try {
-                int num1 = std::stoi(firstNum);
-                int num2 = std::stoi(secondNum);
-        
-                // Nếu ngoài vùng [0,99], không làm gì
-                if (num1 < 0 || num1 > 99 || num2 < 0 || num2 > 99) {
+                    InputNumList.push_back(num);
+                } catch (const std::invalid_argument& e) {
+                    reset();
+                    deselect();
+                    std::cout << "Invalid input: '" << tempString << "' is not a valid number." << std::endl;
+                    return;
+                } catch (const std::out_of_range& e) {
+                    reset();
+                    deselect();
+                    std::cout << "Invalid input: number '" << tempString << "' is out of range." << std::endl;
                     return;
                 }
-        
-                InputNumList.push_back(num1);
-                InputNumList.push_back(num2);
-            } catch (const std::invalid_argument& e) {
-                std::cout << "Invalid input: one of the values is not a number." << std::endl;
-                return;
-            } catch (const std::out_of_range& e) {
-                std::cout << "Invalid input: one of the values is out of range." << std::endl;
-                return;
             }
         }
+        
 
         if (InputNum != -1 || !InputNumList.empty())
         {
