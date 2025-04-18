@@ -682,7 +682,7 @@ void MainUI::initGraphButtons(Graph* g)
         if (type == -1) return;
         else if (type == 0)
         {
-            int nodeCount = 8;
+            int nodeCount = 10;
             int edgeCount = 13;
             int minWeight = 1;
             int maxWeight = 10;

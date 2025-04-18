@@ -42,7 +42,7 @@ void AVLTree::remove(int value)
 
     mStep = 0;
     mLastStep = 6;
-    mLastInfo = "Deletion is complete.";
+    mLastInfo = "#";
 
     removeHelper(mRoot, value);
     align(mRoot);
@@ -51,9 +51,6 @@ void AVLTree::remove(int value)
 bool AVLTree::search(int value)
 {
     resetHistory();
-
-    // updateValue(value, value + 1);
-    // return false;
 
     mCode = {
         "if this == null: return false",
@@ -64,7 +61,7 @@ bool AVLTree::search(int value)
         "else: return true"
     };
 
-    mLastInfo = "#";
+    mLastInfo = "Deletion is complete.";
     if (searchHelper(mRoot, value)) // nếu value có trong cây
     {
         mLastStep = 5;
@@ -77,8 +74,40 @@ bool AVLTree::search(int value)
 
 void AVLTree::updateValue(int value, int newValue)
 {
+    if (!mRoot) return;
+
+    resetHistory();
+
+    TreeNode* cur = mRoot;
+    while (cur) // find value
+    {
+        if (value < cur->mValue) cur = cur->mLeft;
+        else if (value < cur->mValue) cur = cur->mRight;
+        else break;
+    }
+
+    if (!cur)
+        mLastStep = 0;
+    else
+        mLastStep = 1;
+
+    mActionQueue.pushInstantAction([=]() { mStep = 0; });
     remove(value);
-    insert(newValue);
+    mCode = {
+        "if search(value) == false: return",
+        "else: remove(value); insert(newValue)"
+    };  
+
+    if (cur)
+    {
+        mActionQueue.pushInstantAction([=]() { mStep = 1; });
+        insert(newValue);
+        mCode = {
+            "if search(value) == false: return",
+            "else: remove(value); insert(newValue)"
+        };  
+        mLastInfo = "Updated sucessfully.";
+    }
 }
 
 void AVLTree::empty()
@@ -112,7 +141,7 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
 
             // Calculate current position
             sf::Vector2f curPos = prev->mTargetPosition;
-            if (value < prev->mValue) // is left child
+            if (value <= prev->mValue) // is left child
                 curPos += sf::Vector2f(-VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
             else // is right child
                 curPos += sf::Vector2f(VIZ::DS::Size.x / (1 << (node->mLevel + 1)), VIZ::DS::RowSpacing);
@@ -146,7 +175,7 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
     createNewActionGroup();
     highlightNode(node, sf::Color::Red, 0.3f, false);
 
-    if (value < node->mValue) // Left traveral
+    if (value <= node->mValue) // Left traveral
     {
         mActionQueue.pushInstantAction([=]() {
             mInfo = std::to_string(value) + " is less than " + std::to_string(node->mValue) + ", go left.";
@@ -170,12 +199,12 @@ void AVLTree::insertHelper(TreeNode* &node, TreeNode* prev, int value)
         }
         insertHelper(node->mRight, node, value);
     }
-    else // value == node->mValue
-    {
-        mActionQueue.pushInstantAction([=]() {
-            mInfo = std::to_string(value) + " is already in the tree.";
-        });
-    }
+    // else // value == node->mValue
+    // {
+    //     mActionQueue.pushInstantAction([=]() {
+    //         mInfo = std::to_string(value) + " is already in the tree.";
+    //     });
+    // }
 
     createNewActionGroup();
     highlightNode(node, VIZ::NODE::FillColor, 0.3f, false);
@@ -192,9 +221,7 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
 {
     if (!node) 
     {
-        mActionQueue.pushInstantAction([=]() {
-            mInfo = std::to_string(value) + " is not in the tree.";
-        }); 
+        mLastInfo = std::to_string(value) + " is not in the tree.";
         return;
     }
 
@@ -413,7 +440,7 @@ void AVLTree::balance(TreeNode* &root)
     mActionQueue.pushInstantAction([=]() {
         root->setNote("");
     });
-d
+
     if (bf > 1) 
     {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
