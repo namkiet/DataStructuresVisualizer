@@ -220,7 +220,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x =");
     InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch, info]() {
         SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
-        info->setText("Type a number from 1 to 99");
+        info->setText("Type a number from 0 to 99");
     });
     SearchButton->addSubComponent(InputBoxSearch);
     SearchButton->setFunc([this,SearchButton,avl]()

@@ -97,8 +97,10 @@ void TextBox::inputLogic(sf::Uint32 unicode) {
         if (!mInput.empty()) {
             mInput.pop_back();
         }
+    } else if(mInputType == InputType::Number && isdigit(ch)){
+        mInput += ch;
     }
-    else if(mAllowedChars.find(ch) != std::string::npos){
+    else if(mInputType == InputType::VectorNum && mAllowedChars .find(ch) != std::string::npos){
         mInput += ch;
     }
     mText.setString(mInput); 
@@ -150,9 +152,9 @@ void TextBox::submit()
                 InputNum = std::stoi(mInput);
                 assert(InputNum >= 0 && "Number must be greater than or equal to 0.");
             } catch (const std::invalid_argument& e) {
-                assert(false && "Invalid input: not a valid integer.");
+                std::cout<<"Invalid input: not a valid integer.";
             } catch (const std::out_of_range& e) {
-                assert(false && "Invalid input: number out of range.");
+                std::cout<<"Invalid input: number out of range.";
             }
 
         } else if(mInputType == InputType::VectorNum){
@@ -170,9 +172,9 @@ void TextBox::submit()
                 InputNumList.push_back(num1);
                 InputNumList.push_back(num2);
             } catch (const std::invalid_argument& e) {
-                assert(false && "Invalid input: one of the values is not a number.");
+                std::cout<<"Invalid input: one of the values is not a number.";
             } catch (const std::out_of_range& e) {
-                assert(false && "Invalid input: one of the values is out of range.");
+                std::cout<<"Invalid input: one of the values is out of range.";
             }
             
 
