@@ -218,7 +218,7 @@ void Graph::updateCurrent(sf::Time dt)
         for(auto& edge: EdgeList){
             int start = edge.first.first;
             int end = edge.first.second;
-            sf::Vector2f force = Attraction(ForceConstant * 2, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
+            sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
             velocity[start] += force * dt.asSeconds();
             velocity[end] -= force * dt.asSeconds();
         }
@@ -230,7 +230,7 @@ void Graph::updateCurrent(sf::Time dt)
             for(int j = 0; j < NumVer;j++)
             {
                 if(i == j) continue;
-                sf::Vector2f force = Repulsion(ForceConstant, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
+                sf::Vector2f force = Repulsion(ForceConstant * 10, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
                 velocity[i] += force * dt.asSeconds();
             }
         }

@@ -334,36 +334,5 @@ bool SettingsState::handleEvent(const sf::Event& event)
 
 	IncreaseEdgeThickness->handleEvent(event);
 	DecreaseEdgeThickness->handleEvent(event);
-
-	if (event.type == sf::Event::KeyPressed)
-	{
-        if (event.key.code == sf::Keyboard::B)
-        {
-			if (VIZ::NODE::Radius < 36.f)
-			{
-				float newSize = VIZ::NODE::Radius + 2.f;
-				VIZ::NODE::Thickness = newSize * (VIZ::NODE::Thickness / VIZ::NODE::Radius);
-				VIZ::NODE::Radius = newSize;
-			}
-        }
-
-		if (event.key.code == sf::Keyboard::C)
-		{
-			if (VIZ::EDGE::Thickness < 7.f)
-			{
-				VIZ::EDGE::Thickness += 1.f;
-			}
-		}
-	
-		for(auto& node : nodes)
-		{
-			delete node;
-		}
-		for(auto& edge : edges)
-		{
-			delete edge;
-		}
-		initNodesAndEdge();
-	}
 	return true;
 }

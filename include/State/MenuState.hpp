@@ -17,4 +17,5 @@ private:
 	sf::Sprite				mBackground;
 	Carousel				mCarousel;
 	GUI::Button::Ptr		mSettingButton;	
+	sf::Sprite				mTitle;
 };

@@ -78,11 +78,16 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
         ANIMATION::Speed = speed[speedIndex];
     });
 
-    mStepByStepButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(200.f, 50.f), "Run step by step", sf::Vector2f(100, 50), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
-    mStepByStepButton->setToggle(false);
+    mSelectedRadioButtonSprite.setTexture(textures.get(Textures::SelectedRadioButton));
+    mUnselectedRadioButtonSprite.setTexture(textures.get(Textures::UnselectedRadioButton));
 
-    mAtOnceButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(500.f, 50.f), "Run at once", sf::Vector2f(100, 50), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
-    mAtOnceButton->setToggle(false);
+    mStepByStepButton = std::make_shared<GUI::Button>(mFont, UI::CONTROLBOX::Position, "Run step by step", sf::Vector2f(UI::CONTROLBOX::Size.x / 2.f, UI::CONTROLBOX::Size.y), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
+    // mStepByStepButton->setToggle(false);
+    mStepByStepButton->setSprite(mUnselectedRadioButtonSprite);
+
+    mAtOnceButton = std::make_shared<GUI::Button>(mFont, UI::CONTROLBOX::Position + sf::Vector2f(UI::CONTROLBOX::Size.x / 2, 0), "Run at once", sf::Vector2f(UI::CONTROLBOX::Size.x / 2.f, UI::CONTROLBOX::Size.y), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
+    // mAtOnceButton->setToggle(false);
+    mAtOnceButton->setSprite(mSelectedRadioButtonSprite);
 }
 
 void MainUI::updateCurrent(sf::Time dt)
@@ -265,26 +270,6 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
 
     });
 
-    
-    mStepByStepButton->setCallback([=](){
-        avl->isStepByStep = true;
-        avl->stop = true;
-        // InputBoxInsert->submit();
-        // InputBoxDelete->submit();
-        // InputBoxSearch->submit();
-        // InputBoxUpdate->submit();
-    });
-
-    mAtOnceButton->setCallback([=](){
-        avl->isStepByStep = false;
-        avl->stop = false;
-        // InputBoxInsert->submit();
-        // InputBoxDelete->submit();
-        // InputBoxSearch->submit();
-        // InputBoxUpdate->submit();
-    });
-
-
     // Pack all buttons
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(InsertButton);
@@ -452,24 +437,6 @@ void MainUI::initHeapButtons(HeapTree* heap)
         }
         UpdateButton->resetSubComponentInfo();
 
-    });
-
-    mStepByStepButton->setCallback([=](){
-        heap->isStepByStep = true;
-        heap->stop = true;
-        // InputBoxPush->submit();
-        // // InputBoxPop->submit();
-        // InputBoxSearch->submit();
-        // InputBoxUpdate->submit();
-    });
-
-    mAtOnceButton->setCallback([=](){
-        heap->isStepByStep = false;
-        heap->stop = false;
-        // InputBoxPush->submit();
-        // // InputBoxPop->submit();
-        // InputBoxSearch->submit();
-        // InputBoxUpdate->submit();   
     });
 
     // Pack all buttons
@@ -658,26 +625,6 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     });
 
-    mStepByStepButton->setCallback([=](){
-        ll->isStepByStep = true;
-        ll->stop = true;
-        // InputBoxInsertAtHead->submit();
-        // InputBoxInsertAtLast->submit();
-        // InputBoxDelete->submit();
-        // InputBoxSearch->submit();
-        // InputBoxUpdate->submit();
-    });
-
-    mAtOnceButton->setCallback([=](){
-        ll->isStepByStep = false;
-        ll->stop = false;
-        // InputBoxInsertAtHead->submit();
-        // InputBoxInsertAtLast->submit();
-        // InputBoxDelete->submit();
-        // InputBoxSearch->submit();
-        // InputBoxUpdate->submit();
-    });
-
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(InsertButton);
     OperationButtonsList->pack(DeleteButton);
@@ -821,6 +768,23 @@ void MainUI::initGraphButtons(Graph* g)
 void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* info)
 {
     OperationButtonsList->makeEmpty();
+
+    mStepByStepButton->setCallback([=]()
+    {
+        mDataStructure->isStepByStep = true;
+        mDataStructure->stop = true;
+        mStepByStepButton->setSprite(mSelectedRadioButtonSprite);
+        mAtOnceButton->setSprite(mUnselectedRadioButtonSprite);
+    });
+
+    mAtOnceButton->setCallback([=]()
+    {
+        mDataStructure->isStepByStep = false;
+        mDataStructure->stop = false;
+        mStepByStepButton->setSprite(mUnselectedRadioButtonSprite);
+        mAtOnceButton->setSprite(mSelectedRadioButtonSprite);
+    });
+
     if (mode == World::Mode::AVLMode)
     {
         auto avl = dynamic_cast<AVLTree*>(mDataStructure);
@@ -884,10 +848,6 @@ void MainUI::handleEvent(const sf::Event& event)
     mSpeedButton->handleEvent(event);
     mStepByStepButton->handleEvent(event);
     mAtOnceButton->handleEvent(event);
-    // if (mSpeedButton->isActive())
-    // {
-
-    // }
 }
 
 bool MainUI::getBackRequest()

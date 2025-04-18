@@ -17,11 +17,12 @@ App::App():
     loadTextures();
     loadFonts();
     registerStates();
-    mStateStack.pushState(States::Title);
+    mStateStack.pushState(States::Menu);
 }
 
 void App::loadTextures()
 {
+    mTextures.load(Textures::Title, "assets/images/title.png");
     mTextures.load(Textures::HomeIcon, "assets/images/home.png");
 
 	mTextures.load(Textures::AppBackground1, "assets/images/desert-night.png");
@@ -29,10 +30,10 @@ void App::loadTextures()
     mTextures.load(Textures::AppBackground3, "assets/images/forest.jpg");
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
 
-    mTextures.load(Textures::AVLThumbnail, "assets/images/avl-thumbnail.png");
-    mTextures.load(Textures::HeapThumbnail, "assets/images/heap-thumbnail.png");
-    mTextures.load(Textures::LLThumbnail, "assets/images/ll-thumbnail.png");
-    mTextures.load(Textures::GraphThumbnail, "assets/images/graph-thumbnail.png");
+    mTextures.load(Textures::AVLThumbnail, "assets/images/desert-night/avl-thumbnail.png");
+    mTextures.load(Textures::HeapThumbnail, "assets/images/desert-night/heap-thumbnail.png");
+    mTextures.load(Textures::LLThumbnail, "assets/images/desert-night/ll-thumbnail.png");
+    mTextures.load(Textures::GraphThumbnail, "assets/images/desert-night/graph-thumbnail.png");
 
     mTextures.load(Textures::Prev, "assets/images/prevFrame.png");
     mTextures.load(Textures::Next, "assets/images/nextFrame.png");
@@ -44,8 +45,11 @@ void App::loadTextures()
     mTextures.load(Textures::SettingIcon, "assets/images/settings.png");
     mTextures.load(Textures::NavigateLeft, "assets/images/navigate_left.png");
     mTextures.load(Textures::NavigateRight, "assets/images/navigate_right.png");
-    mTextures.load(Textures::ID::Minus, "assets/images/minus.png");
-    mTextures.load(Textures::ID::Plus, "assets/images/plus.png");
+    mTextures.load(Textures::Minus, "assets/images/minus.png");
+    mTextures.load(Textures::Plus, "assets/images/plus.png");
+
+    mTextures.load(Textures::SelectedRadioButton, "assets/images/selected-radio-button.png");
+    mTextures.load(Textures::UnselectedRadioButton, "assets/images/unselected-radio-button.png");
 }
 
 void App::loadFonts()

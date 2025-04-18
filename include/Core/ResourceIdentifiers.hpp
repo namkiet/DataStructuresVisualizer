@@ -13,6 +13,7 @@ namespace Textures
 {
 	enum ID
 	{
+		Title,
 		AppBackground1,
 		AppBackground2,
 		AppBackground3,
@@ -32,7 +33,9 @@ namespace Textures
 		NavigateLeft,
 		NavigateRight,
 		Minus,
-		Plus
+		Plus,
+		SelectedRadioButton,
+		UnselectedRadioButton
 	};
 }
 
