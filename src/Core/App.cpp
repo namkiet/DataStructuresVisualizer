@@ -30,10 +30,10 @@ void App::loadTextures()
     mTextures.load(Textures::AppBackground3, "assets/images/forest.jpg");
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
 
-    mTextures.load(Textures::AVLThumbnail, "assets/images/avl-thumbnail.png");
-    mTextures.load(Textures::HeapThumbnail, "assets/images/heap-thumbnail.png");
-    mTextures.load(Textures::LLThumbnail, "assets/images/ll-thumbnail.png");
-    mTextures.load(Textures::GraphThumbnail, "assets/images/graph-thumbnail.png");
+    mTextures.load(Textures::AVLThumbnail, "assets/images/desert-night/avl-thumbnail.png");
+    mTextures.load(Textures::HeapThumbnail, "assets/images/desert-night/heap-thumbnail.png");
+    mTextures.load(Textures::LLThumbnail, "assets/images/desert-night/ll-thumbnail.png");
+    mTextures.load(Textures::GraphThumbnail, "assets/images/desert-night/graph-thumbnail.png");
 
     mTextures.load(Textures::Prev, "assets/images/prevFrame.png");
     mTextures.load(Textures::Next, "assets/images/nextFrame.png");

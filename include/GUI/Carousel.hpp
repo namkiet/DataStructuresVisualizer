@@ -97,8 +97,8 @@ private:
     float                   currentOffset = 0;
 
 private:
-    float                   selectedScale = 1;
-    float                   defaultScale = 0.75;
+    float                   selectedScale = 0.8;
+    float                   defaultScale = 0.6;
 
 private:
     std::vector<Item*>      items;
