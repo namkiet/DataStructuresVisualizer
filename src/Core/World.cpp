@@ -35,11 +35,12 @@ void World::update(sf::Time dt)
 	mPseudoCode->setCode(mDataStructure->getCode());
 	mPseudoCode->setStep(mDataStructure->getStep());
 
-	mInfoPanel->setText(mDataStructure->getInfo());
+	if (mInfoPanel->getText() != mDataStructure->getInfo())
+		mInfoPanel->setText(mDataStructure->getInfo());
 
 	mProgressBar->setProgress(mDataStructure->getProgress());
 
-	if (mDataStructure->stop && mDataStructure->isRunning())
+	if (mDataStructure->stop && (mDataStructure->isRunning() || mDataStructure->canRedo()))
 		mPauseButton->setSprite(mPlay);
 	else
 		mPauseButton->setSprite(mPause);
@@ -174,7 +175,7 @@ void World::setMode(World::Mode mode)
 	}
 
 	mSceneLayers[DataStructure]->setPosition(VIZ::DS::Position);
-	mMainUI->createButtonList(mode, mDataStructure);
+	mMainUI->createButtonList(mode, mDataStructure, mInfoPanel);
 
 
 	mPrevButton->setCallback([=](){ mDataStructure->undo(); });
@@ -221,10 +222,10 @@ void World::handleEvent(const sf::Event& event)
 		}
 	}
 
-	if (mProgressBar->handleEvent(event))
-	{
-		mDataStructure->loadStep(mProgressBar->getProgress());	
-	}
+	// if (mProgressBar->handleEvent(event))
+	// {
+	// 	mDataStructure->loadStep(mProgressBar->getProgress());	
+	// }
 }
  
 void World::updateBackRequest()

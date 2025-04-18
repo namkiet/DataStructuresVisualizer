@@ -3,17 +3,18 @@
 
 InfoPanel::InfoPanel(sf::Font &font, sf::Vector2f size):
     mFont(font),
-    mSize(size)
+    mSize(size),
+    mContent("")
 {
     mText.setFont(mFont);
     mText.setCharacterSize(16);
-    mText.setFillColor(sf::Color::White);
     mText.setPosition(sf::Vector2f(16.f, 16.f));
 }
 
 void InfoPanel::setText(const std::string& text)
 {
-    std::istringstream words("[INFO] " + text);
+    std::istringstream words;
+    words.str((text[0] == '!' ? "[ERROR] " : "[INFO] ") + text);
     std::string word, wrappedText, line;
     sf::Text tempText("", mFont, mText.getCharacterSize());
 
@@ -31,6 +32,9 @@ void InfoPanel::setText(const std::string& text)
     }
     wrappedText += (wrappedText.empty() ? "" : "\n") + line; // Thêm dòng cuối cùng
     mText.setString(wrappedText);
+    mText.setFillColor(text[0] == '!' ? sf::Color::Red : sf::Color::White);
+
+    mContent = text;
 }
 
 void InfoPanel::setCharacterSize(float size)
@@ -46,4 +50,9 @@ void InfoPanel::updateCurrent(sf::Time dt)
 void InfoPanel::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(mText, states);
+}
+
+std::string InfoPanel::getText() const
+{
+    return mContent;
 }

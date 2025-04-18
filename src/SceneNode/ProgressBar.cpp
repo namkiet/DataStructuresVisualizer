@@ -48,7 +48,9 @@ bool ProgressBar::handleEvent(const sf::Event& event) {
 
 void ProgressBar::setProgress(float p)
 {
-    if (p < 0 || p > 1) return;
+    // if (p < 0 || p > 1) return;
+    if (p < 0) p = 0;
+    if (p > 1) p = 1;
     progress = p;
     fill.setSize({progress * width, bar.getSize().y});
     knob.setPosition(progress * width + x, bar.getPosition().y + bar.getSize().y / 2);
@@ -65,5 +67,5 @@ void ProgressBar::updateCurrent(sf::Time dt) {
 void ProgressBar::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(bar, states);
     target.draw(fill, states);
-    target.draw(knob, states);
+    // target.draw(knob, states);
 }

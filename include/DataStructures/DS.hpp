@@ -25,6 +25,7 @@ public:
 
     virtual void                    empty();
     virtual void                    loadFromVector(std::vector<int> numList);
+    int                             getSize() const;
 
 protected:
     virtual void                    align() {};

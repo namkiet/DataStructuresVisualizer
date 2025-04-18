@@ -44,8 +44,8 @@ void App::loadTextures()
     mTextures.load(Textures::SettingIcon, "assets/images/settings.png");
     mTextures.load(Textures::NavigateLeft, "assets/images/navigate_left.png");
     mTextures.load(Textures::NavigateRight, "assets/images/navigate_right.png");
-    mTextures.load(Textures::ID::Minus, "assets/images/minus.jpg");
-    mTextures.load(Textures::ID::Plus, "assets/images/plus.jpg");
+    mTextures.load(Textures::ID::Minus, "assets/images/minus.png");
+    mTextures.load(Textures::ID::Plus, "assets/images/plus.png");
 }
 
 void App::loadFonts()

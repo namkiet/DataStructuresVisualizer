@@ -40,8 +40,8 @@ public:
     void                                handleEvent(const sf::Event& event);
 
 public:
-    void                                createButtonList(World::Mode mode, DS* mDataStructure);
-    void                                initAVLButtons(AVLTree* avl);
+    void                                createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel *info);
+    void                                initAVLButtons(AVLTree* avl, InfoPanel *info);
     void                                initHeapButtons(HeapTree* heap);
     void                                initLinkedListButtons(LinkedList* ll);
     void                                initGraphButtons(Graph* g);

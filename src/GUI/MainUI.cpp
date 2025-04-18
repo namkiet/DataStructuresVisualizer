@@ -105,7 +105,7 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
         target.draw(lines, states);
 }
 
-void MainUI::initAVLButtons(AVLTree* avl)
+void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
 {
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
 
@@ -134,7 +134,7 @@ void MainUI::initAVLButtons(AVLTree* avl)
             std::srand(std::time(nullptr)); 
             std::vector<int> randomList(10);
             for (int &num : randomList)
-                num = std::rand() % 100; // Random numbers from 0 to 99
+                num = std::rand() % 99 + 1; // Random numbers from 0 to 99
             
             avl->loadFromVector(randomList);
         }
@@ -174,8 +174,9 @@ void MainUI::initAVLButtons(AVLTree* avl)
     // Add Insert button
     GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
     GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
-    InputBoxInsert->setCallback([InsertButton, InputBoxInsert]() {
+    InputBoxInsert->setCallback([InsertButton, InputBoxInsert, info]() {
         InsertButton->setSubComponentInfo(InputBoxInsert->getInputNum(),0);
+        info->setText("Type a number from 1 to 99");
     });
     InsertButton->addSubComponent(InputBoxInsert);
     InsertButton->setFunc([this,InsertButton, avl]()
@@ -194,9 +195,10 @@ void MainUI::initAVLButtons(AVLTree* avl)
     // Add Delete button
     GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Delete",ButtonSize);
     GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
-    InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete]()
+    InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete, info]()
     {
         DeleteButton->setSubComponentInfo(InputBoxDelete->getInputNum(),0);
+        info->setText("Type a number from 1 to 99");
     });
     DeleteButton->addSubComponent(InputBoxDelete);
     DeleteButton->setFunc([this,DeleteButton, avl]()
@@ -214,8 +216,9 @@ void MainUI::initAVLButtons(AVLTree* avl)
     // Add Search button
     GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
     GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x =");
-    InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch]() {
+    InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch, info]() {
         SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
+        info->setText("Type a number from 1 to 99");
     });
     SearchButton->addSubComponent(InputBoxSearch);
     SearchButton->setFunc([this,SearchButton,avl]()
@@ -234,9 +237,10 @@ void MainUI::initAVLButtons(AVLTree* avl)
     // add update button
     GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[4], "Update", ButtonSize);
     GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "old =, new =", GUI::TextBox::InputType::VectorNum);
-    InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
+    InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate, info]()
     {
         UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
+        info->setText("Type the old and new value, seperated by a comma.");
     });
 
     UpdateButton->addSubComponent(InputBoxUpdate);
@@ -317,7 +321,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
             std::srand(std::time(nullptr)); 
             std::vector<int> randomList(10);
             for (int &num : randomList)
-                num = std::rand() % 100; // Random numbers from 0 to 99
+                num = std::rand() % 99 + 1; // Random numbers from 0 to 99
             
             heap->loadFromVector(randomList);
         }
@@ -503,7 +507,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
             std::srand(std::time(nullptr)); 
             std::vector<int> randomList(10);
             for (int &num : randomList)
-                num = std::rand() % 100; // Random numbers from 0 to 99
+                num = std::rand() % 99 + 1; // Random numbers from 0 to 99
             
             ll->loadFromVector(randomList);
         }
@@ -812,13 +816,13 @@ void MainUI::initGraphButtons(Graph* g)
     OperationButtonsList->pack(MSTButton);
 }
 
-void MainUI::createButtonList(World::Mode mode, DS* mDataStructure)
+void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* info)
 {
     OperationButtonsList->makeEmpty();
     if (mode == World::Mode::AVLMode)
     {
         auto avl = dynamic_cast<AVLTree*>(mDataStructure);
-        initAVLButtons(avl);
+        initAVLButtons(avl, info);
 	}
     else if (mode == World::Mode::LinkedListMode)
     {

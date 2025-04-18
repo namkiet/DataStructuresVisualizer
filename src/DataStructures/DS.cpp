@@ -110,7 +110,7 @@ void DS::toFirst()
     if (!canUndo()) return;
     playback = UNDO;
     stop = true;
-    cS = 0;
+    cS = targetFrame = 0;
 }
 
 void DS::toLast()
@@ -118,7 +118,7 @@ void DS::toLast()
     if (!canRedo()) return;
     playback = REDO;
     stop = true;
-    cS = mH.size() - 1;
+    cS = targetFrame = mH.size() - 1;
 }
 
 void DS::run()
@@ -194,10 +194,14 @@ void DS::updateCurrent(sf::Time dt)
     // else
     //     elapsedTimer = 0;
 
+
     if (mActionQueue.isEmpty())
     {
-        mStep = mLastStep;
-        if (mLastInfo != "#") mInfo = mLastInfo;
+        if (ANIMATION::Speed < 1000)
+        {
+            mStep = mLastStep;
+            if (mLastInfo != "#") mInfo = mLastInfo;
+        }
 
         totalTimer = 0;
         elapsedTimer = 0;
@@ -240,7 +244,7 @@ void DS::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {    
     states.transform *= getTransform();  
 
-    if (cS != mH.size() - 1 && !mH.empty()) // not the last step
+    if (cS != mH.size() - 1 && !mH.empty() && cS != -1) // not the last step
     {
         sf::Sprite sprite(mH[cS]);
         sprite.setColor(sf::Color(220, 220, 220, 200));
@@ -428,12 +432,18 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
 
 void DS::loadFromVector(std::vector<int> numList)
 {
-    isStepByStep = false;
+    // isStepByStep = false;
     empty();
+    playback = NORMAL;
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
-    mActionQueue.pushInstantAction([=](){ ANIMATION::Speed = curSpeed; resetHistory(); align(); });
+    mActionQueue.pushInstantAction([=]()
+    { 
+        ANIMATION::Speed = curSpeed; 
+        align(); 
+        mActionQueue.pushInstantAction([=]() { resetHistory(); }); 
+    });
 }    
 
 std::string DS::getInfo()
@@ -461,4 +471,9 @@ void DS::changeNodePosition(int id, sf::Vector2f pos)
     for(auto& edge: mEdgeList){
         edge->updateEdge();
     }
+}
+
+int DS::getSize() const
+{
+    return mNodeList.size();
 }

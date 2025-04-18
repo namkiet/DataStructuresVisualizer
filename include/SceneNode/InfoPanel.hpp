@@ -10,6 +10,7 @@ public:
 
     void                                setText(const std::string& newText);
     void                                setCharacterSize(float size);
+    std::string                         getText() const;
 
 private:
     virtual void                        updateCurrent(sf::Time dt) override;
@@ -19,4 +20,5 @@ private:
     sf::Text                            mText;
     sf::Font                            mFont;
     sf::Vector2f                        mSize;
+    std::string                         mContent;
 };
