@@ -413,7 +413,7 @@ void AVLTree::balance(TreeNode* &root)
     mActionQueue.pushInstantAction([=]() {
         root->setNote("");
     });
-
+d
     if (bf > 1) 
     {
         if (getBalanceFactor(root->mLeft) >= 0) // LL

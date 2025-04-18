@@ -35,7 +35,7 @@ void World::update(sf::Time dt)
 	mPseudoCode->setCode(mDataStructure->getCode());
 	mPseudoCode->setStep(mDataStructure->getStep());
 
-	if (mInfoPanel->getText() != mDataStructure->getInfo())
+	if (mInfoPanel->getText() == "" || mDataStructure->getInfo() != "")
 		mInfoPanel->setText(mDataStructure->getInfo());
 
 	mProgressBar->setProgress(mDataStructure->getProgress());

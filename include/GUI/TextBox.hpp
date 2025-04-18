@@ -33,7 +33,7 @@ namespace GUI
         virtual void                                deselect() override;
 
         int                                         getInputNum();
-        std::vector<int>                                 getInputNumList();
+        std::vector<int>                            getInputNumList();
         void                                        setPlaceholder(const std::string& text);
         void                                        submit();
         sf::FloatRect                               getGlobalBounds() const;

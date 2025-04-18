@@ -56,6 +56,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
     OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
 
+
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
     mSeperateToolBoxLine[3] = sf::VertexArray(sf::Lines, 2);
     mSeperateToolBoxLine[3][0].position = UI::OPERATIONBOX::Position + sf::Vector2f(ButtonSize.x, 0);
@@ -82,12 +83,14 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     mUnselectedRadioButtonSprite.setTexture(textures.get(Textures::UnselectedRadioButton));
 
     mStepByStepButton = std::make_shared<GUI::Button>(mFont, UI::CONTROLBOX::Position, "Run step by step", sf::Vector2f(UI::CONTROLBOX::Size.x / 2.f, UI::CONTROLBOX::Size.y), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
-    // mStepByStepButton->setToggle(false);
-    mStepByStepButton->setSprite(mUnselectedRadioButtonSprite);
+    mStepByStepButton->setToggle(false);
+    // mStepByStepButton->setSprite(mUnselectedRadioButtonSprite);
+    mStepByStepButton->setFillColor(sf::Color::Transparent);
 
     mAtOnceButton = std::make_shared<GUI::Button>(mFont, UI::CONTROLBOX::Position + sf::Vector2f(UI::CONTROLBOX::Size.x / 2, 0), "Run at once", sf::Vector2f(UI::CONTROLBOX::Size.x / 2.f, UI::CONTROLBOX::Size.y), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
-    // mAtOnceButton->setToggle(false);
-    mAtOnceButton->setSprite(mSelectedRadioButtonSprite);
+    mAtOnceButton->setToggle(false);
+    // mAtOnceButton->setSprite(mSelectedRadioButtonSprite);
+    mAtOnceButton->setFillColor(sf::Color(255, 255, 255, 5));
 }
 
 void MainUI::updateCurrent(sf::Time dt)
@@ -104,7 +107,7 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
     target.draw(*mSpeedButton, states);
     target.draw(*mStepByStepButton, states);
     target.draw(*mAtOnceButton, states);
-
+    
     
     for(auto &lines: mSeperateToolBoxLine)
         target.draw(lines, states);
@@ -117,33 +120,58 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
-    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[4].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+    GUI::TextBox::Ptr InputBoxRandom    = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2) , sf::Vector2f(100.f, 40.f), "N =");
+    GUI::TextBox::Ptr InputBoxInit      = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  (OperationButtonPosition[1].y + OperationButtonPosition[2].y) / 2) , sf::Vector2f(100.f, 40.f), "array = ", GUI::TextBox::InputType::VectorNum);
+    GUI::Button::Ptr LoadButton         = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[2].y + OperationButtonPosition[3].y) / 2), "Load", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr EmptyButton        = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[4].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
 
-    RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
-    LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
-    EmptyButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(2); });
+    InputBoxRandom->setCallback([CreateButton, InputBoxRandom]() { CreateButton->setSubComponentInfo(InputBoxRandom->getInputNum(), 0); });
+    InputBoxInit->setCallback([CreateButton, InputBoxInit]() { CreateButton->setSubComponentInfo(InputBoxInit->getInputNumList(), 1); });
+    LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(2); });
+    EmptyButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(3); });
 
-    CreateButton->addSubComponent(RandomButton);
+    CreateButton->addSubComponent(InputBoxRandom);
+    CreateButton->addSubComponent(InputBoxInit);
     CreateButton->addSubComponent(LoadButton);
     CreateButton->addSubComponent(EmptyButton);
 
-    CreateButton->setFunc([CreateButton,avl]()
+    CreateButton->setFunc([CreateButton,avl, info]()
     {
         int type = CreateButton->getSubComponentInfo().InfoID;
 
         if (type == -1) return;
         else if (type == 0)
         {
-            std::srand(std::time(nullptr)); 
-            std::vector<int> randomList(10);
-            for (int &num : randomList)
-                num = std::rand() % 99 + 1; // Random numbers from 0 to 99
-            
-            avl->loadFromVector(randomList);
+            int N = CreateButton->getSubComponentInfo().num;
+            if (N <= 50)
+            {
+                std::srand(std::time(nullptr)); 
+                std::vector<int> randomList(N);
+                for (int &num : randomList)
+                    num = std::rand() % 99 + 1; // Random numbers from 0 to 99
+
+                avl->loadFromVector(randomList);
+            }
+            else
+            {
+                info->setText("!Maximum size is 50.");
+            }
         }
         else if (type == 1)
+        {
+            std::vector<int> list = CreateButton->getSubComponentInfo().VecNum;
+            for (int x: list) std::cerr << x << "-";
+            std::cerr << "\n";
+            if (list.size() <= 50)
+            {
+                avl->loadFromVector(list);
+            } 
+            else
+            {
+                info->setText("!Maximum size is 50.");
+            }
+        }
+        else if (type == 2)
         {
             std::wstring filename = OpenFileDialog();
             if (!filename.empty()) {
@@ -170,7 +198,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
                 std::cerr << "No file selected or an error occurred." << std::endl;
             }
         }
-        else if (type == 2)
+        else if (type == 3)
             avl->empty();
 
         CreateButton->resetSubComponentInfo();
@@ -181,7 +209,6 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
     InputBoxInsert->setCallback([InsertButton, InputBoxInsert, info]() {
         InsertButton->setSubComponentInfo(InputBoxInsert->getInputNum(),0);
-        info->setText("Type a number from 0 to 99");
     });
     InsertButton->addSubComponent(InputBoxInsert);
     InsertButton->setFunc([this,InsertButton, avl]()
@@ -205,7 +232,6 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete, info]()
     {
         DeleteButton->setSubComponentInfo(InputBoxDelete->getInputNum(),0);
-        info->setText("Type a number from 0 to 99");
     });
     DeleteButton->addSubComponent(InputBoxDelete);
     DeleteButton->setFunc([this,DeleteButton, avl]()
@@ -225,7 +251,6 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x =");
     InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch, info]() {
         SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
-        info->setText("Type a number from 0 to 99");
     });
     SearchButton->addSubComponent(InputBoxSearch);
     SearchButton->setFunc([this,SearchButton,avl]()
@@ -247,7 +272,6 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate, info]()
     {
         UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);
-        info->setText("Type the old and new value, seperated by a comma.");
     });
 
     UpdateButton->addSubComponent(InputBoxUpdate);
@@ -773,16 +797,16 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
     {
         mDataStructure->isStepByStep = true;
         mDataStructure->stop = true;
-        mStepByStepButton->setSprite(mSelectedRadioButtonSprite);
-        mAtOnceButton->setSprite(mUnselectedRadioButtonSprite);
+        mStepByStepButton->setFillColor(sf::Color(255, 255, 255, 5));
+        mAtOnceButton->setFillColor(sf::Color::Transparent);
     });
 
     mAtOnceButton->setCallback([=]()
     {
         mDataStructure->isStepByStep = false;
         mDataStructure->stop = false;
-        mStepByStepButton->setSprite(mUnselectedRadioButtonSprite);
-        mAtOnceButton->setSprite(mSelectedRadioButtonSprite);
+        mStepByStepButton->setFillColor(sf::Color::Transparent);
+        mAtOnceButton->setFillColor(sf::Color(255, 255, 255, 5));
     });
 
     if (mode == World::Mode::AVLMode)
@@ -810,34 +834,6 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
 void MainUI::handleEvent(const sf::Event& event)
 {
     OperationButtonsList->handleEvent(event);
-
-    // mInstructText.setString("");
-    // GUI::Component::Ptr ActivateChild = OperationButtonsList->getActivateChild();
-    // if(ActivateChild != NULL)
-    // {
-    //     auto activateChild = std::dynamic_pointer_cast<GUI::ExpandableButton>(ActivateChild);
-    //     if (activateChild) {
-    //         for (auto& sub : activateChild->mSubComponents) 
-    //         {
-    //             if(!sub->isSelected()) continue;
-    //             auto textbox = std::dynamic_pointer_cast<GUI::TextBox>(sub);
-    //             if(textbox) // it is textbox type 
-    //             {
-    //                 if(textbox->mInputType == GUI::TextBox::InputType::Number)
-    //                 {
-    //                     mInstructText.setString(instructNumInput);
-    //                 }
-    //                 else if(textbox->mInputType == GUI::TextBox::InputType::VectorNum)
-    //                 {
-    //                     mInstructText.setString(instructVecNumInput);
-    //                 }
-    //                 mInstructText.setPosition(sf::Vector2f(OperationBox.getSize().x + 350.f, textbox->getGlobalBounds().top + 25.f));
-    //                 centerOrigin(mInstructText);
-    //             }
-    //         }
-    //     }
-    // }
-
     BackButtons->handleEvent(event);
     if (BackButtons->isActive())
     {
