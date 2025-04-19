@@ -105,9 +105,20 @@ void Graph::handleEvent(const sf::Event& event){
 }
 
 // find edge
-int Graph::EdgeID(int start, int end){
+int Graph::EdgeID(int start, int end){ // given 2 id, not 2 value
     for(int i = 0; i < mEdgeList.size();i++){
-        if(mEdgeList[i]->mFrom->mValue == start && mEdgeList[i]->mTo->mValue == end){
+        if(mEdgeList[i]->mFrom == mNodeList[start].get() && mEdgeList[i]->mTo == mNodeList[end].get()){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int Graph::findVerID(CircleNode* node)
+{
+    for (int i = 0; i < mNodeList.size(); i++)
+    {
+        if (mNodeList[i].get() == node) {
             return i;
         }
     }
@@ -141,17 +152,17 @@ void Graph::Prim()
         int minEdgeID = -1;
         int minEdge = INT_MAX;
     // 1 thang true 1 thang false thi noi lai voi nhau, neu khong thi dua ve color cu
-        for(int j = 0; j < mEdgeList.size();j++){
-            int sourceID = mEdgeList[j]->mFrom->mValue;
-            int destID = mEdgeList[j]->mTo->mValue;
+        for(int j = 0; j < this->EdgeList.size();j++){
+            int sourceID = EdgeList[j].first.first;
+            int destID = EdgeList[j].first.second;
             // std::cout<<"source : "<<sourceID<<"dest : "<<destID<<std::endl;
             if((*marked)[sourceID] ^ (*marked)[destID])
             {
                 if(mEdgeList[j]->getColor() != sf::Color::Blue)
             {
                 // std::cout<<"source : "<<sourceID<<"dest : "<<destID<<" inside the if statement" <<std::endl;
-                if(minEdgeID == -1 || mEdgeList[j]->getWeight() < minEdge){
-                    minEdgeID = j; minEdge = mEdgeList[j]->getWeight();
+                if(minEdgeID == -1 || EdgeList[j].second < minEdge){
+                    minEdgeID = j; minEdge = EdgeList[j].second;
                 }
                 // std::cout<<"MINEDGEID = "<<minEdgeID<<std::endl;
                 changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Blue, 0.5f);
@@ -163,10 +174,12 @@ void Graph::Prim()
         }
 
         if(minEdgeID == -1) break;
+        
+        int id1 = findVerID(mEdgeList[minEdgeID]->mFrom); 
+        int id2 = findVerID(mEdgeList[minEdgeID]->mTo);
+        int ToMark = (*marked)[id1]? id2 : id1;
 
-        int ToMark = (*marked)[mEdgeList[minEdgeID]->mFrom->mValue]? mEdgeList[minEdgeID]->mTo->mValue : mEdgeList[minEdgeID]->mFrom->mValue;
-
-        int direction = (ToMark == mEdgeList[minEdgeID]->mTo->mValue)? 1 : -1;  // direction to mark edge 
+        int direction = (ToMark == id2)? 1 : -1;  // direction to mark edge 
         (*marked)[ToMark] = true;
         (*markedEdge)[minEdgeID] = true;
         createNewActionGroup();
@@ -295,6 +308,8 @@ bool Graph::checkValidInput(const std::vector<int>& data)
 
 bool Graph::loadFromVector(std::vector<int> numList)
 {
+    std::map<int,int> ValueToID; // just temporary use
+    ValueToID.clear();
     if (!checkValidInput(numList)) return false;
 
     empty();
@@ -312,12 +327,6 @@ bool Graph::loadFromVector(std::vector<int> numList)
     NumVer = nodeSet.size();
     NumEdge = EdgeList.size();
 
-    // int nodeCount = nodeSet.size();
-    // int edgeCount = EdgeList.size();
-
-    // std::cout<<"success jump to constructor"<<std::endl;
-    // NumVer = 8;
-    // NumEdge = 13;
     velocity.resize(NumVer, sf::Vector2f(0,0));
     ForceConstant = VIZ::DS::Size.x * VIZ::DS::Size.y / NumVer;
 
@@ -328,25 +337,42 @@ bool Graph::loadFromVector(std::vector<int> numList)
 
     int n = NumVer;
     vector<CircleNode*> ListGraphNode;
-    ListGraphNode.resize(n);
     
-    for(int i = 0; i < n;i++){
-        ListGraphNode[i] = new CircleNode(i, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
-        // set position
-        float angle = 2 * PI * i / n;
+    // for(int i = 0; i < n;i++){
+    //     ListGraphNode[i] = new CircleNode(i, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+    //     // set position
+    //     float angle = 2 * PI * i / n;
+    //     sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
+    //     ListGraphNode[i]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
+    // }
+    int curID = 0;
+    for (std::set<int>::iterator it = nodeSet.begin(); it != nodeSet.end(); it++)
+    {
+        ListGraphNode.push_back(new CircleNode(*it, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor));
+        ValueToID[*it] = curID;
+        float angle = 2 * PI * curID / n;
         sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
-        ListGraphNode[i]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
+        ListGraphNode.back()->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
+        curID++;
     }
+
+    // add Node to the original NodeList
+    for (auto& Node: ListGraphNode){
+        addNode(Node);
+    }
+
+    //Change edgeList valueToID
+    for (auto& edge : EdgeList)
+    {
+        edge.first.first = ValueToID[edge.first.first];
+        edge.first.second = ValueToID[edge.first.second];
+    }
+
 
     // add Edge
     for(int i = 0 ; i < EdgeList.size();i++){
         addEdge(ListGraphNode[EdgeList[i].first.first], ListGraphNode[EdgeList[i].first.second], EdgeList[i].second, false);
     }
-
-    // add Node to the original NodeList
-    for(auto& Node: ListGraphNode){
-        addNode(Node);
-    }
-
+    std::cout<<"return true ok"<<std::endl;
     return true;
 }

@@ -26,13 +26,21 @@ private:
     void                        physicalUpdate(sf::Time dt);
     bool                        checkValidInput(const std::vector<int>& data);
 
+
 private:
     bool                        isReady;
     int                         NumVer;
     int                         NumEdge;
     int                         selectID;
     vector<sf::Vector2f>        velocity;
-    std::vector<std::pair<std::pair<int, int>, int>> EdgeList;
-    float                      ForceConstant;
+    float                       ForceConstant;
+
+    // Graph component utility
+
+    std::vector<std::pair<std::pair<int, int>, int>> EdgeList; // store pair of id (not value as b)
+    // std::map<int, CircleNode::Ptr> NodeValue; // map value to circleNode pointer
+private:
+    int                         findVerID(CircleNode* node);
+
 
 };
