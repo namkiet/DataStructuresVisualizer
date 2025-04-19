@@ -16,8 +16,8 @@ void InfoPanel::setText(std::string text)
     std::istringstream words;
     if (!text.empty() && text[0] == '!')
     {
-        text = text.substr(1);
-        words.str("[ERROR] " + text);
+        // text = text.substr(1);
+        words.str("[ERROR] " + text.substr(1));
         mText.setFillColor(sf::Color::Red);
     }
     else

@@ -42,7 +42,7 @@ void AVLTree::remove(int value)
 
     mStep = 0;
     mLastStep = 6;
-    mLastInfo = "#";
+    mLastInfo = "Deletion is complete.";
 
     removeHelper(mRoot, value);
     align(mRoot);

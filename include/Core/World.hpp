@@ -81,6 +81,8 @@ private:
     sf::Sprite                          mPause;
     sf::Sprite                          mPlay;
 
+    sf::Text                            mText;
+
 public:
     void                                handleEvent(const sf::Event& event);
     void                                setMode(World::Mode mode);

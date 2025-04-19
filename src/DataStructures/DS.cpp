@@ -447,7 +447,9 @@ bool DS::loadFromVector(std::vector<int> numList)
     { 
         ANIMATION::Speed = curSpeed; 
         align(); 
-        mActionQueue.pushInstantAction([=]() { resetHistory(); isStepByStep = stop = oldStepByStep; }); 
+        // mActionQueue.pushInstantAction([=]() { 
+            resetHistory(); isStepByStep = stop = oldStepByStep; 
+        // }); 
     });
 
     return true;

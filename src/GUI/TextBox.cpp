@@ -199,11 +199,11 @@ void TextBox::submit()
             try {
                 InputNum = std::stoi(mInput);
         
-                if (InputNum < 0 || InputNum > 99) {
-                    reset();
-                    deselect();
-                    return;
-                }
+                // if (InputNum < 0 || InputNum > 99) {
+                //     reset();
+                //     deselect();
+                //     return;
+                // }
             } catch (const std::invalid_argument& e) {
                 std::cout << "Invalid input: not a valid integer.";
                 reset();
@@ -228,12 +228,12 @@ void TextBox::submit()
                 try {
                     int num = std::stoi(tempString);
         
-                    if (num < 0 || num > 99) {
-                        reset();
-                        deselect();
-                        std::cout << "Invalid input: number out of range [0,99]." << std::endl;
-                        return;
-                    }
+                    // if (num < 0 || num > 99) {
+                    //     reset();
+                    //     deselect();
+                    //     std::cout << "Invalid input: number out of range [0,99]." << std::endl;
+                    //     return;
+                    // }
         
                     InputNumList.push_back(num);
                 } catch (const std::invalid_argument& e) {
