@@ -147,7 +147,7 @@ namespace Action
         {
             if (!isInit)
             {
-                if (node->getOpacity() == 1.f) return true;
+                // if (node->getOpacity() == 1.f) return true;
                 isInit = true;
             }
 

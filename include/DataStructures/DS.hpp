@@ -24,7 +24,7 @@ public:
     virtual void                    updateValue(int value, int newValue) {};
 
     virtual void                    empty();
-    virtual void                    loadFromVector(std::vector<int> numList);
+    virtual bool                    loadFromVector(std::vector<int> numList);
     int                             getSize() const;
 
 protected:

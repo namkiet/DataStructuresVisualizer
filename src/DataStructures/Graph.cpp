@@ -270,8 +270,33 @@ void Graph::empty()
     EdgeList.clear();
 }
 
-void Graph::loadFromVector(std::vector<int> numList)
+bool Graph::checkValidInput(const std::vector<int>& data)
 {
+    if (data.size() % 3 != 0) return false; // lỗi dữ liệu
+
+    std::set<std::pair<int, int>> seen;
+
+    for (size_t i = 0; i < data.size(); i += 3) {
+        int u = data[i];
+        int v = data[i + 1];
+        // int w = data[i + 2]; // weight, không cần check ở đây
+
+        if (u == v) return false; // self-loop
+
+        if (u > v) std::swap(u, v); // chuẩn hóa cặp cạnh
+
+        if (seen.count({u, v})) return false; // duplicate edge
+
+        seen.insert({u, v});
+    }
+
+    return true;
+}
+
+bool Graph::loadFromVector(std::vector<int> numList)
+{
+    if (!checkValidInput(numList)) return false;
+
     empty();
 
     std::set<int> nodeSet;
@@ -322,4 +347,6 @@ void Graph::loadFromVector(std::vector<int> numList)
     for(auto& Node: ListGraphNode){
         addNode(Node);
     }
+
+    return true;
 }

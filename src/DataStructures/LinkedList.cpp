@@ -353,41 +353,41 @@ void LinkedList::insertAtIndex(int value, int index)
     addNode(newNode);
     addEdge(newNode, nullptr, true);
     
-    int rowIndex = newNode->mIndex / maxRowNode;
-    sf::Vector2f pos;
-
-    if ((newNode->mIndex + 1) % maxRowNode == 0) // last node in a row
-    {
-        pos = cur->mTargetPosition + sf::Vector2f(0, 150);
-    }
-    else
-    {
-        if (rowIndex % 2 == 0) // even row
-            pos = cur->getPosition() + sf::Vector2f(150, 0);
-        else // odd row
-            pos = cur->getPosition() + sf::Vector2f(-150, 0);
-    }
-
     mActionQueue.pushInstantAction([=]() {
         mStep = 3;
         mInfo = "Create new vertex to store value " + std::to_string(value) + ".";
     }, false);
     mActionQueue.pushAction(Action::FadeInNode(newNode, 0.5f), false);
-    moveNode(newNode, pos, 0.5f);
 
-    if (!isTailInsert)
+    if (isTailInsert)
     {
+        int rowIndex = newNode->mIndex / maxRowNode;
+        sf::Vector2f pos;
+
+        if ((newNode->mIndex + 1) % maxRowNode == 0) // last node in a row
+        {
+            pos = cur->mTargetPosition + sf::Vector2f(0, 150);
+        }
+        else
+        {
+            if (rowIndex % 2 == 0) // even row
+                pos = cur->getPosition() + sf::Vector2f(150, 0);
+            else // odd row
+                pos = cur->getPosition() + sf::Vector2f(-150, 0);
+        }
+
+        moveNode(newNode, pos, 0.5f);
         mActionQueue.pushInstantAction([=]() {
-            mStep = 4;
-            mInfo = "node.next points to pre.next, pre.next points to node.";
+            mStep = 1;
+            mInfo = "tail.next points to node, tail points to node";
         });
     }
     else
     {
         mActionQueue.pushInstantAction([=]() {
-            mStep = 1;
-            mInfo = "tail.next points to node, tail points to node";
-        });
+            mStep = 4;
+            mInfo = "node.next points to pre.next, pre.next points to node.";
+        });   
     }
 
     newNode->mPrev = cur;

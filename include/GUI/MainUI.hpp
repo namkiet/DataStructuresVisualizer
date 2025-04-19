@@ -47,8 +47,8 @@ public:
 public:
     void                                createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel *info);
     void                                initAVLButtons(AVLTree* avl, InfoPanel *info);
-    void                                initHeapButtons(HeapTree* heap);
-    void                                initLinkedListButtons(LinkedList* ll);
-    void                                initGraphButtons(Graph* g);
+    void                                initHeapButtons(HeapTree* heap, InfoPanel *info);
+    void                                initLinkedListButtons(LinkedList* ll, InfoPanel *info);
+    void                                initGraphButtons(Graph* g, InfoPanel *info);
     bool                                getBackRequest();
 };

@@ -302,7 +302,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
     OperationButtonsList->pack(UpdateButton);
 }
 
-void MainUI::initHeapButtons(HeapTree* heap)
+void MainUI::initHeapButtons(HeapTree* heap, InfoPanel *info)
 {
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
 
@@ -471,7 +471,7 @@ void MainUI::initHeapButtons(HeapTree* heap)
     OperationButtonsList->pack(UpdateButton);
 }
 
-void MainUI::initLinkedListButtons(LinkedList* ll)
+void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
 {
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
 
@@ -539,24 +539,27 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
 
     GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
 
-    // initialize the textbox
-    GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f), "Insert at Head");
-    // attach it to its parent
-    InsertButton->addSubComponent(InputBoxInsertAtHead);
-    // set callback for the textbox
+    GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f), "x = (head)");
     InputBoxInsertAtHead->setCallback([InsertButton, InputBoxInsertAtHead]()
     {
-        InsertButton->setSubComponentInfo(InputBoxInsertAtHead->getInputNum(),0);
+        InsertButton->setSubComponentInfo(InputBoxInsertAtHead->getInputNum(), 0);
     });
 
-    GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f), "Insert at Tail");
-
-    InsertButton->addSubComponent(InputBoxInsertAtLast);
-
+    GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = (tail)");
     InputBoxInsertAtLast->setCallback([InsertButton, InputBoxInsertAtLast]()
     {
-        InsertButton->setSubComponentInfo(InputBoxInsertAtLast->getInputNum(),1 );
+        InsertButton->setSubComponentInfo(InputBoxInsertAtLast->getInputNum(), 1);
     });
+
+    GUI::TextBox::Ptr InputBoxInsertAtIndex = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f), "x =, index =", GUI::TextBox::InputType::VectorNum);
+    InputBoxInsertAtIndex->setCallback([InsertButton, InputBoxInsertAtIndex]()
+    {
+        InsertButton->setSubComponentInfo(InputBoxInsertAtIndex->getInputNumList(), 2);
+    });
+
+    InsertButton->addSubComponent(InputBoxInsertAtHead);
+    InsertButton->addSubComponent(InputBoxInsertAtLast);
+    InsertButton->addSubComponent(InputBoxInsertAtIndex);
 
 
     InsertButton->setFunc([this,InsertButton, ll]()
@@ -573,6 +576,12 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
         else if (ActionType == 1) //insertAtLast
         {
             ll->InsertAtLast(num);
+        }
+        else if (ActionType == 2) // insert at index
+        {
+            int v = InsertButton->getSubComponentInfo().VecNum[0];
+            int id = InsertButton->getSubComponentInfo().VecNum[1];
+            ll->insertAtIndex(v, id);
         }
         InsertButton->resetSubComponentInfo();
     });
@@ -656,7 +665,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll)
     OperationButtonsList->pack(UpdateButton);
 }
 
-void MainUI::initGraphButtons(Graph* g)
+void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
 {
     sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
 
@@ -806,21 +815,22 @@ void MainUI::initGraphButtons(Graph* g)
         InitButton->addSubComponent(InputBoxInit);
         InputBoxInit->setMessage("Input edge list\nOne edge each line");
         InputBoxInit->setAllowedEndLine(true);
-        InputBoxInit->mText.setLineSpacing(0.5f);
+        InputBoxInit->mText.setLineSpacing(1.f);
 
 
-       InitButton->setFunc([this,InitButton,g]()
+       InitButton->setFunc([this,InitButton,g, info]()
        {
-           if (g->isRunning()) return;
-           std::vector<int> nums = InitButton->getSubComponentInfo().VecNum;
-           int ActionType = InitButton->getSubComponentInfo().InfoID;
-           if (ActionType == -1) return;
-           if (ActionType == 0)
+           if (!g->isRunning())
            {
-                int n = nums.size();
-                if(n % 3 != 0) return;
-                g->loadFromVector(nums);
-           }
+            std::vector<int> nums = InitButton->getSubComponentInfo().VecNum;
+            int ActionType = InitButton->getSubComponentInfo().InfoID;
+            if (ActionType == -1) return;
+            if (ActionType == 0)
+            {
+                if (!g->loadFromVector(nums))
+                    info->setText("!Invalid input.");
+            }
+            }
            InitButton->resetSubComponentInfo();
    
        });
@@ -859,17 +869,17 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
     else if (mode == World::Mode::LinkedListMode)
     {
         auto ll = static_cast<LinkedList*>(mDataStructure);
-        initLinkedListButtons(ll);
+        initLinkedListButtons(ll, info);
     }
     else if (mode == World::Mode::HeapMode)
     {
         auto heap = static_cast<HeapTree*>(mDataStructure);
-        initHeapButtons(heap);
+        initHeapButtons(heap, info);
     }
     else if (mode == World::Mode::GraphMode)
     {
         auto g = static_cast<Graph*>(mDataStructure);
-        initGraphButtons(g);
+        initGraphButtons(g, info);
     }
 }
 

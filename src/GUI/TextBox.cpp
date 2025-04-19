@@ -34,7 +34,7 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
     mText.setCharacterSize(mCharSize);
     mText.setFillColor(sf::Color::White);
     mText.setPosition(position.x + 5.f, position.y + int((size.y - mCharSize) / 2.f));
-    mText.setString("");
+    mText.setString("_");
 
     mMessage.setFont(font);
     mMessage.setCharacterSize(14);
@@ -91,7 +91,7 @@ void TextBox::reset(){
     InputNum = -1;
     InputNumList.clear();
     mInput = "";
-    mText.setString(mInput);
+    mText.setString(mInput + "_");
 }
 
 void TextBox::handleEvent(const sf::Event& event) {
@@ -108,10 +108,10 @@ void TextBox::handleEvent(const sf::Event& event) {
             showMessage = false;
         }
     }
-    if (event.key.code == sf::Keyboard::Enter) {
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
         if (event.key.shift && mAllowedEndline) {
             mInput += '\n';
-            mText.setString(mInput);
+            mText.setString(mInput + "_");
         } else {
             submit();
         }
@@ -148,7 +148,7 @@ void TextBox::inputLogic(sf::Uint32 unicode) {
     else if(mInputType == InputType::VectorNum && mAllowedChars .find(ch) != std::string::npos){
         mInput += ch;
     }
-    mText.setString(mInput); 
+    mText.setString(mInput + "_"); 
 }
 
 void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -176,7 +176,7 @@ void TextBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 void TextBox::setText(const std::string& text) {
     mInput = text;
-    mText.setString(mInput);
+    mText.setString(mInput + "_");
 }
 
 std::string TextBox::getText() const {

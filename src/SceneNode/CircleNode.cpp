@@ -72,7 +72,6 @@ void CircleNode::setOutlineColor(sf::Color color)
     mShape.setOutlineColor(color);
 }
 
-
 void CircleNode::setOpacity(float opacity)
 {
     if (opacity > 1) opacity = 1;

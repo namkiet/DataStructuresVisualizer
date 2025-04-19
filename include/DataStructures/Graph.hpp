@@ -20,10 +20,11 @@ public:
     void                        MarkEdge(Edge* edge, int direction, float duration); // direction = 1 if edge from mFrom to mTo, otherwise -1
     void                        handleEvent(const sf::Event& event); // to handle mouse events click on node or sth
     virtual void                updateCurrent(sf::Time dt);
-    void                        loadFromVector(std::vector<int> numList) override;
+    bool                        loadFromVector(std::vector<int> numList) override;
 
 private:
     void                        physicalUpdate(sf::Time dt);
+    bool                        checkValidInput(const std::vector<int>& data);
 
 private:
     bool                        isReady;

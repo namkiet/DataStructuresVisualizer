@@ -432,8 +432,10 @@ void DS::swapTwoNodes(CircleNode* a, CircleNode* b, float duration)
     });
 }
 
-void DS::loadFromVector(std::vector<int> numList)
+bool DS::loadFromVector(std::vector<int> numList)
 {
+    if(numList.size() > 50) return false;
+
     empty();
     bool oldStepByStep = isStepByStep;
     isStepByStep = stop = false;
@@ -447,6 +449,8 @@ void DS::loadFromVector(std::vector<int> numList)
         align(); 
         mActionQueue.pushInstantAction([=]() { resetHistory(); isStepByStep = stop = oldStepByStep; }); 
     });
+
+    return true;
 }    
 
 std::string DS::getInfo()
