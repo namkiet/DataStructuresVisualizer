@@ -11,10 +11,20 @@ InfoPanel::InfoPanel(sf::Font &font, sf::Vector2f size):
     mText.setPosition(sf::Vector2f(16.f, 16.f));
 }
 
-void InfoPanel::setText(const std::string& text)
+void InfoPanel::setText(std::string text)
 {
     std::istringstream words;
-    words.str((text[0] == '!' ? "[ERROR] " : "[INFO] ") + text);
+    if (!text.empty() && text[0] == '!')
+    {
+        text = text.substr(1);
+        words.str("[ERROR] " + text);
+        mText.setFillColor(sf::Color::Red);
+    }
+    else
+    {
+        words.str("[INFO] " + text);
+        mText.setFillColor(sf::Color::White);
+    }
     std::string word, wrappedText, line;
     sf::Text tempText("", mFont, mText.getCharacterSize());
 
@@ -32,7 +42,6 @@ void InfoPanel::setText(const std::string& text)
     }
     wrappedText += (wrappedText.empty() ? "" : "\n") + line; // Thêm dòng cuối cùng
     mText.setString(wrappedText);
-    mText.setFillColor(text[0] == '!' ? sf::Color::Red : sf::Color::White);
 
     mContent = text;
 }

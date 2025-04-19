@@ -8,7 +8,7 @@ public:
     typedef std::unique_ptr<InfoPanel>  Ptr;
                                         InfoPanel(sf::Font& font, sf::Vector2f size);
 
-    void                                setText(const std::string& newText);
+    void                                setText(std::string newText);
     void                                setCharacterSize(float size);
     std::string                         getText() const;
 
