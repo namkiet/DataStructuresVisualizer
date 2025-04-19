@@ -785,8 +785,50 @@ void MainUI::initGraphButtons(Graph* g)
             MSTButton->resetSubComponentInfo();
             });
 
+    // Add init button
+    sf::Vector2f BoxPosition = UI::OPERATIONBOX::Position + sf::Vector2f(OperationBox.getSize().x, 0);
+    sf::Vector2f BoxSize = sf::Vector2f(UI::OPERATIONBOX::Size.x - OperationBox.getSize().x, UI::OPERATIONBOX::Size.y);
+
+       GUI::ExpandableButton::Ptr InitButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Init", ButtonSize);
+       GUI::TextBox::Ptr InputBoxInit = std::make_shared<GUI::TextBox>(
+        mFont, 
+        BoxPosition, 
+        BoxSize, 
+        "", 
+        GUI::TextBox::InputType::VectorNum);
+
+        InputBoxInit->setCallback([this, InitButton, InputBoxInit]()
+           {
+               InitButton->setSubComponentInfo(InputBoxInit->getInputNumList(),0);
+           });
+        sf::Vector2f textPos = BoxPosition + sf::Vector2f(5.f, InputBoxInit->mCharSize/2);
+        InputBoxInit->mText.setPosition(textPos);
+        InitButton->addSubComponent(InputBoxInit);
+        InputBoxInit->setMessage("Input edge list\nOne edge each line");
+        InputBoxInit->setAllowedEndLine(true);
+        InputBoxInit->mText.setLineSpacing(0.5f);
+
+
+       InitButton->setFunc([this,InitButton,g]()
+       {
+           if (g->isRunning()) return;
+           std::vector<int> nums = InitButton->getSubComponentInfo().VecNum;
+           int ActionType = InitButton->getSubComponentInfo().InfoID;
+           if (ActionType == -1) return;
+           if (ActionType == 0)
+           {
+                int n = nums.size();
+                if(n % 3 != 0) return;
+                g->loadFromVector(nums);
+           }
+           InitButton->resetSubComponentInfo();
+   
+       });
+    
+
     OperationButtonsList->pack(CreateButton);
     OperationButtonsList->pack(MSTButton);
+    OperationButtonsList->pack(InitButton);
 }
 
 void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* info)

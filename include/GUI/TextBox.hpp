@@ -38,19 +38,24 @@ namespace GUI
         void                                        submit();
         sf::FloatRect                               getGlobalBounds() const;
         void                                        setMessage(std::string message);
+        void                                        setTextPosition(sf::Vector2f pos);
+        void                                        setAllowedEndLine(bool isAllowed);
 
     public:
         InputType                                   mInputType;
-    private:
-        unsigned int                                mCharSize;
-        sf::RectangleShape                          mBox;
         sf::Text                                    mText;
+        unsigned int                                mCharSize;
         sf::Text                                    mPlaceholder;
+    private:
+
+        sf::RectangleShape                          mBox;
+
         std::string                                 mInput;
         int                                         InputNum;
         std::vector<int>                            InputNumList;
         sf::Text                                    mMessage;
         bool                                        showMessage;
+        bool                                        mAllowedEndline;
 
 
     private:

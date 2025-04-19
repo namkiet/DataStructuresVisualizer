@@ -8,14 +8,15 @@
 #include <vector>   
 namespace GUI {
 
-const std::string TextBox::mAllowedChars = "0123456789,";
+const std::string TextBox::mAllowedChars = "0123456789, ";
 
 TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size, std::string placeholder, InputType inputType) :
     mInputType(inputType), // just 1 number by default
     mCharSize(14),
     mDefaultOutlineColor(sf::Color(255, 255, 255, 50)),
     mSelectOutlineColor(sf::Color::White),
-    showMessage(false)
+    showMessage(false),
+    mAllowedEndline(false)
 {
     // mDefaultOutlineColor = UI::TEXTBOX::DefaultBorder;
     // mSelectOutlineColor = UI::TEXTBOX::SelectedBorder;
@@ -44,7 +45,7 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
     }
     else if(mInputType == GUI::TextBox::InputType::VectorNum)
     {
-        mMessage.setString("Input 2 number from 0 to 99 seperated by ','");
+        mMessage.setString("Input 2 number from 0 to 99 seperated by ',' or ' '");
     }
 
     mPlaceholder.setFont(font);
@@ -63,6 +64,14 @@ sf::FloatRect GUI::TextBox::getGlobalBounds() const {
 
 void GUI::TextBox::setMessage(std::string message){
     mMessage.setString(message);
+}
+
+void GUI::TextBox::setTextPosition(sf::Vector2f pos){
+    mText.setPosition(pos);
+}
+
+void GUI::TextBox::setAllowedEndLine(bool isAllowed){
+    mAllowedEndline = isAllowed;
 }
 
 void TextBox::select(){
@@ -99,10 +108,11 @@ void TextBox::handleEvent(const sf::Event& event) {
             showMessage = false;
         }
     }
-    if (event.type == sf::Event::KeyPressed)
-    {   
-        if (event.key.code == sf::Keyboard::Enter) 
-        {   
+    if (event.key.code == sf::Keyboard::Enter) {
+        if (event.key.shift && mAllowedEndline) {
+            mInput += '\n';
+            mText.setString(mInput);
+        } else {
             submit();
         }
     }
@@ -208,12 +218,13 @@ void TextBox::submit()
         }
 
         else if (mInputType == InputType::VectorNum) {
-            char separator = ',';
             std::string temp = mInput;
+            mInput.erase(std::remove(mInput.begin(), mInput.end(), '\n'), mInput.end());
+            std::replace(temp.begin(), temp.end(), ',', ' ');
             std::stringstream ss(temp);
             std::string tempString;
         
-            while (std::getline(ss, tempString, separator)) {
+            while (ss >> tempString) {
                 try {
                     int num = std::stoi(tempString);
         
@@ -239,10 +250,8 @@ void TextBox::submit()
             }
         }
         
-
-        if (InputNum != -1 || !InputNumList.empty())
-        {
-            if(mCallback){
+        if (InputNum != -1 || !InputNumList.empty()) {
+            if (mCallback) {
                 mCallback();
             }
         }
