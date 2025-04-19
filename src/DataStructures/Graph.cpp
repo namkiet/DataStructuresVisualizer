@@ -121,6 +121,8 @@ void Graph::MarkEdge(Edge* edge,int direction, float duration){
 void Graph::Prim()
 {
     if (NumVer == 0) return;
+
+    resetHistory();
     //     for(int i = 0; i < NumVer ;i++){
     //     std::cout<<"World Postion at"<< i<<" : "<<getWorldPosition(i).x<<" "<<getWorldPosition(i).y<<std::endl;
     // }
@@ -190,7 +192,13 @@ void Graph::Prim()
     
     createNewActionGroup();
     for (auto &node: mNodeList)
-        if (node) highlightNode(node.get(), VIZ::NODE::FillColor, 0.3f, false);
+    {
+        if (node) 
+        {
+            node->mTargetPosition = node->getPosition();
+            highlightNode(node.get(), VIZ::NODE::FillColor, 0.3f, false);
+        }
+    }
 }
 
 void Graph::remove(int value){
@@ -208,51 +216,49 @@ bool Graph::search(int value) {
 
 void Graph::updateCurrent(sf::Time dt)
 {
+    DS::updateCurrent(dt);
+    if (!isRunning())
+        physicalUpdate(dt);   
+}
 
-    // DS::updateCurrent(dt);
-    mActionQueue.update(dt);
-    
-    if (mActionQueue.isEmpty())
+void Graph::physicalUpdate(sf::Time dt)
+{
+    // attraction between adjacent node
+    for(auto& edge: EdgeList){
+        int start = edge.first.first;
+        int end = edge.first.second;
+        sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
+        velocity[start] += force * dt.asSeconds();
+        velocity[end] -= force * dt.asSeconds();
+    }
+
+
+    // repulsion between node
+    for(int i = 0 ; i < NumVer;i++)
     {
-        // attraction between adjacent node
-        for(auto& edge: EdgeList){
-            int start = edge.first.first;
-            int end = edge.first.second;
-            sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
-            velocity[start] += force * dt.asSeconds();
-            velocity[end] -= force * dt.asSeconds();
-        }
-
-
-        // repulsion between node
-        for(int i = 0 ; i < NumVer;i++)
+        for(int j = 0; j < NumVer;j++)
         {
-            for(int j = 0; j < NumVer;j++)
-            {
-                if(i == j) continue;
-                sf::Vector2f force = Repulsion(ForceConstant * 10, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
-                velocity[i] += force * dt.asSeconds();
-            }
-        }
-
-        // center attraction
-        for(int i = 0 ; i < NumVer;i++){
-            sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
-            velocity[i] += force*dt.asSeconds();
-        }
-
-        // update position, take into account friction
-        for(int i = 0 ; i < NumVer;i++)
-        {
-            velocity[i] *= 0.9f; // friction
-            sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
-            makeValidNodePosition(newPosition);
-            changeNodePosition(i, newPosition);
-
+            if(i == j) continue;
+            sf::Vector2f force = Repulsion(ForceConstant * 10, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
+            velocity[i] += force * dt.asSeconds();
         }
     }
-// mActionqueue phu trach viec add vao cac node cac canh
 
+    // center attraction
+    for(int i = 0 ; i < NumVer;i++){
+        sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
+        velocity[i] += force*dt.asSeconds();
+    }
+
+    // update position, take into account friction
+    for(int i = 0 ; i < NumVer;i++)
+    {
+        velocity[i] *= 0.9f; // friction
+        sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
+        makeValidNodePosition(newPosition);
+        changeNodePosition(i, newPosition);
+
+    }
 }
 
 void Graph::empty()
@@ -290,22 +296,6 @@ void Graph::loadFromVector(std::vector<int> numList)
     velocity.resize(NumVer, sf::Vector2f(0,0));
     ForceConstant = VIZ::DS::Size.x * VIZ::DS::Size.y / NumVer;
 
-    // EdgeList = {
-    //     {{0, 1}, 4},
-    //     {{0, 2}, 3},
-    //     {{0, 6}, 10},
-    //     {{0, 7}, 1},
-    //     {{1, 3}, 2},
-    //     {{1, 4}, 7},
-    //     {{2, 4}, 1},
-    //     {{2, 5}, 3},
-    //     {{3, 5}, 5},
-    //     {{4, 5}, 2},
-    //     {{4, 6}, 4},
-    //     {{5, 7}, 1},
-    //     {{6, 7}, 6}
-    // };
-
     sf::Vector2f Center = VIZ::DS::Center - VIZ::DS::Position; // vi tri tuong doi
 
     double magnitude = 200;
@@ -322,17 +312,6 @@ void Graph::loadFromVector(std::vector<int> numList)
         sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
         ListGraphNode[i]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
     }
-
-    // int id = 0;
-    // for (int x: nodeSet)
-    // {
-    //     ListGraphNode[id] = new CircleNode(x, 16.f, sf::Color::White, sf::Color::Black);
-    //     // set position
-    //     float angle = 2 * PI * id / n;
-    //     sf::Vector2f unitVec(std::cos(angle), std::sin(angle));
-    //     ListGraphNode[id]->setPosition(Center + sf::Vector2f(unitVec.x * magnitude, unitVec.y * magnitude));
-    //     id++;
-    // }
 
     // add Edge
     for(int i = 0 ; i < EdgeList.size();i++){

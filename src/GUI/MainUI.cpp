@@ -839,16 +839,16 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
     {
         mDataStructure->isStepByStep = true;
         mDataStructure->stop = true;
-        mStepByStepButton->setFillColor(sf::Color(255, 255, 255, 5));
-        mAtOnceButton->setFillColor(sf::Color::Transparent);
+        mStepByStepButton->setFillColor(UI::BUTTON::ActivatedColor);
+        mAtOnceButton->setFillColor(UI::BUTTON::FillColor);
     });
 
     mAtOnceButton->setCallback([=]()
     {
         mDataStructure->isStepByStep = false;
         mDataStructure->stop = false;
-        mStepByStepButton->setFillColor(sf::Color::Transparent);
-        mAtOnceButton->setFillColor(sf::Color(255, 255, 255, 5));
+        mStepByStepButton->setFillColor(UI::BUTTON::FillColor);
+        mAtOnceButton->setFillColor(UI::BUTTON::ActivatedColor);
     });
 
     if (mode == World::Mode::AVLMode)

@@ -92,6 +92,7 @@ private:
     int                             targetFrame = -1;
     std::vector<int>                keyFrames;
 
+protected:
     enum                            RunType { UNDO, REDO, NORMAL };
     RunType                         playback;
 
