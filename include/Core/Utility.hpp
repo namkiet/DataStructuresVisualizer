@@ -21,6 +21,8 @@ sf::Vector2f NormalUnitVector(sf::Vector2f vec);
 sf::Vector2f Repulsion(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2);
 sf::Vector2f Attraction(float coefficient, sf::Vector2f pos1, sf::Vector2f pos2);
 
+// sf::Vector2f CenterAttractionNew(sf::Vector2f pos, int id, int numVer);
+
 sf::Vector2f CenterAttraction(sf::Vector2f pos);
 
 bool isValidNodePosition(sf::Vector2f pos);
@@ -30,3 +32,5 @@ void makeValidNodePosition(sf::Vector2f& pos);
 
 Textures::ID getCurrentBackgroundOption();
 Textures::ID getCurrentVolumeOption();
+
+std::vector <Textures::ID> getCurrentThumbnailOption();

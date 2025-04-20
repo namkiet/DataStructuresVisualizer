@@ -41,7 +41,7 @@ Graph::Graph(){
 
     sf::Vector2f Center = VIZ::DS::Center - VIZ::DS::Position; // vi tri tuong doi
 
-    double magnitude = 200;
+    double magnitude = 300;
     constexpr double PI = 3.14159265358979323846;
 
     for(int i = 0; i < n;i++){
@@ -260,13 +260,17 @@ void Graph::physicalUpdate(sf::Time dt)
     // center attraction
     for(int i = 0 ; i < NumVer;i++){
         sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
+        // sf::Vector2f force = CenterAttractionNew(mNodeList[i]->getPosition(), i, NumVer);
         velocity[i] += force*dt.asSeconds();
     }
 
     // update position, take into account friction
     for(int i = 0 ; i < NumVer;i++)
     {
-        velocity[i] *= 0.9f; // friction
+        // velocity[i] *= 0.2f; // friction
+        if(i == 0) std::cout<<norm(velocity[i]) <<std::endl;
+        velocity[i] = (norm(velocity[i]) < 10.f)? velocity[i] * 0.2f : velocity[i] * 0.7f;
+        velocity[i] = (norm(velocity[i]) < 0.01f)? sf::Vector2f(0.f,0.f) : velocity[i];
         sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
         makeValidNodePosition(newPosition);
         changeNodePosition(i, newPosition);

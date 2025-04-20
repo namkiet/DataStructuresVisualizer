@@ -15,10 +15,11 @@ MenuState::MenuState(StateStack& stack, Context context):
 	color.a = 0;
 	mBackground.setColor(sf::Color(100, 100, 100));
 
-	mCarousel.pushItem(Carousel::Item::AVL, 		context.textures->get(Textures::AVLThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppAVL); });
-	mCarousel.pushItem(Carousel::Item::HEAP, 		context.textures->get(Textures::HeapThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
-	mCarousel.pushItem(Carousel::Item::LINKED_LIST, context.textures->get(Textures::LLThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
-	mCarousel.pushItem(Carousel::Item::GRAPH, 		context.textures->get(Textures::GraphThumbnail), 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
+	std::vector <Textures::ID> thumbnail = getCurrentThumbnailOption();
+	mCarousel.pushItem(Carousel::Item::AVL, 		context.textures->get(thumbnail[0]), 	[this](){ requestStackPop(); requestStackPush(States::InAppAVL); });
+	mCarousel.pushItem(Carousel::Item::HEAP, 		context.textures->get(thumbnail[1]), 	[this](){ requestStackPop(); requestStackPush(States::InAppHeap); });
+	mCarousel.pushItem(Carousel::Item::LINKED_LIST, context.textures->get(thumbnail[2]), 	[this](){ requestStackPop(); requestStackPush(States::InAppLinkedList); });
+	mCarousel.pushItem(Carousel::Item::GRAPH, 		context.textures->get(thumbnail[3]), 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
 
 	// setting button
 	mSettingButton = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), sf::Vector2f(SCREEN::Width - 80.f, 20.f), "", sf::Vector2f(50.f, 50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);

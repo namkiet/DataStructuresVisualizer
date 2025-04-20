@@ -32,10 +32,20 @@ void App::loadTextures()
     mTextures.load(Textures::AppBackground3, "assets/images/forest.jpg");
 	mTextures.load(Textures::MenuBackground, "assets/images/menu-bg (1).png");
 
-    mTextures.load(Textures::AVLThumbnail, "assets/images/desert-night/avl-thumbnail.png");
-    mTextures.load(Textures::HeapThumbnail, "assets/images/desert-night/heap-thumbnail.png");
-    mTextures.load(Textures::LLThumbnail, "assets/images/desert-night/ll-thumbnail.png");
-    mTextures.load(Textures::GraphThumbnail, "assets/images/desert-night/graph-thumbnail.png");
+    mTextures.load(Textures::DesertNightAVLThumbnail, "assets/images/desert-night/avl-thumbnail.png");
+    mTextures.load(Textures::DesertNightHeapThumbnail, "assets/images/desert-night/heap-thumbnail.png");
+    mTextures.load(Textures::DesertNightLLThumbnail, "assets/images/desert-night/ll-thumbnail.png");
+    mTextures.load(Textures::DesertNightGraphThumbnail, "assets/images/desert-night/graph-thumbnail.png");
+
+    mTextures.load(Textures::sunriseAVLThumbnail, "assets/images/sunrise/avl-thumbnail.png");
+    mTextures.load(Textures::sunriseHeapThumbnail, "assets/images/sunrise/heap-thumbnail.png");
+    mTextures.load(Textures::sunriseLLThumbnail, "assets/images/sunrise/ll-thumbnail.png");
+    mTextures.load(Textures::sunriseGraphThumbnail, "assets/images/sunrise/graph-thumbnail.png");
+
+    mTextures.load(Textures::forestAVLThumbnail, "assets/images/forest/avl-thumbnail.png");
+    mTextures.load(Textures::forestHeapThumbnail, "assets/images/forest/heap-thumbnail.png");
+    mTextures.load(Textures::forestLLThumbnail, "assets/images/forest/ll-thumbnail.png");
+    mTextures.load(Textures::forestGraphThumbnail, "assets/images/forest/graph-thumbnail.png");
 
     mTextures.load(Textures::Prev, "assets/images/prevFrame.png");
     mTextures.load(Textures::Next, "assets/images/nextFrame.png");
