@@ -24,8 +24,12 @@ World::World(sf::RenderWindow& window, TextureHolder& textures, FontHolder& font
 	textures.get(Textures::Play).setSmooth(true);
 	mPlay.setTexture(textures.get(Textures::Play));
 
+	mText.setFont(fonts.get(Fonts::Main));
+	mText.setCharacterSize(50);
+	mText.setPosition(sf::Vector2f(SCREEN::Width / 2, 50));
+	mText.setFillColor(sf::Color::White);
+
     buildScene();
-	// mShader.loadFromFile("shader/colormode.frag", sf::Shader::Fragment);
 }
 
 void World::update(sf::Time dt)
@@ -35,7 +39,7 @@ void World::update(sf::Time dt)
 	mPseudoCode->setCode(mDataStructure->getCode());
 	mPseudoCode->setStep(mDataStructure->getStep());
 
-	if (mInfoPanel->getText() == "" || mDataStructure->getInfo() != "")
+	if (mInfoPanel->getText()[0] != '!')
 		mInfoPanel->setText(mDataStructure->getInfo());
 
 	mProgressBar->setProgress(mDataStructure->getProgress());
@@ -78,6 +82,8 @@ void World::draw()
 	mWindow.draw(*mPrevButton);
 	mWindow.draw(*mNextButton);
 	mWindow.draw(*mPauseButton);
+
+	mWindow.draw(mText);
 }
 
 void World::buildScene()
@@ -151,28 +157,33 @@ void World::setMode(World::Mode mode)
 	mMode = mode;
 	if (mode == World::Mode::AVLMode)
 	{
+		mText.setString("AVL");
 		std::unique_ptr<AVLTree> avl(new AVLTree());
 		mDataStructure = avl.get();
 		mSceneLayers[DataStructure]->attachChild(std::move(avl));
 	}
 	else if (mode == World::Mode::LinkedListMode)
 	{
+		mText.setString("Singly Linked List");
 		std::unique_ptr<LinkedList> ll(new LinkedList());
 		mDataStructure = ll.get();
 		mSceneLayers[DataStructure]->attachChild(std::move(ll));
 	}
 	else if (mode == World::Mode::HeapMode)
 	{
+		mText.setString("Min Heap");
 		std::unique_ptr<HeapTree> heap(new HeapTree());
 		mDataStructure = heap.get();
 		mSceneLayers[DataStructure]->attachChild(std::move(heap));
 	}
 	else if (mode == World::Mode::GraphMode)
 	{
+		mText.setString("Graph");
 		std::unique_ptr<Graph> graph(new Graph());
 		mDataStructure = graph.get();
 		mSceneLayers[DataStructure]->attachChild(std::move(graph));
 	}
+	centerOrigin(mText);
 
 	mSceneLayers[DataStructure]->setPosition(VIZ::DS::Position);
 	mMainUI->createButtonList(mode, mDataStructure, mInfoPanel);

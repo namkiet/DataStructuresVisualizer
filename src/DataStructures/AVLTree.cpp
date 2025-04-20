@@ -40,9 +40,9 @@ void AVLTree::remove(int value)
         "this is balanced"
     };
 
-    mStep = 0;
+    mActionQueue.pushInstantAction([=](){ mStep = 0; });
     mLastStep = 6;
-    mLastInfo = "#";
+    mLastInfo = "Deletion is complete.";
 
     removeHelper(mRoot, value);
     align(mRoot);
@@ -431,7 +431,7 @@ void AVLTree::balance(TreeNode* &root)
 
     int bf = getBalanceFactor(root);
     mActionQueue.pushInstantAction([=]() {
-        mStep = 1;
+        if (mLastStep == 6) mStep = 1;
         root->setNote("bf = " + std::to_string(bf));
         mInfo = "Balance factor of " + std::to_string(root->mValue) + " is " + std::to_string(bf);
     });
@@ -445,12 +445,12 @@ void AVLTree::balance(TreeNode* &root)
     {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
         {
-            mActionQueue.pushInstantAction([=]() { mStep = 4; });
+            mActionQueue.pushInstantAction([=]() { if (mLastStep == 6) mStep = 4; });
             root = rightRotate(root);
         }
         else 
         {
-            mActionQueue.pushInstantAction([=]() { mStep = 5; });
+            mActionQueue.pushInstantAction([=]() { if (mLastStep == 6) mStep = 5; });
             root->mLeft = leftRotate(root->mLeft); // LR
             root = rightRotate(root);
         }
@@ -459,12 +459,12 @@ void AVLTree::balance(TreeNode* &root)
     {
         if (getBalanceFactor(root->mRight) <= 0) // RR
         {
-            mActionQueue.pushInstantAction([=]() { mStep = 2; });
+            mActionQueue.pushInstantAction([=]() { if (mLastStep == 6) mStep = 2; });
             root = leftRotate(root);
         }
         else 
         {
-            mActionQueue.pushInstantAction([=]() { mStep = 3; });
+            mActionQueue.pushInstantAction([=]() { if (mLastStep == 6) mStep = 3; });
             root->mRight = rightRotate(root->mRight); // RL
             root = leftRotate(root);
         }

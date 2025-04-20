@@ -37,6 +37,9 @@ private:
     GUI::Button::Ptr                    mStepByStepButton;
     GUI::Button::Ptr                    mAtOnceButton;
 
+private:
+    sf::Vector2f                        ButtonSize;
+    sf::Vector2f                        TextBoxSize;
 
 public:
                                         MainUI(TextureHolder& textures, FontHolder& fonts);

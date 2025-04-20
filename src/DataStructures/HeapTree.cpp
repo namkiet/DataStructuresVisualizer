@@ -69,9 +69,7 @@ void HeapTree::insert(int value)
         newNode->setPosition(newNode->mTargetPosition);
     }
 
-    // mActionQueue.pushInstantAction([=]() { 
-        heapifyUp(n); 
-    // });
+    heapifyUp(n); 
 }
 
 void HeapTree::remove(int value)
@@ -89,7 +87,7 @@ void HeapTree::remove(int value)
         "A[0] = A[A.length - 1]",
         "i = 0; A.length--",
         "while i < A.length:",
-        "  if A[i] > L := argmin(A[left], A[right])",
+        "  if A[i]>L:=argmin(A[2i+1], A[2i+2])",
         "    swap(A[i], A[L]); i = L",
         "finish"
     };
@@ -194,7 +192,7 @@ void HeapTree::updateValue(int value, int newValue)
         "else: heapifyDown(i)"
     };
 
-    mLastInfo = "Updated successfully";
+    mLastInfo = "Updated successfully.";
 
     mActionQueue.pushInstantAction([=](){ 
         mStep = 0; 
@@ -262,7 +260,7 @@ void HeapTree::heapifyUp(int index)
     int parValue = mNodeList[parent]->mValue;
 
     mActionQueue.pushInstantAction([=]() { 
-        if (mLastStep == -1) mStep = 2; 
+        if (mLastStep != 1) mStep = 2; 
         mInfo = "Comparing " + std::to_string(curValue) + " with its parent.";
     });
     createNewActionGroup();
@@ -276,14 +274,11 @@ void HeapTree::heapifyUp(int index)
     if (curValue < parValue)
     {
         mActionQueue.pushInstantAction([=]() { 
-            if (mLastStep == -1) mStep = 3; 
+            if (mLastStep != 1) mStep = 3; 
             mInfo = std::to_string(curValue) + " < " + std::to_string(parValue) + " so swap them.";
         });
         swapTwoNodes(mNodeList[index].get(), mNodeList[parent].get(), 0.5f);
-
-        // mActionQueue.pushInstantAction([=]() { 
-            heapifyUp(parent); 
-        // });
+        heapifyUp(parent); 
     }
 }
 
@@ -302,7 +297,7 @@ void HeapTree::heapifyDown(int index)
     int curValue = mNodeList[index]->mValue;
 
     mActionQueue.pushInstantAction([=](){
-        if (mLastStep == -1) mStep = 3;
+        if (mLastStep != 2) mStep = 3;
         mInfo = "Comparing " + std::to_string(curValue) + " with its children.";
     });
     createNewActionGroup();
@@ -328,7 +323,7 @@ void HeapTree::heapifyDown(int index)
     if (smallest != index)
     {
         mActionQueue.pushInstantAction([=]() { 
-            if (mLastStep == -1) mStep = 4; 
+            if (mLastStep != 2) mStep = 4; 
             mInfo = std::to_string(curValue) + " > " + std::to_string(smallestValue) + " so swap them.";
         });
         createNewActionGroup();

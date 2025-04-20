@@ -113,6 +113,8 @@ void LinkedList::remove(int value)
 
         if (temp->mValue == value)
         {
+            if (temp == mHead) mHead = mHead->mNext;
+
             mActionQueue.pushInstantAction([=]() {
                 mStep = 5;
                 mInfo = "Remove value x = " + std::to_string(value) + ".";

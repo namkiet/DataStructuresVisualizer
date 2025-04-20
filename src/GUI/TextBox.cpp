@@ -41,11 +41,11 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
     mMessage.setFillColor(sf::Color::White);
     if(mInputType == GUI::TextBox::InputType::Number)
     {
-        mMessage.setString("Input a number from 0 to 99");
+        mMessage.setString("Input a number from 0 to 99.");
     }
     else if(mInputType == GUI::TextBox::InputType::VectorNum)
     {
-        mMessage.setString("Input 2 number from 0 to 99 seperated by ',' or ' '");
+        mMessage.setString("Input 2 numbers from 0 to 99 seperated by ',' or ' '.");
     }
 
     mPlaceholder.setFont(font);
@@ -199,11 +199,11 @@ void TextBox::submit()
             try {
                 InputNum = std::stoi(mInput);
         
-                if (InputNum < 0 || InputNum > 99) {
-                    reset();
-                    deselect();
-                    return;
-                }
+                // if (InputNum < 0 || InputNum > 99) {
+                //     reset();
+                //     deselect();
+                //     return;
+                // }
             } catch (const std::invalid_argument& e) {
                 std::cout << "Invalid input: not a valid integer.";
                 reset();
@@ -228,12 +228,12 @@ void TextBox::submit()
                 try {
                     int num = std::stoi(tempString);
         
-                    if (num < 0 || num > 99) {
-                        reset();
-                        deselect();
-                        std::cout << "Invalid input: number out of range [0,99]." << std::endl;
-                        return;
-                    }
+                    // if (num < 0 || num > 99) {
+                    //     reset();
+                    //     deselect();
+                    //     std::cout << "Invalid input: number out of range [0,99]." << std::endl;
+                    //     return;
+                    // }
         
                     InputNumList.push_back(num);
                 } catch (const std::invalid_argument& e) {
