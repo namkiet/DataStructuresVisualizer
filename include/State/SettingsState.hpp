@@ -30,6 +30,8 @@ private:
 	GUI::Button::Ptr							IncreaseNodeSize;
 	GUI::Button::Ptr							DecreaseEdgeThickness;
 	GUI::Button::Ptr							IncreaseEdgeThickness;
+	GUI::Button::Ptr							mSoundButton;
+
 
 	sf::Text									NodeSize;
 	sf::Text									EdgeThickness;
@@ -37,6 +39,7 @@ private:
 	sf::Text									mBackgroundText;
 	sf::Text									mNodeSizeText;
 	sf::Text 									mEdgeThicknessText;
+	sf::Text									mSoundText;
 
 	
 

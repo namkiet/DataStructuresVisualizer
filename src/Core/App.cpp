@@ -5,6 +5,7 @@
 #include <State/InApp.hpp>
 #include <Core/Variables.hpp>
 #include <iostream>
+#include <SFML/Audio.hpp>
 
 App::App(): 
     
@@ -16,6 +17,7 @@ App::App():
 {
     loadTextures();
     loadFonts();
+    loadMusic();
     registerStates();
     mStateStack.pushState(States::Menu);
 }
@@ -50,12 +52,22 @@ void App::loadTextures()
 
     mTextures.load(Textures::SelectedRadioButton, "assets/images/selected-radio-button.png");
     mTextures.load(Textures::UnselectedRadioButton, "assets/images/unselected-radio-button.png");
+    mTextures.load(Textures::VolumeOn, "assets/images/volumeOn.png");
+    mTextures.load(Textures::VolumeOff, "assets/images/volumeOff.png");
+    
 }
 
 void App::loadFonts()
 {
     mFonts.load(Fonts::Main, "assets/fonts/jetbrains.ttf");
     mFonts.load(Fonts::UI, "assets/fonts/Poppins-Regular.ttf");
+}
+
+void App::loadMusic(){
+    if (!mMusic.openFromFile("assets/Sound/soundtrack.mp3")) {
+        std::cerr << "[ERROR] Failed to load: assets/Sound/soundtrack.mp3" << std::endl;
+        assert(false); // crash luôn nếu muốn
+    }
 }
 
 void App::registerStates()
@@ -72,6 +84,11 @@ void App::registerStates()
 void App::run()
 {
     sf::Clock clock;
+    
+    mMusic.setLoop(true);  
+    mMusic.setVolume(50);
+    mMusic.play();
+
     while (mWindow.isOpen())
     {
      
@@ -112,6 +129,7 @@ void App::handleEvent()
 void App::update(sf::Time dt)
 {
     mStateStack.update(dt);
+    mMusic.setVolume(Sound::volume);
 }
 
 void App::draw()

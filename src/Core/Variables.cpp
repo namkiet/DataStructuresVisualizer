@@ -64,6 +64,11 @@ namespace UI
         sf::Color OutlineColor      = sf::Color::Transparent;
     }
 }
+namespace Sound
+{
+    bool VolumeOn = true;
+    int volume = 50; // 0 to 100
+}
 
 namespace VIZ    
 {

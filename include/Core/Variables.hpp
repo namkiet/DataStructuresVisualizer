@@ -68,6 +68,11 @@ namespace UI
     }
 }
 
+namespace Sound
+{
+    extern bool VolumeOn;
+    extern int volume;
+}
 namespace VIZ
 {
     namespace DS

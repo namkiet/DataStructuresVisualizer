@@ -35,7 +35,9 @@ namespace Textures
 		Minus,
 		Plus,
 		SelectedRadioButton,
-		UnselectedRadioButton
+		UnselectedRadioButton,
+		VolumeOn,
+		VolumeOff,
 	};
 }
 

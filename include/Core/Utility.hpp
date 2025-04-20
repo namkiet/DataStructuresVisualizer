@@ -29,3 +29,4 @@ bool isValidNodePosition(sf::Vector2f pos);
 void makeValidNodePosition(sf::Vector2f& pos);
 
 Textures::ID getCurrentBackgroundOption();
+Textures::ID getCurrentVolumeOption();

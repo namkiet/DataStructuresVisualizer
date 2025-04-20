@@ -31,9 +31,21 @@ SettingsState::SettingsState(StateStack& stack, Context context):
 	EdgeThickness.setOutlineThickness(1.0f);
 	EdgeThickness.setPosition(SCREEN::Width * 0.4f, SCREEN::Height* 0.7f);
 
+	//VolumeText
+	mSoundText.setFont(context.fonts->get(Fonts::UI));
+	mSoundText.setString("Volume");
+	mSoundText.setCharacterSize(20);
+	centerOrigin(mSoundText);
+	mSoundText.setFillColor(sf::Color::White);
+	mSoundText.setOutlineThickness(1.0f);
+	mSoundText.setPosition(SCREEN::Width * 0.2f, SCREEN::Height * 0.8f);
+
+	std::cout<<"OK at line 43"<<endl;
+
 	
 	updateStatDisplay();
 	
+	std::cout<<"line 48 ok"<<std::endl;
 	//background sprite
 	centerOrigin(mBackgroundSprite);
 	mBackgroundSprite.setPosition(SCREEN::Width / 2.f, SCREEN::Height * 0.3f);
@@ -47,6 +59,7 @@ SettingsState::SettingsState(StateStack& stack, Context context):
 	mBackgroundText.setFillColor(sf::Color::White);
 	mBackgroundText.setOutlineThickness(2.f);
 
+	std::cout<<"61 ok"<<std::endl;
 
 
 	initNodesAndEdge();
@@ -77,6 +90,7 @@ SettingsState::SettingsState(StateStack& stack, Context context):
 	mEdgeThicknessText.setOutlineThickness(1.5f);
 
 
+	std::cout<<"91 ok"<<std::endl;
 	// move left background
 	BgNavigateLeft = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), mBackgroundSprite.getPosition(), "", sf::Vector2f(100.f,100.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
 	sf::Sprite LeftSprite;
@@ -114,6 +128,7 @@ SettingsState::SettingsState(StateStack& stack, Context context):
 		updateStatDisplay();
 	});
 	
+	std::cout<<"129 ok"<<endl;
 	// background text option
 	mBackgroundTextOption.setFont(context.fonts->get(Fonts::UI));
 	mBackgroundTextOption.setCharacterSize(20);
@@ -233,13 +248,36 @@ SettingsState::SettingsState(StateStack& stack, Context context):
 			initNodesAndEdge();
 		}
 	});
-	
+
+	std::cout<<"OK at line 248 before set mSoundButton"<<endl;
+
+	mSoundButton = std::make_shared<GUI::Button>(
+		context.fonts->get(Fonts::UI),
+		sf::Vector2f(SCREEN::Width * 0.4f - 25.f, SCREEN::Height * 0.8f - 25.f),
+		"",
+		sf::Vector2f(50.f, 50.f),
+		GUI::Button::ShapeType::Circle,
+		GUI::Button::ContentType::Image
+	);
+	sf::Sprite Volume;
+	Volume.setTexture(context.textures->get(getCurrentVolumeOption()));
+	centerOrigin(Volume);
+	mSoundButton->setSprite(Volume);
+	mSoundButton->setToggle(false);
+	mSoundButton->setCallback([this]() {
+		Sound::VolumeOn = !Sound::VolumeOn;
+		Sound::volume = 50 - Sound::volume;
+		updateStatDisplay();	
+	});
+
+	std::cout<<"OK at line 269 end the constructor"<<endl;
+
 }
 
 void SettingsState::updateStatDisplay(){
 	// base on the actual info, update the stat in setting
 	
-	if(THEME::mTheme == THEME::Theme::DesertNight)
+	if (THEME::mTheme == THEME::Theme::DesertNight)
 	{
 		mBackgroundSprite.setTexture(context.textures->get(Textures::AppBackground1));
 		centerOrigin(mBackgroundText);
@@ -259,6 +297,13 @@ void SettingsState::updateStatDisplay(){
 		mBackgroundTextOption.setString("Forest");
 		centerOrigin(mBackgroundTextOption);
 	}
+
+	if (mSoundButton)
+{
+	sf::Sprite Volume;
+	Volume.setTexture(context.textures->get(getCurrentVolumeOption()));
+	mSoundButton->setSprite(Volume);
+}
 
 	NodeSize.setString(std::to_string(int(VIZ::NODE::Radius)));
 	centerOrigin(NodeSize);
@@ -302,13 +347,16 @@ void SettingsState::draw()
 	window.draw(mBackgroundText);
 	window.draw(mEdgeThicknessText);
 	window.draw(mNodeSizeText);
+	window.draw(mSoundText);
 
 	window.draw(mBackgroundSprite);
 	window.draw(mBackgroundTextOption);
 	window.draw(*BgNavigateLeft);
 	window.draw(*BgNavigateRight);
+	window.draw(*mSoundButton);
 	window.draw(NodeSize);
 	window.draw(EdgeThickness);
+
 
 	if(VIZ::NODE::Radius < VIZ::NODE::MaxRadius) window.draw(*IncreaseNodeSize);
 	if(VIZ::NODE::Radius > VIZ::NODE::MinRadius) window.draw(*DecreaseNodeSize);
@@ -331,6 +379,7 @@ bool SettingsState::handleEvent(const sf::Event& event)
 	BgNavigateRight->handleEvent(event);
 	IncreaseNodeSize->handleEvent(event);
 	DecreaseNodeSize->handleEvent(event);
+	mSoundButton->handleEvent(event);
 
 	IncreaseEdgeThickness->handleEvent(event);
 	DecreaseEdgeThickness->handleEvent(event);

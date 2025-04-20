@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <State/StateStack.hpp>
+#include <SFML/Audio.hpp>
 
 class App
 {
@@ -13,6 +14,7 @@ private:
     sf::RenderWindow        mWindow;
     TextureHolder           mTextures;
     FontHolder              mFonts;
+    sf::Music               mMusic;
 
 private:
     bool                    mIsPaused;
@@ -20,6 +22,7 @@ private:
 private:
     void                    loadTextures();
     void                    loadFonts();
+    void                    loadMusic();
 
 private:
     void                    handleEvent();

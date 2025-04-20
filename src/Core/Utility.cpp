@@ -115,3 +115,10 @@ Textures::ID getCurrentBackgroundOption(){
 			return Textures::ID::AppBackground1;
 	}
 }
+
+Textures::ID getCurrentVolumeOption(){
+	if (Sound::VolumeOn)
+			return Textures::ID::VolumeOn;
+	else
+			return Textures::ID::VolumeOff;
+}
