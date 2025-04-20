@@ -294,8 +294,8 @@ void GUI::Button::activate()
 
     if (mCallback) 
         mCallback();
-	if (!mIsToggle)
-		deactivate();
+	// if (!mIsToggle)
+	// 	deactivate();
 }
 
 
@@ -330,4 +330,9 @@ void GUI::Button::setFillColor(sf::Color color)
         mShape.setFillColor(mNormalColor);
     else if(mShapeType == ShapeType::Circle)
         mCircle.setFillColor(mNormalColor);
+}
+
+void GUI::Button::setOutlineColor(sf::Color color)
+{
+    mShape.setOutlineColor(color);
 }

@@ -85,6 +85,7 @@ class Button: public Component
         void                    setNormalColor(sf::Color color);
         void                    setSelectedColor(sf::Color color);
         void                    setActivatedColor(sf::Color color);
+        void                    setOutlineColor(sf::Color color);
     private:
         void                    updateSpriteSize();
         void                    updateSpritePosition();

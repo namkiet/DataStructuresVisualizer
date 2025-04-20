@@ -445,12 +445,13 @@ bool DS::loadFromVector(std::vector<int> numList)
     for (int x: numList) insert(x);
     mActionQueue.pushInstantAction([=]()
     { 
-        ANIMATION::Speed = curSpeed; 
+        ANIMATION::Speed = curSpeed;
         align(); 
-        // mActionQueue.pushInstantAction([=]() { 
-            resetHistory(); isStepByStep = stop = oldStepByStep; 
-        // }); 
     });
+    mActionQueue.pushInstantAction([=]() { 
+        resetHistory(); 
+        isStepByStep = stop = oldStepByStep; 
+    }); 
 
     return true;
 }    

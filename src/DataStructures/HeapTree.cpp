@@ -87,7 +87,7 @@ void HeapTree::remove(int value)
         "A[0] = A[A.length - 1]",
         "i = 0; A.length--",
         "while i < A.length:",
-        "  if A[i] > L := argmin(A[left], A[right])",
+        "  if A[i]>L:=argmin(A[2i+1], A[2i+2])",
         "    swap(A[i], A[L]); i = L",
         "finish"
     };
@@ -192,7 +192,7 @@ void HeapTree::updateValue(int value, int newValue)
         "else: heapifyDown(i)"
     };
 
-    mLastInfo = "Updated successfully";
+    mLastInfo = "Updated successfully.";
 
     mActionQueue.pushInstantAction([=](){ 
         mStep = 0; 

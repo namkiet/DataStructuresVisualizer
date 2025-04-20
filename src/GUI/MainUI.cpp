@@ -56,8 +56,9 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     OperationButtonPosition[3] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.6);
     OperationButtonPosition[4] = sf::Vector2f(OperationBox.getPosition().x, OperationBox.getPosition().y + OperationBox.getSize().y * 0.8);
 
+    ButtonSize = sf::Vector2f(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
+    TextBoxSize = sf::Vector2f(120.f, 40.f);
 
-    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
     mSeperateToolBoxLine[3] = sf::VertexArray(sf::Lines, 2);
     mSeperateToolBoxLine[3][0].position = UI::OPERATIONBOX::Position + sf::Vector2f(ButtonSize.x, 0);
     mSeperateToolBoxLine[3][1].position = UI::CONTROLBOX::Position + sf::Vector2f(ButtonSize.x, 0);
@@ -70,6 +71,8 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
 
     mSpeedButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f, 800.f), "1x", sf::Vector2f(100, 100), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Text);
     mSpeedButton->setToggle(false);
+    mSpeedButton->setActivatedColor(UI::BUTTON::FillColor);
+    mSpeedButton->setSelectedColor(UI::BUTTON::FillColor);
     mSpeedButton->setCallback([=]()
     {
         speedIndex = (speedIndex + 1) % speed.size();
@@ -85,12 +88,14 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     mStepByStepButton = std::make_shared<GUI::Button>(mFont, UI::CONTROLBOX::Position, "Run step by step", sf::Vector2f(UI::CONTROLBOX::Size.x / 2.f, UI::CONTROLBOX::Size.y), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
     mStepByStepButton->setToggle(false);
     // mStepByStepButton->setSprite(mUnselectedRadioButtonSprite);
-    mStepByStepButton->setFillColor(UI::BUTTON::FillColor);
+    mStepByStepButton->setNormalColor(UI::BUTTON::FillColor);
+    mStepByStepButton->setSelectedColor(UI::BUTTON::SelectedColor);
 
     mAtOnceButton = std::make_shared<GUI::Button>(mFont, UI::CONTROLBOX::Position + sf::Vector2f(UI::CONTROLBOX::Size.x / 2, 0), "Run at once", sf::Vector2f(UI::CONTROLBOX::Size.x / 2.f, UI::CONTROLBOX::Size.y), GUI::Button::ShapeType::Rectangle, GUI::Button::ContentType::Text);
     mAtOnceButton->setToggle(false);
     // mAtOnceButton->setSprite(mSelectedRadioButtonSprite);
-    mAtOnceButton->setFillColor(UI::BUTTON::ActivatedColor);
+    mAtOnceButton->setNormalColor(UI::BUTTON::ActivatedColor);
+    mAtOnceButton->setSelectedColor(UI::BUTTON::SelectedColor);
 }
 
 void MainUI::updateCurrent(sf::Time dt)
@@ -115,11 +120,10 @@ void MainUI::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) cons
 
 void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
 {
-    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
 
     // Add Insert button
     GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
-    GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
+    GUI::TextBox::Ptr InputBoxInsert = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
     InputBoxInsert->setCallback([InsertButton, InputBoxInsert, info]() {
         InsertButton->setSubComponentInfo(InputBoxInsert->getInputNum(),0);
     });
@@ -150,7 +154,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
 
     // Add Delete button
     GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Delete",ButtonSize);
-    GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
+    GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
     InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete, info]()
     {
         DeleteButton->setSubComponentInfo(InputBoxDelete->getInputNum(),0);
@@ -180,7 +184,7 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
 
     // Add Search button
     GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
-    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x =");
+    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
     InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch, info]() {
         SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
     });
@@ -214,11 +218,9 @@ void MainUI::initAVLButtons(AVLTree* avl, InfoPanel* info)
 
 void MainUI::initHeapButtons(HeapTree* heap, InfoPanel *info)
 {
-    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
-
     // Add Push button
     GUI::ExpandableButton::Ptr PushButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Push",ButtonSize);
-    GUI::TextBox::Ptr InputBoxPush = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = ");
+    GUI::TextBox::Ptr InputBoxPush = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
     InputBoxPush->setCallback([PushButton, InputBoxPush]()
     {
         PushButton->setSubComponentInfo(InputBoxPush->getInputNum(),0);
@@ -250,8 +252,10 @@ void MainUI::initHeapButtons(HeapTree* heap, InfoPanel *info)
 
     // Add Pop button
     GUI::ExpandableButton::Ptr PopButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Pop",ButtonSize);
-    GUI::Button::Ptr SubmitButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Extract Top", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr SubmitButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), "Extract Top", TextBoxSize);
     SubmitButton->setCallback([this,PopButton, SubmitButton]() { PopButton->setSubComponentInfo(0); });
+    SubmitButton->setOutlineColor(sf::Color(255, 255, 255, 50));
+
     PopButton->addSubComponent(SubmitButton);
     PopButton->setFunc([this,PopButton, heap]()
     {
@@ -270,7 +274,7 @@ void MainUI::initHeapButtons(HeapTree* heap, InfoPanel *info)
 
     // Add Search Button
     GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
-    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
     InputBoxSearch->setCallback([this,SearchButton, InputBoxSearch]()
     {
         SearchButton->setSubComponentInfo(InputBoxSearch->getInputNum(),0);
@@ -307,23 +311,20 @@ void MainUI::initHeapButtons(HeapTree* heap, InfoPanel *info)
 
 void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
 {
-    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
-
     GUI::ExpandableButton::Ptr InsertButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "Insert",ButtonSize);
-
-    GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[1].y) , sf::Vector2f(100.f, 40.f), "x = (head)");
+    GUI::TextBox::Ptr InputBoxInsertAtHead = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[1].y + OperationButtonPosition[2].y - TextBoxSize.y) / 2), TextBoxSize, "x = (head)");
     InputBoxInsertAtHead->setCallback([InsertButton, InputBoxInsertAtHead]()
     {
         InsertButton->setSubComponentInfo(InputBoxInsertAtHead->getInputNum(), 0);
     });
 
-    GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "x = (tail)");
+    GUI::TextBox::Ptr InputBoxInsertAtLast = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = (tail)");
     InputBoxInsertAtLast->setCallback([InsertButton, InputBoxInsertAtLast]()
     {
         InsertButton->setSubComponentInfo(InputBoxInsertAtLast->getInputNum(), 1);
     });
 
-    GUI::TextBox::Ptr InputBoxInsertAtIndex = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[3].y) , sf::Vector2f(100.f, 40.f), "x =, index =", GUI::TextBox::InputType::VectorNum);
+    GUI::TextBox::Ptr InputBoxInsertAtIndex = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[3].y + OperationButtonPosition[4].y - TextBoxSize.y) / 2), TextBoxSize, "x =, index =", GUI::TextBox::InputType::VectorNum);
     InputBoxInsertAtIndex->setCallback([InsertButton, InputBoxInsertAtIndex]()
     {
         InsertButton->setSubComponentInfo(InputBoxInsertAtIndex->getInputNumList(), 2);
@@ -359,7 +360,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
     });
 
     GUI::ExpandableButton::Ptr DeleteButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Delete",ButtonSize);
-    GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxDelete = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
 
     DeleteButton->addSubComponent(InputBoxDelete);
     InputBoxDelete->setCallback([this,DeleteButton, InputBoxDelete]()
@@ -381,7 +382,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
     });
 
     GUI::ExpandableButton::Ptr SearchButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[3], "Search",ButtonSize);
-    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f));
+    GUI::TextBox::Ptr InputBoxSearch = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "x = ");
 
     SearchButton->addSubComponent(InputBoxSearch);
     InputBoxSearch->setCallback([this, SearchButton, InputBoxSearch]()
@@ -409,8 +410,6 @@ void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
 
 void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
 {
-    sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
-
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
@@ -508,6 +507,7 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
                 fin.close();
             } 
             else {
+                // g->empty();
                 std::cerr << "No file selected or an error occurred." << std::endl;
             }
         }
@@ -537,45 +537,40 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
             });
 
     // Add init button
-    sf::Vector2f BoxPosition = UI::OPERATIONBOX::Position + sf::Vector2f(OperationBox.getSize().x, 0);
-    sf::Vector2f BoxSize = sf::Vector2f(UI::OPERATIONBOX::Size.x - OperationBox.getSize().x, UI::OPERATIONBOX::Size.y);
+    sf::Vector2f BoxSize = sf::Vector2f(UI::OPERATIONBOX::Size.x - OperationBox.getSize().x, UI::OPERATIONBOX::Size.y) * 0.8;
+    sf::Vector2f BoxPosition = sf::Vector2f((UI::OPERATIONBOX::Size.x + OperationBox.getSize().x - BoxSize.x) / 2.f, UI::OPERATIONBOX::Position.y + (UI::OPERATIONBOX::Size.y - BoxSize.y) / 2.f);
 
-       GUI::ExpandableButton::Ptr InitButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Init", ButtonSize);
-       GUI::TextBox::Ptr InputBoxInit = std::make_shared<GUI::TextBox>(
-        mFont, 
-        BoxPosition, 
-        BoxSize, 
-        "", 
-        GUI::TextBox::InputType::VectorNum);
+    GUI::ExpandableButton::Ptr InitButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Init", ButtonSize);
+    GUI::TextBox::Ptr InputBoxInit = std::make_shared<GUI::TextBox>(mFont, BoxPosition, BoxSize, "Input edge list.\nOne edge each line", GUI::TextBox::InputType::VectorNum);
 
-        InputBoxInit->setCallback([this, InitButton, InputBoxInit]()
-           {
-               InitButton->setSubComponentInfo(InputBoxInit->getInputNumList(),0);
-           });
-        sf::Vector2f textPos = BoxPosition + sf::Vector2f(5.f, InputBoxInit->mCharSize/2);
-        InputBoxInit->mText.setPosition(textPos);
-        InitButton->addSubComponent(InputBoxInit);
-        InputBoxInit->setMessage("Input edge list\nOne edge each line");
-        InputBoxInit->setAllowedEndLine(true);
-        InputBoxInit->mText.setLineSpacing(1.f);
+    InputBoxInit->setCallback([this, InitButton, InputBoxInit]()
+    {
+        InitButton->setSubComponentInfo(InputBoxInit->getInputNumList(),0);
+    });
+    sf::Vector2f textPos = BoxPosition + sf::Vector2f(5.f, InputBoxInit->mCharSize/2);
+    InputBoxInit->mText.setPosition(textPos);
+    InitButton->addSubComponent(InputBoxInit);
+    InputBoxInit->setMessage("Shift + Enter to start a new line.");
+    InputBoxInit->setAllowedEndLine(true);
+    InputBoxInit->mText.setLineSpacing(1.f);
 
 
-       InitButton->setFunc([this,InitButton,g, info]()
-       {
-           if (!g->isRunning())
-           {
-            std::vector<int> nums = InitButton->getSubComponentInfo().VecNum;
-            int ActionType = InitButton->getSubComponentInfo().InfoID;
-            if (ActionType == -1) return;
-            if (ActionType == 0)
-            {
-                if (!g->loadFromVector(nums))
-                    info->setText("!Invalid input.");
-            }
-            }
-           InitButton->resetSubComponentInfo();
-   
-       });
+    InitButton->setFunc([this,InitButton,g, info]()
+    {
+        if (!g->isRunning())
+        {
+        std::vector<int> nums = InitButton->getSubComponentInfo().VecNum;
+        int ActionType = InitButton->getSubComponentInfo().InfoID;
+        if (ActionType == -1) return;
+        if (ActionType == 0)
+        {
+            if (!g->loadFromVector(nums))
+                info->setText("!Invalid input.");
+        }
+        }
+        InitButton->resetSubComponentInfo();
+
+    });
     
 
     OperationButtonsList->pack(CreateButton);
@@ -591,29 +586,27 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
     {
         mDataStructure->isStepByStep = true;
         mDataStructure->stop = true;
-        mStepByStepButton->setFillColor(UI::BUTTON::ActivatedColor);
-        mAtOnceButton->setFillColor(UI::BUTTON::FillColor);
+        mStepByStepButton->setNormalColor(UI::BUTTON::ActivatedColor);
+        mAtOnceButton->setNormalColor(UI::BUTTON::FillColor);
     });
 
     mAtOnceButton->setCallback([=]()
     {
         mDataStructure->isStepByStep = false;
         mDataStructure->stop = false;
-        mStepByStepButton->setFillColor(UI::BUTTON::FillColor);
-        mAtOnceButton->setFillColor(UI::BUTTON::ActivatedColor);
+        mStepByStepButton->setNormalColor(UI::BUTTON::FillColor);
+        mAtOnceButton->setNormalColor(UI::BUTTON::ActivatedColor);
     });
 
     if (mode != World::Mode::GraphMode)
     {
-        sf::Vector2f ButtonSize(OperationBox.getSize().x, OperationBox.getSize().y * 0.2);
-
         // Add Create button
         GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
-        GUI::TextBox::Ptr InputBoxRandom    = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2) , sf::Vector2f(100.f, 40.f), "N =");
-        GUI::TextBox::Ptr InputBoxInit      = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  (OperationButtonPosition[1].y + OperationButtonPosition[2].y) / 2) , sf::Vector2f(100.f, 40.f), "array = ", GUI::TextBox::InputType::VectorNum);
-        GUI::Button::Ptr LoadButton         = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[2].y + OperationButtonPosition[3].y) / 2), "Load", sf::Vector2f(100.f,40.f));
-        GUI::Button::Ptr EmptyButton        = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[4].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+        GUI::TextBox::Ptr InputBoxRandom    = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, OperationButtonPosition[1].y - TextBoxSize.y / 2), TextBoxSize, "N = ");
+        GUI::TextBox::Ptr InputBoxInit      = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, OperationButtonPosition[2].y - TextBoxSize.y / 2), TextBoxSize, "array = ", GUI::TextBox::InputType::VectorNum);
+        GUI::Button::Ptr LoadButton         = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, OperationButtonPosition[3].y - TextBoxSize.y / 2), "Load", TextBoxSize);
+        GUI::Button::Ptr EmptyButton        = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, OperationButtonPosition[4].y - TextBoxSize.y / 2), "Empty", TextBoxSize);
 
         InputBoxRandom->setCallback([CreateButton, InputBoxRandom]() { CreateButton->setSubComponentInfo(InputBoxRandom->getInputNum(), 0); });
         InputBoxInit->setCallback([CreateButton, InputBoxInit]() { CreateButton->setSubComponentInfo(InputBoxInit->getInputNumList(), 1); });
@@ -622,6 +615,8 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
 
         InputBoxRandom->setMessage("Input the size of the random data.");
         InputBoxInit->setMessage("Input the list for initialization.");
+        LoadButton->setOutlineColor(sf::Color(255, 255, 255, 50));
+        EmptyButton->setOutlineColor(sf::Color(255, 255, 255, 50));
 
         CreateButton->addSubComponent(InputBoxRandom);
         CreateButton->addSubComponent(InputBoxInit);
@@ -698,7 +693,8 @@ void MainUI::createButtonList(World::Mode mode, DS* mDataStructure, InfoPanel* i
 
         // add update button
         GUI::ExpandableButton::Ptr UpdateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[4], "Update", ButtonSize);
-        GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55,  OperationButtonPosition[2].y) , sf::Vector2f(100.f, 40.f), "old =, new =", GUI::TextBox::InputType::VectorNum);
+        GUI::TextBox::Ptr InputBoxUpdate = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), TextBoxSize, "old =, new =", GUI::TextBox::InputType::VectorNum);
+
         InputBoxUpdate->setCallback([this, UpdateButton, InputBoxUpdate]()
         {
             UpdateButton->setSubComponentInfo(InputBoxUpdate->getInputNumList(),0);

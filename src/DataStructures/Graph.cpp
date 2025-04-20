@@ -328,7 +328,7 @@ bool Graph::loadFromVector(std::vector<int> numList)
     NumEdge = EdgeList.size();
 
     velocity.resize(NumVer, sf::Vector2f(0,0));
-    ForceConstant = VIZ::DS::Size.x * VIZ::DS::Size.y / NumVer;
+    ForceConstant = 140000;
 
     sf::Vector2f Center = VIZ::DS::Center - VIZ::DS::Position; // vi tri tuong doi
 
