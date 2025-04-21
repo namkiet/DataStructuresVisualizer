@@ -9,7 +9,6 @@ class CircleNode:
 {
 public:
     typedef std::shared_ptr<CircleNode> Ptr;
-                            CircleNode(const CircleNode &other);
                             CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor);
 
 public:

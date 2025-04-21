@@ -58,6 +58,12 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
 void TextBox::setPlaceholder(const std::string& text) {
     mPlaceholder.setString(text);
 }
+
+void TextBox::setPlaceholderPosition(sf::Vector2f pos)
+{
+    mPlaceholder.setPosition(mBox.getPosition() + pos + sf::Vector2f(5.f, 5.f));
+}
+
 sf::FloatRect GUI::TextBox::getGlobalBounds() const {
     return mBox.getGlobalBounds();
 }

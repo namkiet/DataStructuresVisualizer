@@ -1,6 +1,6 @@
 #include <DataStructures/LinkedList.hpp>
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/Edge.hpp>
+#include <DataStructures/Edge.hpp>
 #include <DataStructures/DS.hpp>
 #include <Core/Utility.hpp>
 
@@ -34,7 +34,7 @@ bool LinkedList::search(int value)
         return false;
     }
     
-    LinkedListNode* temp = mHead;
+    ListNode* temp = mHead;
     while (temp)
     {
         mActionQueue.pushInstantAction([=]() {
@@ -101,7 +101,7 @@ void LinkedList::remove(int value)
         return;
     }
 
-    LinkedListNode* temp = mHead;
+    ListNode* temp = mHead;
     while (temp)
     {
         mActionQueue.pushInstantAction([=]() {
@@ -189,7 +189,7 @@ void LinkedList::updateValue(int value, int newValue)
         return;
     }
     
-    LinkedListNode* temp = mHead;
+    ListNode* temp = mHead;
     while (temp)
     {
         mActionQueue.pushInstantAction([=]() {
@@ -244,7 +244,7 @@ void LinkedList::InsertAtHead(int value)
     mLastStep = 2;
     mLastInfo = "The whole process is O(1).";
 
-    LinkedListNode* newHead = new LinkedListNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+    ListNode* newHead = new ListNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     newHead->mNext = mHead;
     newHead->mPrev = nullptr;
     newHead->setPosition(sf::Vector2f(50, 0));
@@ -326,7 +326,7 @@ void LinkedList::insertAtIndex(int value, int index)
         mLastStep = 2;
     }
 
-    LinkedListNode* cur = mHead;
+    ListNode* cur = mHead;
     for (int k = 0; k < index - 1; k++)
     {
         if (!isTailInsert)
@@ -342,7 +342,7 @@ void LinkedList::insertAtIndex(int value, int index)
         cur = cur->mNext;
     }
 
-    LinkedListNode* newNode = new LinkedListNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
+    ListNode* newNode = new ListNode(value, VIZ::NODE::Radius, VIZ::NODE::FillColor, VIZ::NODE::OutlineColor);
     if (cur->mNext) 
         newNode->setPosition((cur->getPosition() + cur->mNext->getPosition()) / 2.f + sf::Vector2f(0, -50));
     else
@@ -405,7 +405,7 @@ void LinkedList::insertAtIndex(int value, int index)
     align(mHead);
 }
 
-void LinkedList::align(LinkedListNode* curNode, sf::Vector2f curPos)
+void LinkedList::align(ListNode* curNode, sf::Vector2f curPos)
 {
     if (!curNode || ANIMATION::Speed >= 1000) return;
 

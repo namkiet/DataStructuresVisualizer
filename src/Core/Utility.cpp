@@ -111,10 +111,10 @@ bool isValidNodePosition(sf::Vector2f pos)
 
 void makeValidNodePosition(sf::Vector2f& pos)
 {
-	if(pos.x < 0) pos.x = 0;
-	if(pos.x > VIZ::DS::Size.x) pos.x = VIZ::DS::Size.x;
-	if(pos.y < 0) pos.y = 0;
-	if(pos.y > VIZ::DS::Size.y) pos.y = VIZ::DS::Size.y;
+	if(pos.x < VIZ::NODE::Radius) pos.x = VIZ::NODE::Radius;
+	if(pos.x > VIZ::DS::Size.x - VIZ::NODE::Radius) pos.x = VIZ::DS::Size.x - VIZ::NODE::Radius;
+	if(pos.y < VIZ::NODE::Radius) pos.y = VIZ::NODE::Radius;	
+	if(pos.y > VIZ::DS::Size.y - VIZ::NODE::Radius) pos.y = VIZ::DS::Size.y - VIZ::NODE::Radius;
 }
 
 Textures::ID getCurrentBackgroundOption(){

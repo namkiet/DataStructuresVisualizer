@@ -3,7 +3,7 @@
 #include <State/StateStack.hpp>
 #include <Core/ResourceIdentifiers.hpp>
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/TreeNode.hpp>
+#include <DataStructures/TreeNode.hpp>
 #include <Core/ResourceHolder.hpp>
 #include <DataStructures/AVLTree.hpp>
 #include <memory>

@@ -1,4 +1,4 @@
-#include <SceneNode/Edge.hpp>
+#include <DataStructures/Edge.hpp>
 #include <Core/Utility.hpp>
 #include<iostream>
 #include <Core/Variables.hpp>

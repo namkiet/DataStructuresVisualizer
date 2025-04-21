@@ -1,9 +1,9 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/TreeNode.hpp>
-#include <SceneNode/Edge.hpp>
+#include <DataStructures/TreeNode.hpp>
+#include <DataStructures/Edge.hpp>
 #include <DataStructures/DS.hpp>
-#include <SceneNode/LinkedListNode.hpp>
+#include <DataStructures/ListNode.hpp>
 
 class LinkedList: public DS
 {
@@ -20,9 +20,9 @@ public:
     void                        insertAtIndex(int value, int index);
 
 private:
-    LinkedListNode*             mHead;
+    ListNode*             mHead;
     void                        align() override { align(mHead); };
-    void                        align(LinkedListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));
+    void                        align(ListNode* curNode, sf::Vector2f curPos = sf::Vector2f(100, 100));
 
 private:
     int                         maxRowNode;

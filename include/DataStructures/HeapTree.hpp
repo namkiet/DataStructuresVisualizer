@@ -1,6 +1,6 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/CircleNode.hpp>
+#include <DataStructures/CircleNode.hpp>
 #include <DataStructures/DS.hpp>
 
 class HeapTree: public DS
