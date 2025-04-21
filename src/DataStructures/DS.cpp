@@ -2,7 +2,7 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 
-DS::DS() { empty(); stop = false; playback = NORMAL; }
+DS::DS() { empty(); stop = false; playback = NORMAL; timer = 0;}
 
 void DS::empty()
 {
