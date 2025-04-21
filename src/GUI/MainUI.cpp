@@ -69,7 +69,7 @@ MainUI::MainUI(TextureHolder& textures, FontHolder& fonts)
     BackButtons = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f,20.f), "", sf::Vector2f(50.f,50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
     BackButtons->setSprite(HomeSprite);
 
-    mSpeedButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(20.f, 800.f), "1x", sf::Vector2f(100, 100), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Text);
+    mSpeedButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f(SCREEN::Width - 170, SCREEN::Height - 35), "1x", sf::Vector2f(20, 20), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Text);
     mSpeedButton->setToggle(false);
     mSpeedButton->setActivatedColor(UI::BUTTON::FillColor);
     mSpeedButton->setSelectedColor(UI::BUTTON::FillColor);
@@ -413,9 +413,9 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
 
-    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[0].y + OperationButtonPosition[1].y) / 2), "Random", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, OperationButtonPosition[2].y), "Load", sf::Vector2f(100.f,40.f));
-    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f(ToolBox.getSize().x * 0.55, (OperationButtonPosition[3].y + OperationButtonPosition[3].y) / 2), "Empty", sf::Vector2f(100.f,40.f));
+    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[1].y + OperationButtonPosition[1].y - TextBoxSize.y) / 2), "Random", TextBoxSize);
+    GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), "Load", TextBoxSize);
+    GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[4].y + OperationButtonPosition[4].y - TextBoxSize.y) / 2), "Empty", TextBoxSize);
 
     RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
     LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
@@ -485,6 +485,7 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
         }
         else if (type == 1)
         {
+            g->loadTimer = 1.f;
             std::wstring filename = OpenFileDialog();
             if (!filename.empty()) {
                 std::wcout << L"Selected file: " << filename << std::endl;

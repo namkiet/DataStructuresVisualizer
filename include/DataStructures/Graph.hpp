@@ -35,6 +35,11 @@ private:
     vector<sf::Vector2f>        velocity;
     float                       ForceConstant;
 
+    int                         mstSum = 0;
+
+public:
+    float                       loadTimer = 0;
+
     // Graph component utility
 
     std::vector<std::pair<std::pair<int, int>, int>> EdgeList; // store pair of id (not value as b)

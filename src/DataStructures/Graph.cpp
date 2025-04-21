@@ -134,6 +134,15 @@ void Graph::Prim()
     if (NumVer == 0) return;
 
     resetHistory();
+
+    mCode = {
+        "start at any node",
+        "repeat (|V| - 1) times:",
+        "  get min edge from marked to unmarked",
+        "  mark its vertex and edge",
+        "finish"
+    };
+
     //     for(int i = 0; i < NumVer ;i++){
     //     std::cout<<"World Postion at"<< i<<" : "<<getWorldPosition(i).x<<" "<<getWorldPosition(i).y<<std::endl;
     // }
@@ -142,12 +151,20 @@ void Graph::Prim()
 
     (*marked)[0] = true;
 
+    mstSum = 0;
+    mLastInfo = "#";
+    mLastStep = mCode.size() - 1;
+
+    mActionQueue.pushInstantAction([=]() { mStep = 0; });
     createNewActionGroup();
     highlightNode(mNodeList[0].get(), sf::Color::Red, 0.5f, false);
     
     int count = NumVer - 1;
 
+    int edgeCount = 0;
+
     while(count--){
+        mActionQueue.pushInstantAction([=]() { mStep = 2; });
         createNewActionGroup();
         int minEdgeID = -1;
         int minEdge = INT_MAX;
@@ -182,10 +199,28 @@ void Graph::Prim()
         int direction = (ToMark == id2)? 1 : -1;  // direction to mark edge 
         (*marked)[ToMark] = true;
         (*markedEdge)[minEdgeID] = true;
+
         createNewActionGroup();
         highlightNode(mNodeList[ToMark].get(), sf::Color::Red, 0.5f, false);
+        // std::cerr << minEdge << "\n";
         MarkEdge(mEdgeList[minEdgeID].get(), direction, 1.0f);
+        mActionQueue.pushInstantAction([=]() {
+            mStep = 3;
+            mstSum += minEdge;
+            mInfo = "MST Sum = " + std::to_string(mstSum) + ".";
+        }, true);
+
+        edgeCount++;
     }
+// 
+    // std::cerr << edgeCount << "---\n";
+    if (edgeCount != NumVer - 1)
+    {
+        mActionQueue.pushInstantAction([=]() {
+            mInfo = "The graph is not connected.";
+        });
+    }
+    
 
     createNewActionGroup();
     for(int j = 0; j < mEdgeList.size();j++){
@@ -229,13 +264,24 @@ bool Graph::search(int value) {
 
 void Graph::updateCurrent(sf::Time dt)
 {
+    std::cerr << ForceConstant << "\n";
     DS::updateCurrent(dt);
-    if (!isRunning())
-        physicalUpdate(dt);   
+
+    std::cerr << "Load: " << loadTimer << "\n";
+    {
+    if (loadTimer <= 0)
+    {
+        if (!isRunning())
+            physicalUpdate(dt);   
+    }
+    else
+        loadTimer -= dt.asSeconds();
+    }
 }
 
 void Graph::physicalUpdate(sf::Time dt)
 {
+         
     // attraction between adjacent node
     for(auto& edge: EdgeList){
         int start = edge.first.first;
@@ -268,14 +314,14 @@ void Graph::physicalUpdate(sf::Time dt)
     for(int i = 0 ; i < NumVer;i++)
     {
         // velocity[i] *= 0.2f; // friction
-        if(i == 0) std::cout<<norm(velocity[i]) <<std::endl;
+        // if(i == 0) std::cout<<norm(velocity[i]) <<std::endl;
         velocity[i] = (norm(velocity[i]) < 10.f)? velocity[i] * 0.2f : velocity[i] * 0.7f;
         velocity[i] = (norm(velocity[i]) < 0.01f)? sf::Vector2f(0.f,0.f) : velocity[i];
         sf::Vector2f newPosition = mNodeList[i]->getPosition() + velocity[i] * dt.asSeconds();
         makeValidNodePosition(newPosition);
         changeNodePosition(i, newPosition);
-
     }
+    std::cerr << velocity[0].x << " -- " << velocity[0].y << "\n";
 }
 
 void Graph::empty()
@@ -317,6 +363,8 @@ bool Graph::loadFromVector(std::vector<int> numList)
     if (!checkValidInput(numList)) return false;
 
     empty();
+
+    // loadTimer = 1.f;
 
     std::set<int> nodeSet;
     for (int i = 0; i + 2 < numList.size(); i += 3) {

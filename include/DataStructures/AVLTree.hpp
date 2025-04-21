@@ -28,6 +28,9 @@ private:
     TreeNode*                   rightRotate(TreeNode* root);
 
 private:
+    bool                        isUpdating = false;
+
+private:
     void                        align() override { align(mRoot); };
     void                        align(TreeNode* curNode, sf::Vector2f curPos = sf::Vector2f(VIZ::DS::Size.x / 2, VIZ::DS::RowSpacing), float curSpacingX = VIZ::DS::Size.x / 4, float curSpacingY = VIZ::DS::RowSpacing);        
 };

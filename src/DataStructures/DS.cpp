@@ -443,6 +443,8 @@ bool DS::loadFromVector(std::vector<int> numList)
     auto curSpeed = ANIMATION::Speed;
     ANIMATION::Speed = 1000;
     for (int x: numList) insert(x);
+    resetHistory(); 
+    
     mActionQueue.pushInstantAction([=]()
     { 
         ANIMATION::Speed = curSpeed;
