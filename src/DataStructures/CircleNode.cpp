@@ -1,17 +1,6 @@
-#include <SceneNode/CircleNode.hpp>
+#include <DataStructures/CircleNode.hpp>
 #include <Core/Utility.hpp>
 #include <Core/Variables.hpp>
-
-CircleNode::CircleNode(const CircleNode &other)
-    : sf::Transformable(other), sf::Drawable(other),
-      mValue(other.mValue), mTargetPosition(other.mTargetPosition),
-      mShape(other.mShape), mText(other.mText), mNote(other.mNote),
-      mFont(other.mFont), mTextSize(other.mTextSize), mOpacity(other.mOpacity)
-{
-    // Cập nhật font cho text
-    mText.setFont(mFont);
-    mNote.setFont(mFont);
-}
 
 CircleNode::CircleNode(int value, float radius, sf::Color fillColor, sf::Color outlineColor):
     mValue(value), mOpacity(1.f)

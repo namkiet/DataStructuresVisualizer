@@ -1,7 +1,7 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/TreeNode.hpp>
-#include <SceneNode/Edge.hpp>
+#include <DataStructures/TreeNode.hpp>
+#include <DataStructures/Edge.hpp>
 #include <DataStructures/DS.hpp>
 #include <Core/Variables.hpp>
 

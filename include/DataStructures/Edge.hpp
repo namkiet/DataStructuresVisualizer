@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <SceneNode/CircleNode.hpp>
+#include <DataStructures/CircleNode.hpp>
 
 class Edge :
     public sf::Transformable, public sf::Drawable

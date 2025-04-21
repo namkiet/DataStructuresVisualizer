@@ -520,22 +520,26 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
 
     // Add MST Button
     GUI::ExpandableButton::Ptr MSTButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[1], "MST", ButtonSize);
-    MSTButton->setCallback([MSTButton]{
-        MSTButton->setSubComponentInfo(0);
-    });
-    MSTButton->setFunc([MSTButton, g]() {
+    GUI::Button::Ptr PrimButton = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), "Prim", TextBoxSize);
 
-        if (g->isRunning()) return;
+    PrimButton->setCallback([this,MSTButton, PrimButton]() { MSTButton->setSubComponentInfo(0); });
+    PrimButton->setOutlineColor(sf::Color(255, 255, 255, 50));
 
+    MSTButton->addSubComponent(PrimButton);
+
+    MSTButton->setFunc([MSTButton, g]() 
+    {
+        if (!g->isRunning())
+        {
             int ActionType = MSTButton->getSubComponentInfo().InfoID;
             if (ActionType == -1) return;
             else if (ActionType == 0)
-                {
-                    g->Prim();
-                }
-                
-            MSTButton->resetSubComponentInfo();
-            });
+            {
+                g->Prim();
+            }   
+        }
+        MSTButton->resetSubComponentInfo();
+    });
 
     // Add init button
     sf::Vector2f BoxSize = sf::Vector2f(UI::OPERATIONBOX::Size.x - OperationBox.getSize().x, UI::OPERATIONBOX::Size.y) * 0.8;
@@ -543,6 +547,7 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
 
     GUI::ExpandableButton::Ptr InitButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[2], "Init", ButtonSize);
     GUI::TextBox::Ptr InputBoxInit = std::make_shared<GUI::TextBox>(mFont, BoxPosition, BoxSize, "Input edge list.\nOne edge each line", GUI::TextBox::InputType::VectorNum);
+    InputBoxInit->setPlaceholderPosition(sf::Vector2f(0, 0));
 
     InputBoxInit->setCallback([this, InitButton, InputBoxInit]()
     {

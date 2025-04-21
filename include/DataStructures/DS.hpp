@@ -1,11 +1,11 @@
 #pragma once
 #include <SceneNode/SceneNode.hpp>
-#include <SceneNode/CircleNode.hpp>
-#include <SceneNode/Edge.hpp>
+#include <DataStructures/CircleNode.hpp>
+#include <DataStructures/Edge.hpp>
 #include <Core/ActionQueue.hpp>
 #include <Core/Action.hpp>
 
-#include <SceneNode/TreeNode.hpp>
+#include <DataStructures/TreeNode.hpp>
 #include <iostream>
 #include <string>
 

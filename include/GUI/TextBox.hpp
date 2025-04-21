@@ -35,6 +35,7 @@ namespace GUI
         int                                         getInputNum();
         std::vector<int>                            getInputNumList();
         void                                        setPlaceholder(const std::string& text);
+        void                                        setPlaceholderPosition(sf::Vector2f pos);
         void                                        submit();
         sf::FloatRect                               getGlobalBounds() const;
         void                                        setMessage(std::string message);

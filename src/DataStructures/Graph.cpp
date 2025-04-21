@@ -309,6 +309,7 @@ void Graph::physicalUpdate(sf::Time dt)
     // update position, take into account friction
     for(int i = 0 ; i < NumVer; i++)
     {
+        if (selectID == i) continue;
         // velocity[i] *= 0.2f; // friction
         // if(i == 0) std::cout<<norm(velocity[i]) <<std::endl;
         velocity[i] = (norm(velocity[i]) < 10.f)? velocity[i] * 0.2f : velocity[i] * 0.7f;
