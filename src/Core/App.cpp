@@ -6,6 +6,7 @@
 #include <Core/Variables.hpp>
 #include <iostream>
 #include <SFML/Audio.hpp>
+#include <State/AboutState.hpp>
 
 App::App(): 
     
@@ -89,6 +90,7 @@ void App::registerStates()
     mStateStack.registerState<InApp>(States::InAppHeap);
     mStateStack.registerState<InApp>(States::InAppGraph);
     mStateStack.registerState<InApp>(States::InAppLinkedList);
+    mStateStack.registerState<AboutState>(States::About);
 }
 
 void App::run()

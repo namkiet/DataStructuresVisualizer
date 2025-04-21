@@ -334,11 +334,11 @@ void SettingsState::draw()
 	sf::RenderWindow& window = *getContext().window;
 	window.setView(window.getDefaultView());
  
-	for(CircleNode* node : nodes)
+	for (CircleNode* node : nodes)
 	{
 		window.draw(*node);
 	}
-	for(Edge* edge : edges)
+	for (Edge* edge : edges)
 	{
 		window.draw(*edge);
 	}
@@ -358,11 +358,11 @@ void SettingsState::draw()
 	window.draw(EdgeThickness);
 
 
-	if(VIZ::NODE::Radius < VIZ::NODE::MaxRadius) window.draw(*IncreaseNodeSize);
-	if(VIZ::NODE::Radius > VIZ::NODE::MinRadius) window.draw(*DecreaseNodeSize);
+	if (VIZ::NODE::Radius < VIZ::NODE::MaxRadius) window.draw(*IncreaseNodeSize);
+	if (VIZ::NODE::Radius > VIZ::NODE::MinRadius) window.draw(*DecreaseNodeSize);
 
-	if(VIZ::EDGE::Thickness < VIZ::EDGE::MaxThickness) window.draw(*IncreaseEdgeThickness);
-	if(VIZ::EDGE::Thickness > VIZ::EDGE::MinThickness) window.draw(*DecreaseEdgeThickness);
+	if (VIZ::EDGE::Thickness < VIZ::EDGE::MaxThickness) window.draw(*IncreaseEdgeThickness);
+	if (VIZ::EDGE::Thickness > VIZ::EDGE::MinThickness) window.draw(*DecreaseEdgeThickness);
 }
 
 bool SettingsState::update(sf::Time dt)

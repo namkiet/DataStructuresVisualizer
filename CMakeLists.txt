@@ -40,3 +40,8 @@ message(STATUS "C++ Compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}")
+
+message(STATUS "🔍 SRC_FILES found:")
+foreach(file ${SRC_FILES})
+    message(STATUS "  - ${file}")
+endforeach()

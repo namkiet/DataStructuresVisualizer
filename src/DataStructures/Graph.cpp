@@ -44,7 +44,7 @@ Graph::Graph(){
     double magnitude = 300;
     constexpr double PI = 3.14159265358979323846;
 
-    for(int i = 0; i < n;i++){
+    for (int i = 0; i < n;i++) {
         ListGraphNode[i] = new CircleNode(i, VIZ::NODE::Radius, sf::Color::White, sf::Color::Black);
         // set position
         float angle = 2 * PI * i / n;
@@ -53,18 +53,18 @@ Graph::Graph(){
     }
 
     // add Edge
-    for(int i = 0 ; i < EdgeList.size();i++){
+    for (int i = 0 ; i < EdgeList.size();i++) {
         addEdge(ListGraphNode[EdgeList[i].first.first], ListGraphNode[EdgeList[i].first.second], EdgeList[i].second, false);
     }
 
     // add Node to the original NodeList
-    for(auto& Node: ListGraphNode){
+    for (auto& Node : ListGraphNode) {
         addNode(Node);
     }
 
     isReady = true;
 
-    std::cout<<"Create Graph OK"<<std::endl;
+    std::cout << "Create Graph OK" << std::endl;
 }
 
 Graph::Graph(vector<vector<pair<int,int>>> G){
@@ -72,7 +72,7 @@ Graph::Graph(vector<vector<pair<int,int>>> G){
 };
 void Graph::handleEvent(const sf::Event& event){
     // std::cout<<"Graph can handle event"<<std::endl;
-    if(event.type == sf::Event::MouseButtonPressed)
+    if (event.type == sf::Event::MouseButtonPressed)
     {
         std::cout<<"Mouse position"<<event.mouseButton.x<<" "<<event.mouseButton.y<<std::endl;
         if(event.mouseButton.button == sf::Mouse::Left){
@@ -86,7 +86,7 @@ void Graph::handleEvent(const sf::Event& event){
         }
     }
 
-    else if(event.type == sf::Event::MouseButtonReleased)
+    else if (event.type == sf::Event::MouseButtonReleased)
     {
         selectID = -1;
     }
@@ -95,7 +95,7 @@ void Graph::handleEvent(const sf::Event& event){
     {
         if (selectID != -1) {
             sf::Vector2f Pos = sf::Vector2f(event.mouseMove.x - VIZ::DS::Position.x, event.mouseMove.y - VIZ::DS::Position.y);
-            if(isValidNodePosition(Pos))
+            if (isValidNodePosition(Pos))
             {
                 changeNodePosition(selectID, Pos);
             }
@@ -105,9 +105,10 @@ void Graph::handleEvent(const sf::Event& event){
 }
 
 // find edge
-int Graph::EdgeID(int start, int end){ // given 2 id, not 2 value
-    for(int i = 0; i < mEdgeList.size();i++){
-        if(mEdgeList[i]->mFrom == mNodeList[start].get() && mEdgeList[i]->mTo == mNodeList[end].get()){
+int Graph::EdgeID(int start, int end)
+{ // given 2 id, not 2 value
+    for (int i = 0; i < mEdgeList.size();i++) {
+        if (mEdgeList[i]->mFrom == mNodeList[start].get() && mEdgeList[i]->mTo == mNodeList[end].get()){
             return i;
         }
     }
@@ -125,7 +126,8 @@ int Graph::findVerID(CircleNode* node)
     return -1;
 }
 
-void Graph::MarkEdge(Edge* edge,int direction, float duration){
+void Graph::MarkEdge(Edge* edge,int direction, float duration)
+{
     mActionQueue.pushAction(Action::MarkEdge(edge,direction, duration));
 }
 
@@ -143,9 +145,6 @@ void Graph::Prim()
         "finish"
     };
 
-    //     for(int i = 0; i < NumVer ;i++){
-    //     std::cout<<"World Postion at"<< i<<" : "<<getWorldPosition(i).x<<" "<<getWorldPosition(i).y<<std::endl;
-    // }
     auto marked = std::make_shared<std::vector<bool>>(NumVer, false);
     auto markedEdge = std::make_shared<std::vector<bool>> (mEdgeList.size(),false);
 
@@ -163,7 +162,7 @@ void Graph::Prim()
 
     int edgeCount = 0;
 
-    while(count--){
+    while (count--) {
         mActionQueue.pushInstantAction([=]() { mStep = 2; });
         createNewActionGroup();
         int minEdgeID = -1;
@@ -173,28 +172,27 @@ void Graph::Prim()
             int sourceID = EdgeList[j].first.first;
             int destID = EdgeList[j].first.second;
             // std::cout<<"source : "<<sourceID<<"dest : "<<destID<<std::endl;
-            if((*marked)[sourceID] ^ (*marked)[destID])
+            if ((*marked)[sourceID] ^ (*marked)[destID])
             {
-                if(mEdgeList[j]->getColor() != sf::Color::Blue)
+                if (mEdgeList[j]->getColor() != sf::Color::Blue)
             {
                 // std::cout<<"source : "<<sourceID<<"dest : "<<destID<<" inside the if statement" <<std::endl;
-                if(minEdgeID == -1 || EdgeList[j].second < minEdge){
+                if (minEdgeID == -1 || EdgeList[j].second < minEdge){
                     minEdgeID = j; minEdge = EdgeList[j].second;
                 }
-                // std::cout<<"MINEDGEID = "<<minEdgeID<<std::endl;
                 changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Blue, 0.5f);
             }
             }
-            else if(!(*markedEdge)[j]){
+            else if (!(*markedEdge)[j]) {
                 changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, VIZ::EDGE::Color, 0.5f);
             }
         }
 
-        if(minEdgeID == -1) break;
+        if (minEdgeID == -1) break;
         
         int id1 = findVerID(mEdgeList[minEdgeID]->mFrom); 
         int id2 = findVerID(mEdgeList[minEdgeID]->mTo);
-        int ToMark = (*marked)[id1]? id2 : id1;
+        int ToMark = (*marked)[id1] ? id2 : id1;
 
         int direction = (ToMark == id2)? 1 : -1;  // direction to mark edge 
         (*marked)[ToMark] = true;
@@ -202,7 +200,6 @@ void Graph::Prim()
 
         createNewActionGroup();
         highlightNode(mNodeList[ToMark].get(), sf::Color::Red, 0.5f, false);
-        // std::cerr << minEdge << "\n";
         MarkEdge(mEdgeList[minEdgeID].get(), direction, 1.0f);
         mActionQueue.pushInstantAction([=]() {
             mStep = 3;
@@ -212,8 +209,6 @@ void Graph::Prim()
 
         edgeCount++;
     }
-// 
-    // std::cerr << edgeCount << "---\n";
     if (edgeCount != NumVer - 1)
     {
         mActionQueue.pushInstantAction([=]() {
@@ -223,23 +218,24 @@ void Graph::Prim()
     
 
     createNewActionGroup();
-    for(int j = 0; j < mEdgeList.size();j++){
-        if(!(*markedEdge)[j]){
+    for (int j = 0; j < mEdgeList.size();j++) {
+        if (!(*markedEdge)[j]){
             std::cout<<"original color"<<std::endl;
             changeEdgeColor(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, VIZ::EDGE::Color, 0.5f);
         }
     }
     createNewActionGroup();
-    for(int j = 0; j < mEdgeList.size();j++){
-        if((*markedEdge)[j]){
-            std::cout<<"Highlight Edge"<<std::endl;
+    for (int j = 0; j < mEdgeList.size();j++) {
+        if ((*markedEdge)[j]) 
+        {
+            std::cout << "Highlight Edge" << std::endl;
             traverseEdge(mEdgeList[j]->mFrom, mEdgeList[j]->mTo, sf::Color::Green, 0.5f, false);
         }
     }
 
     
     createNewActionGroup();
-    for (auto &node: mNodeList)
+    for (auto &node : mNodeList)
     {
         if (node) 
         {
@@ -249,7 +245,7 @@ void Graph::Prim()
     }
 }
 
-void Graph::remove(int value){
+void Graph::remove(int value) {
     std::cout<<"Remove ok"<<std::endl;
 }
 
@@ -283,7 +279,7 @@ void Graph::physicalUpdate(sf::Time dt)
 {
          
     // attraction between adjacent node
-    for(auto& edge: EdgeList){
+    for (auto& edge: EdgeList) {
         int start = edge.first.first;
         int end = edge.first.second;
         sf::Vector2f force = Attraction(ForceConstant, mNodeList[end]->getPosition(), mNodeList[start]->getPosition());
@@ -293,25 +289,25 @@ void Graph::physicalUpdate(sf::Time dt)
 
 
     // repulsion between node
-    for(int i = 0 ; i < NumVer;i++)
+    for (int i = 0 ; i < NumVer;i++)
     {
-        for(int j = 0; j < NumVer;j++)
+        for (int j = 0; j < NumVer;j++)
         {
-            if(i == j) continue;
+            if (i == j) continue;
             sf::Vector2f force = Repulsion(ForceConstant * 10, mNodeList[j]->getPosition(), mNodeList[i]->getPosition());
             velocity[i] += force * dt.asSeconds();
         }
     }
 
     // center attraction
-    for(int i = 0 ; i < NumVer;i++){
+    for(int i = 0 ; i < NumVer; i++){
         sf::Vector2f force = CenterAttraction(mNodeList[i]->getPosition());
         // sf::Vector2f force = CenterAttractionNew(mNodeList[i]->getPosition(), i, NumVer);
         velocity[i] += force*dt.asSeconds();
     }
 
     // update position, take into account friction
-    for(int i = 0 ; i < NumVer;i++)
+    for(int i = 0 ; i < NumVer; i++)
     {
         // velocity[i] *= 0.2f; // friction
         // if(i == 0) std::cout<<norm(velocity[i]) <<std::endl;
@@ -409,7 +405,7 @@ bool Graph::loadFromVector(std::vector<int> numList)
     }
 
     // add Node to the original NodeList
-    for (auto& Node: ListGraphNode){
+    for (auto& Node : ListGraphNode){
         addNode(Node);
     }
 
@@ -422,7 +418,7 @@ bool Graph::loadFromVector(std::vector<int> numList)
 
 
     // add Edge
-    for(int i = 0 ; i < EdgeList.size();i++){
+    for (int i = 0 ; i < EdgeList.size();i++) {
         addEdge(ListGraphNode[EdgeList[i].first.first], ListGraphNode[EdgeList[i].first.second], EdgeList[i].second, false);
     }
     std::cout<<"return true ok"<<std::endl;

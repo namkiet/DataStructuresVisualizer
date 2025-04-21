@@ -16,7 +16,8 @@ namespace States {
         InAppLinkedList,
         Title,
         Menu,
-        Settings
+        Settings,
+        About,
         // StateCount
     };
 };

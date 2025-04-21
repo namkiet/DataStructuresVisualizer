@@ -39,11 +39,11 @@ TextBox::TextBox(const sf::Font& font, sf::Vector2f position, sf::Vector2f size,
     mMessage.setFont(font);
     mMessage.setCharacterSize(14);
     mMessage.setFillColor(sf::Color::White);
-    if(mInputType == GUI::TextBox::InputType::Number)
+    if (mInputType == GUI::TextBox::InputType::Number)
     {
         mMessage.setString("Input a number from 0 to 99.");
     }
-    else if(mInputType == GUI::TextBox::InputType::VectorNum)
+    else if (mInputType == GUI::TextBox::InputType::VectorNum)
     {
         mMessage.setString("Input 2 numbers from 0 to 99 seperated by ',' or ' '.");
     }

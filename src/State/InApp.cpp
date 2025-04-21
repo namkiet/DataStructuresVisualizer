@@ -28,7 +28,7 @@ bool InApp::handleEvent(const sf::Event& event)
 {
     mWorld.handleEvent(event);
 
-    if(mWorld.getBackRequest())
+    if (mWorld.getBackRequest())
     {
         requestStackPop();
         requestStackPush(States::Menu);

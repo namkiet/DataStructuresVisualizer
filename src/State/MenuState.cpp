@@ -22,11 +22,34 @@ MenuState::MenuState(StateStack& stack, Context context):
 	mCarousel.pushItem(Carousel::Item::GRAPH, 		context.textures->get(thumbnail[3]), 	[this](){ requestStackPop(); requestStackPush(States::InAppGraph); });
 
 	// setting button
-	mSettingButton = std::make_shared<GUI::Button>(context.fonts->get(Fonts::UI), sf::Vector2f(SCREEN::Width - 80.f, 20.f), "", sf::Vector2f(50.f, 50.f), GUI::Button::ShapeType::Circle, GUI::Button::ContentType::Image);
+	mSettingButton = std::make_shared<GUI::Button>(
+		context.fonts->get(Fonts::UI),
+		sf::Vector2f(SCREEN::Width - 80.f, 20.f),
+		"", sf::Vector2f(50.f, 50.f),
+		GUI::Button::ShapeType::Circle,
+		GUI::Button::ContentType::Image);
 	mSettingButton->setNormalColor(sf::Color(255, 255, 255, 50));
 	mSettingButton->setSelectedColor(sf::Color(255, 255, 255, 100));
 	mSettingButton->setSprite(sf::Sprite(context.textures->get(Textures::SettingIcon)));
-	mSettingButton->setCallback([this](){ requestStackPop(); requestStackPush(States::Settings); });
+	mSettingButton->setCallback([this](){
+		requestStackPop(); 
+		requestStackPush(States::Settings); 
+	});
+
+	mAboutButton = std::make_shared<GUI::Button>(
+		context.fonts->get(Fonts::UI),
+		sf::Vector2f(SCREEN::Width / 2.f - 75.f, SCREEN::Height - 80.f),
+		"About",
+		sf::Vector2f(150.f, 40.f),
+		GUI::Button::ShapeType::Rectangle,
+		GUI::Button::ContentType::Text
+	);
+	mAboutButton->setNormalColor(sf::Color(255, 255, 255, 50));
+	mAboutButton->setSelectedColor(sf::Color(255, 255, 255, 100));
+	mAboutButton->setCallback([this]() {
+		requestStackPop();
+		requestStackPush(States::About);
+	});
 
 	context.textures->get(Textures::Title).setSmooth(true);
 	mTitle.setTexture(context.textures->get(Textures::Title));
@@ -43,6 +66,7 @@ void MenuState::draw()
 	mCarousel.draw(window);
 	window.draw(*mSettingButton);
 	window.draw(mTitle);
+	window.draw(*mAboutButton);
 }
 
 bool MenuState::update(sf::Time dt)
@@ -54,6 +78,7 @@ bool MenuState::update(sf::Time dt)
 bool MenuState::handleEvent(const sf::Event& event)
 {
 	mSettingButton->handleEvent(event);
+	mAboutButton->handleEvent(event);
 	mCarousel.handleEvent(event);
 	return true;
 }

@@ -10,9 +10,7 @@ InstructText::InstructText() {
 void InstructText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     // std::cout<<"JUmp to draw instruction ok"<<std::endl;
-    if(hasInfo){
-        std::cout<<"It has info and now draw"<<std::endl;
+    if (hasInfo)
         target.draw(*mInstruct, states);
-    }
 }
 }
