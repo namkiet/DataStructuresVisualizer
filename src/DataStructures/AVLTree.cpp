@@ -61,7 +61,7 @@ bool AVLTree::search(int value)
         "else: return true"
     };
 
-    mLastInfo = "Deletion is complete.";
+    mLastInfo = "Searching is complete.";
     if (searchHelper(mRoot, value)) // nếu value có trong cây
     {
         mLastStep = 5;
