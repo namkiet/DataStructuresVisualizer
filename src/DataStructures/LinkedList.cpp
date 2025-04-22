@@ -10,7 +10,7 @@ LinkedList::LinkedList(): mHead(nullptr) {
 
 void LinkedList::insert(int value)
 {
-    InsertAtHead(value);
+    InsertAtLast(value);
 }
 
 bool LinkedList::search(int value)

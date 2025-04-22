@@ -457,12 +457,12 @@ void AVLTree::balance(TreeNode* &root)
     {
         if (getBalanceFactor(root->mLeft) >= 0) // LL
         {
-            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 4; });
+            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 2; });
             root = rightRotate(root);
         }
         else 
         {
-            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 5; });
+            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 3; });
             root->mLeft = leftRotate(root->mLeft); // LR
             root = rightRotate(root);
         }
@@ -471,12 +471,12 @@ void AVLTree::balance(TreeNode* &root)
     {
         if (getBalanceFactor(root->mRight) <= 0) // RR
         {
-            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 2; });
+            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 4; });
             root = leftRotate(root);
         }
         else 
         {
-            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 3; });
+            mActionQueue.pushInstantAction([=]() { if (!isUpdating) mStep = 5; });
             root->mRight = rightRotate(root->mRight); // RL
             root = leftRotate(root);
         }
@@ -532,7 +532,7 @@ TreeNode* AVLTree::rightRotate(TreeNode* root)
 
     
     mActionQueue.pushInstantAction([=]() {
-        mInfo = "Rotate left at " + std::to_string(root->mValue);
+        mInfo = "Rotate right at " + std::to_string(root->mValue);
     }, true);
 
     createNewActionGroup();
