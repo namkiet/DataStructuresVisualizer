@@ -295,7 +295,7 @@ void MainUI::initHeapButtons(HeapTree* heap, InfoPanel *info)
                 else
                 {
                     info->setText("");
-                    heap->insert(num);
+                    heap->push(num);
                 }
             }
         }
