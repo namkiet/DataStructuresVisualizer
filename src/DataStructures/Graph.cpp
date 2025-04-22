@@ -318,7 +318,6 @@ void Graph::physicalUpdate(sf::Time dt)
         makeValidNodePosition(newPosition);
         changeNodePosition(i, newPosition);
     }
-    std::cerr << velocity[0].x << " -- " << velocity[0].y << "\n";
 }
 
 void Graph::empty()

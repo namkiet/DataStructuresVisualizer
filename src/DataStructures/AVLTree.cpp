@@ -228,8 +228,9 @@ void AVLTree::removeHelper(TreeNode* &node, int value)
         return;
     }
 
+    int v = node->mValue;
     mActionQueue.pushInstantAction([=]() {
-        mInfo = "Comparing " + std::to_string(value) + " with " + std::to_string(node->mValue);
+        mInfo = "Comparing " + std::to_string(value) + " with " + std::to_string(v);
     });
 
     createNewActionGroup();

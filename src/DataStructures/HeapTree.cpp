@@ -135,6 +135,7 @@ bool HeapTree::search(int value)
         "    return i",
         "return NOT_FOUND"
     };
+    mLastInfo = "Searching successfully.";
     
     for (int i = 0; i < mNodeList.size(); i++)
     {
