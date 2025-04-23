@@ -9,9 +9,8 @@
 #include <State/AboutState.hpp>
 
 App::App(): 
-    
     mContextSettings(0, 0, 16),
-    mWindow(sf::VideoMode(SCREEN::Width, SCREEN::Height), "My App", sf::Style::Default, mContextSettings),
+    mWindow(sf::VideoMode(SCREEN::Width, SCREEN::Height), "My App", sf::Style::Titlebar | sf::Style::Close, mContextSettings),
     mStateStack(State::Context(mWindow, mTextures, mFonts)),
     mView(mWindow.getDefaultView()),
     mIsPaused(false)

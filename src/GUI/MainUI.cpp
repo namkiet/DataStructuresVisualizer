@@ -412,16 +412,23 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
 {
     // Add Create button
     GUI::ExpandableButton::Ptr CreateButton = std::make_shared<GUI::ExpandableButton>(mFont, OperationButtonPosition[0], "Create", ButtonSize);
+    
+    GUI::TextBox::Ptr InputBoxRandom    = std::make_shared<GUI::TextBox>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, OperationButtonPosition[1].y - TextBoxSize.y / 2), TextBoxSize, "V =, E =", GUI::TextBox::InputType::VectorNum);
+    InputBoxRandom->setCallback([CreateButton, InputBoxRandom]() { CreateButton->setSubComponentInfo(InputBoxRandom->getInputNumList(), 0); });
+        
 
-    GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[1].y + OperationButtonPosition[1].y - TextBoxSize.y) / 2), "Random", TextBoxSize);
+    // GUI::Button::Ptr RandomButton   = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[1].y + OperationButtonPosition[1].y - TextBoxSize.y) / 2), "Random", TextBoxSize);
     GUI::Button::Ptr LoadButton     = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[2].y + OperationButtonPosition[3].y - TextBoxSize.y) / 2), "Load", TextBoxSize);
     GUI::Button::Ptr EmptyButton    = std::make_shared<GUI::Button>(mFont, sf::Vector2f((UI::OPERATIONBOX::Size.x + ButtonSize.x - TextBoxSize.x) / 2.f, (OperationButtonPosition[4].y + OperationButtonPosition[4].y - TextBoxSize.y) / 2), "Empty", TextBoxSize);
 
-    RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
+    // RandomButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(0); });
     LoadButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(1); });
     EmptyButton->setCallback([CreateButton]() { CreateButton->setSubComponentInfo(2); });
 
-    CreateButton->addSubComponent(RandomButton);
+    LoadButton->setOutlineColor(sf::Color(255, 255, 255, 50));
+    EmptyButton->setOutlineColor(sf::Color(255, 255, 255, 50));
+
+    CreateButton->addSubComponent(InputBoxRandom);
     CreateButton->addSubComponent(LoadButton);
     CreateButton->addSubComponent(EmptyButton);
 
@@ -432,8 +439,9 @@ void MainUI::initGraphButtons(Graph* g, InfoPanel *info)
         if (type == -1) return;
         else if (type == 0)
         {
-            int nodeCount = 10;
-            int edgeCount = 13;
+            auto VecNum = CreateButton->getSubComponentInfo().VecNum;
+            int nodeCount = VecNum[0];
+            int edgeCount = VecNum[1];
             int minWeight = 1;
             int maxWeight = 10;
 

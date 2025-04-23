@@ -363,10 +363,10 @@ void LinkedList::insertAtIndex(int value, int index)
 
     if (isTailInsert)
     {
-        int rowIndex = newNode->mIndex / maxRowNode;
+        int rowIndex = cur->mIndex / maxRowNode;
         sf::Vector2f pos;
 
-        if ((newNode->mIndex + 1) % maxRowNode == 0) // last node in a row
+        if ((cur->mIndex + 1) % maxRowNode == 0) // last node in a row
         {
             pos = cur->mTargetPosition + sf::Vector2f(0, 150);
         }
