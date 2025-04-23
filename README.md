@@ -1,9 +1,8 @@
-# Project_CS163_APCS22: Data Structure Visualization
+# Project_CS163: Data Structure Visualization
 
 ## Introduction
 
-Data Structure Visualization is a program that allows users to visualize the behavior of common data structures. This program is written in C++ and uses the SFML library for graphics rendering.
-
+This CS163 group lab project, the Data Structure Visualizer, provides interactive animations that demonstrate how fundamental data structures work. It’s designed to help users explore and understand operations like insertion, deletion, and traversal in real time.
 ## Features
 This program currently supports the following data structures:
 AVL Tree
@@ -61,5 +60,5 @@ https://www.youtube.com/watch?v=ExtQr4t8RA8
   - Nguyen Huu Phuoc (Student ID: 24125018, GitHub: AkiyaNguyen)
   - Le Quoc Vi (Student ID: 24125085, GitHub: wzyle)
 
-- **Course:** CS163 – Data Structures and Algorithms  
+- **Course:** CS163 – Data Structures  
 - **Institution:** VNU University of Science
