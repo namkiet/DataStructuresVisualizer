@@ -1,101 +1,65 @@
-# CMake SFML Project Template
+# Project_CS163_APCS22: Data Structure Visualization
 
-This repository template should allow for a fast and hassle-free kick start of your next SFML project using CMake.
-Thanks to [GitHub's nature of templates](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), you can fork this repository without inheriting its Git history.
+## Introduction
 
-The template starts out very basic, but might receive additional features over time:
+Data Structure Visualization is a program that allows users to visualize the behavior of common data structures. This program is written in C++ and uses the SFML library for graphics rendering.
 
-- Basic CMake script to build your project and link SFML on any operating system
-- Basic [GitHub Actions](https://github.com/features/actions) script for all major platforms
+## Features
+This program currently supports the following data structures:
+AVL Tree
+Heap
+Linked List
+Graph
 
-## How to Use
 
-1. Install [Git](https://git-scm.com/downloads) and [CMake](https://cmake.org/download/). Use your system's package manager if available.
-2. Follow [GitHub's instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) for how to use their project template feature to create your own project. If you don't want to use GitHub, see the section below.
-3. Clone your new GitHub repo and open the repo in your text editor of choice.
-4. Open [CMakeLists.txt](CMakeLists.txt). Rename the project and the target name of the executable to whatever name you want. Make sure to change all occurrences.
-5. If you want to add or remove any .cpp files, change the source files listed in the `add_executable` call in CMakeLists.txt to match the source files your project requires. If you plan on keeping the default main.cpp file then no changes are required.
-6. If your code uses the Audio or Network modules then add `sfml-audio` or `sfml-network` to the `target_link_libraries` call alongside the existing `sfml-graphics` library that is being linked.
-7. If you use Linux, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions you can use the following commands:
-   ```
-   sudo apt update
-   sudo apt install \
-       libxrandr-dev \
-       libxcursor-dev \
-       libxi-dev \
-       libudev-dev \
-       libfreetype-dev \
-       libflac-dev \
-       libvorbis-dev \
-       libgl1-mesa-dev \
-       libegl1-mesa-dev \
-       libfreetype-dev
-   ```
-8. Configure and build your project. Most popular IDEs support CMake projects with very little effort on your part.
+## Main Features
 
-   - [VS Code](https://code.visualstudio.com) via the [CMake extension](https://code.visualstudio.com/docs/cpp/cmake-linux)
-   - [Visual Studio](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170)
-   - [CLion](https://www.jetbrains.com/clion/features/cmake-support.html)
-   - [Qt Creator](https://doc.qt.io/qtcreator/creator-project-cmake.html)
+- **Animated Data Structure Operations**  
+  Real-time visualizations of insert, delete, search, and update actions on your data structure.
 
-   Using CMake from the command line is straightforward as well.
-   Be sure to run these commands in the root directory of the project you just created.
+- **Playback Controls**  
+  Adjust animation speed and use play, pause, or reverse to explore each step at your own pace.
 
-   ```
-   cmake -B build
-   cmake --build build
-   ```
+- **Synchronized Code Highlighting**  
+  Step-by-step highlighting of the corresponding source code alongside the animation.
 
-9. Enjoy!
+- **Flexible Data Input**  
+  Generate a random list or import one from a file to drive the visualization.
 
-## Upgrading SFML
+## Installation
 
-SFML is found via CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module.
-FetchContent automatically downloads SFML from GitHub and builds it alongside your own code.
-Beyond the convenience of not having to install SFML yourself, this ensures ABI compatibility and simplifies things like specifying static versus shared libraries.
+### Prerequisites
 
-Modifying what version of SFML you want is as easy as changing the `GIT_TAG` argument.
-Currently it uses SFML 3 via the `3.0.0` tag.
+- **Git** (to clone the repository)  
+- **CMake** version 3.28 or higher  
+- **C++ compiler**:  
+  - GCC or Clang on Linux/macOS  
+  - MSVC or MinGW on Windows  
+- **Internet connection** (so FetchContent can automatically download SFML)  
+- **Optional**: a system-wide SFML installation; see [SFML downloads](https://www.sfml-dev.org/download.php) if you prefer not to use FetchContent 
 
-## But I want to...
+### Building
 
-Modify CMake options by adding them as configuration parameters (with a `-D` flag) or by modifying the contents of CMakeCache.txt and rebuilding.
+```bash
+mkdir build
 
-### Not use GitHub
+cmake -G "MinGW Makefiles" -S . -B build
 
-You can use this project without a GitHub account by [downloading the contents](https://github.com/SFML/cmake-sfml-project/archive/refs/heads/master.zip) of the repository as a ZIP archive and unpacking it locally.
-This approach also avoids using Git entirely if you would prefer to not do that.
+cmake --build build
 
-### Change Compilers
+.\build\bin\main.exe
+```  
 
-See the variety of [`CMAKE_<LANG>_COMPILER`](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER.html) options.
-In particular you'll want to modify `CMAKE_CXX_COMPILER` to point to the C++ compiler you wish to use.
+### Demo Video
 
-### Change Compiler Optimizations
+https://www.youtube.com/watch?v=ExtQr4t8RA8
 
-CMake abstracts away specific optimizer flags through the [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) option.
-By default this project recommends `Release` builds which enable optimizations.
-Other build types include `Debug` builds which enable debug symbols but disable optimizations.
-If you're using a multi-configuration generator (as is often the case on Windows), you can modify the [`CMAKE_CONFIGURATION_TYPES`](https://cmake.org/cmake/help/latest/variable/CMAKE_CONFIGURATION_TYPES.html#variable:CMAKE_CONFIGURATION_TYPES) option.
+### Credits
 
-### Change Generators
+- **Authors:**
+  - Trinh Vo Nam Kiet (Student ID: 24125013, GitHub: namkiet)
+  - Nguyen Huu Phuoc (Student ID: 24125018, GitHub: AkiyaNguyen)
+  - Le Quoc Vi (Student ID: 24125085, GitHub: wzyle)
 
-While CMake will attempt to pick a suitable default generator, some systems offer a number of generators to choose from.
-Ubuntu, for example, offers Makefiles and Ninja as two potential options.
-For a list of generators, click [here](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
-To modify the generator you're using you must reconfigure your project providing a `-G` flag with a value corresponding to the generator you want.
-You can't simply modify an entry in the CMakeCache.txt file unlike the above options.
-Then you may rebuild your project with this new generator.
-
-## More Reading
-
-Here are some useful resources if you want to learn more about CMake:
-
-- [Official CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/)
-- [How to Use CMake Without the Agonizing Pain - Part 1](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-1.html)
-- [How to Use CMake Without the Agonizing Pain - Part 2](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-2.html)
-- [Better CMake YouTube series by Jefferon Amstutz](https://www.youtube.com/playlist?list=PL8i3OhJb4FNV10aIZ8oF0AA46HgA2ed8g)
-
-## License
-
-The source code is dual licensed under Public Domain and MIT -- choose whichever you prefer.
+- **Course:** CS163 – Data Structures and Algorithms  
+- **Institution:** VNU University of Science
