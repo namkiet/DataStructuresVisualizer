@@ -20,6 +20,10 @@ App::App():
     loadMusic();
     registerStates();
     mStateStack.pushState(States::Menu);
+
+    sf::Image icon;
+    icon.loadFromFile("assets/images/icon.png");
+    mWindow.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
 void App::loadTextures()
