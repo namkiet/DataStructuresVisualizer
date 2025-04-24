@@ -335,7 +335,7 @@ void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
     InsertButton->addSubComponent(InputBoxInsertAtIndex);
 
 
-    InsertButton->setFunc([this,InsertButton, ll]()
+    InsertButton->setFunc([this,InsertButton, ll, info]()
     {
         if (ll->isRunning()) return;
         int ActionType = InsertButton->getSubComponentInfo().InfoID;
@@ -352,9 +352,16 @@ void MainUI::initLinkedListButtons(LinkedList* ll, InfoPanel *info)
         }
         else if (ActionType == 2) // insert at index
         {
-            int v = InsertButton->getSubComponentInfo().VecNum[0];
-            int id = InsertButton->getSubComponentInfo().VecNum[1];
-            ll->insertAtIndex(v, id);
+            std::vector<int> nums = InsertButton->getSubComponentInfo().VecNum;
+            if (nums.size() != 2)
+                info->setText("!Exactly 2 numbers are required.");
+            else if (nums[0] < 0 || nums[0] > 99 || nums[1] < 0 || nums[1] > 99)
+                info->setText("!Invalid input.");
+            else
+            {
+                info->setText("");
+                ll->insertAtIndex(nums[0], nums[1]);
+            }
         }
         InsertButton->resetSubComponentInfo();
     });

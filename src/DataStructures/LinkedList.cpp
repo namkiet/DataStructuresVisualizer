@@ -296,7 +296,7 @@ void LinkedList::insertAtIndex(int value, int index)
 
     if (index > mNodeList.size())
     {
-        mLastInfo = "Index must not be greater than list size."; 
+        mLastInfo = "!Index must not be greater than list size."; 
         return;
     }
 
